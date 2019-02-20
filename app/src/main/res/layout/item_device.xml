@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="@dimen/dp100"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <CheckBox
@@ -8,11 +10,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <TextView
+        android:id="@+id/mvItemDeviceStatusTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_device_tag"
+        android:padding="@dimen/dp3"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:text="正在测试" />
+
     <ImageView
         android:id="@+id/mvItemDeviceIcon"
-        android:layout_width="@dimen/dp100"
+        android:layout_width="match_parent"
         android:layout_height="@dimen/dp100"
-        android:scaleType="centerCrop"
         android:src="@drawable/icon_offline_device" />
+
+    <TextView
+        android:id="@+id/mvItemDeviceNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/mvItemDeviceIcon"
+        tools:text="编号：ox00-xx" />
 
 </android.support.constraint.ConstraintLayout>

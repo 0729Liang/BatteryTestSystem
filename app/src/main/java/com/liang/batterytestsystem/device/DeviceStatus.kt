@@ -6,9 +6,9 @@ package com.liang.batterytestsystem.device
  * Describe :
  */
 enum class DeviceStatus(var statusName: String?, var statusKey: Int) {
-    OFFLINE("offline", 0),
-    ONLINE("online", 1),
-    CONNECTING("connecting", 2),
-    TESTING("testing", 3),
-    TESTPAUSE("testPause", 4),
+    OFFLINE("离线", 0),
+    ONLINE("连接成功", 1),
+    CONNECTING("正在连接", 2),
+    TESTING("正在测试", 3),
+    TESTPAUSE("测试暂停", 4),
 }
