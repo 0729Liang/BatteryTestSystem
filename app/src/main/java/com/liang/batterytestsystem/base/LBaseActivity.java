@@ -9,5 +9,6 @@ import android.support.v7.app.AppCompatActivity;
  */
 public class LBaseActivity extends AppCompatActivity {
     public LBaseActivity() {
+//        LeakCanary.install(this.getApplication());
     }
 }

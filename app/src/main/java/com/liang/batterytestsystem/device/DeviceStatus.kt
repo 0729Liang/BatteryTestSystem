@@ -3,7 +3,7 @@ package com.liang.batterytestsystem.device
 /**
  * @author : Amarao
  * CreateAt : 11:48 2019/2/20
- * Describe :
+ * Describe : 设备状态
  */
 enum class DeviceStatus(var statusName: String?, var statusKey: Int) {
     OFFLINE("离线", 0),

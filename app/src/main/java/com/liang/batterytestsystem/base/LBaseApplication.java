@@ -5,6 +5,7 @@ import android.app.Application;
 import com.blankj.utilcode.util.Utils;
 import com.liang.liangutils.BuildConfig;
 import com.liang.liangutils.init.LCommon;
+import com.squareup.leakcanary.LeakCanary;
 
 /**
  * @author : Amarao
@@ -12,8 +13,15 @@ import com.liang.liangutils.init.LCommon;
  * Describe :
  */
 public class LBaseApplication extends Application {
-    public LBaseApplication() {
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
         LCommon.init(this, BuildConfig.class);
         Utils.init(this);
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            return;
+        }
+        LeakCanary.install(this);
     }
 }

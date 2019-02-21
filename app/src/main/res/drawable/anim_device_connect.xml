@@ -3,13 +3,15 @@
     android:oneshot="false">
 
     <item
-        android:drawable="@drawable/icon_offline_device2"
+        android:drawable="@drawable/icon_online_device"
         android:duration="400" />
+
     <item
         android:drawable="@drawable/icon_offline_device"
         android:duration="400" />
     <item
-        android:drawable="@drawable/icon_online_device"
+        android:drawable="@drawable/icon_offline_device2"
         android:duration="400" />
+
 
 </animation-list>
