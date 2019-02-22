@@ -1,5 +1,6 @@
 package com.liang.batterytestsystem.device
 
+import com.liang.batterytestsystem.main.DeviceAdapter
 import java.util.*
 
 /**
@@ -11,6 +12,7 @@ class DeviceDataBinding {
 
     internal var mDeviceBeanList: MutableList<DeviceBean> = ArrayList() // 所有设备
     internal var mChedkedDeviceList: MutableList<DeviceBean> = ArrayList() // 选中设备
+    // internal val mConnectDeviceList: MutableList<DeviceBean> = ArrayList() // 连接成功
 
     constructor(deviceBeanList: MutableList<DeviceBean>) {
         mDeviceBeanList.addAll(deviceBeanList)
@@ -34,9 +36,24 @@ class DeviceDataBinding {
         return mChedkedDeviceList
     }
 
+    // 得到连接成功的设备列表
+//    fun getConnectDeviceList(): MutableList<DeviceBean> {
+//        mConnectDeviceList.clear()
+//        mDeviceBeanList.forEach {
+//            if (it.deviceStatus == DeviceStatus.ONLINE) {
+//                mConnectDeviceList.add(it)
+//            }
+//        }
+//        return mConnectDeviceList
+//    }
+
     fun addDevice(bean: DeviceBean, event: ConsumerInsertEvent?) {
         mDeviceBeanList.add(bean)
         event?.insertEvent()
+    }
+
+    fun addDevice(bean: DeviceBean) {
+        mDeviceBeanList.add(bean)
     }
 
     fun addDevice(deviceSerialNumber: String, status: DeviceStatus, event: ConsumerInsertEvent?) {

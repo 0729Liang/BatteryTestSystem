@@ -6,12 +6,16 @@ import android.view.View
 import android.widget.CheckBox
 import com.blankj.utilcode.util.ToastUtils
 import com.liang.batterytestsystem.R
-import com.liang.batterytestsystem.base.LBaseActivity
-import com.liang.batterytestsystem.device.DeviceAdapter
+import com.liang.batterytestsystem.base.LAbstractBaseActivity
 import com.liang.batterytestsystem.device.DeviceDataBinding
+import com.liang.batterytestsystem.device.DeviceEvent
+import com.liang.batterytestsystem.device.DeviceKey
 import com.liang.batterytestsystem.device.DeviceStatus
-import com.liang.liangutils.utils.LLogX
+import com.liang.batterytestsystem.exts.Router
+import com.liang.liangutils.mgrs.LKVMgr
 import kotlinx.android.synthetic.main.activity_main.*
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 
 /**
@@ -19,7 +23,7 @@ import kotlinx.android.synthetic.main.activity_main.*
  * CreateAt : 10:59 2019/2/21
  * Describe : 主界面，负责显示与连接设备
  */
-class MainActivity : LBaseActivity() {
+class MainActivity : LAbstractBaseActivity() {
 
     private val mDataBinding: DeviceDataBinding = DeviceDataBinding()
     private val mAdapter: DeviceAdapter = DeviceAdapter(mDataBinding.mDeviceBeanList)
@@ -33,11 +37,9 @@ class MainActivity : LBaseActivity() {
         initData()
         initView()
         clicEvent()
-
     }
 
-    //override
-    fun initData() {
+    override fun initData() {
         mDataBinding.addDevice("ox00-01", DeviceStatus.OFFLINE, mAdapter)
         mDataBinding.addDevice("ox00-02", DeviceStatus.OFFLINE, mAdapter)
         mDataBinding.addDevice("ox00-03", DeviceStatus.OFFLINE, mAdapter)
@@ -45,9 +47,7 @@ class MainActivity : LBaseActivity() {
         mDataBinding.addDevice("ox00-05", DeviceStatus.OFFLINE, mAdapter)
     }
 
-
-    //override
-    fun initView() {
+    override fun initView() {
         mvMainTitleView.setClickLeftFinish(this)
         mvMainTitleView.setTitle("电池测试系统")
         mvMainTitleView.lineView.visibility = View.VISIBLE
@@ -69,8 +69,7 @@ class MainActivity : LBaseActivity() {
         mAdapter.notifyDataSetChanged()
     }
 
-    //override
-    fun clicEvent() {
+    override fun clicEvent() {
 
         // 全部/取消 选择按钮
         mvMainChooseAllBtn.setOnClickListener {
@@ -84,17 +83,9 @@ class MainActivity : LBaseActivity() {
 
         // 连接按钮
         mvMainConnectBtn.setOnClickListener {
-            mDataBinding.getCheckedDeviceList().forEach {
-                // websocket连接操作
-                LLogX.e("设备" + it.deviceSerialNumber + "尝试连接")
-                it.deviceStatus = DeviceStatus.CONNECTING
-                mAdapter.notifyDataSetChanged()
-            }
-        }
 
-        // item点击
-        mAdapter.setOnItemClickListener { adapter, view, position ->
-            ToastUtils.showShort("position = " + position + " number = " + mDataBinding.mDeviceBeanList.get(position).deviceSerialNumber)
+            LKVMgr.memory().putList(DeviceKey.KEY_MAIN_CHECKED_DEVICE, mDataBinding.getCheckedDeviceList())
+            Router.startDeviceConnect(this)
         }
 
         // chexbox点击
@@ -113,4 +104,26 @@ class MainActivity : LBaseActivity() {
 
         }
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onDeviceEvent(event: DeviceEvent) {
+        when (event.msg) {
+            DeviceEvent.EVENT_START_CONNECT -> {
+                mDataBinding.mDeviceBeanList.forEachIndexed { index, bean ->
+                    if (bean.deviceSerialNumber.equals(event.serialNumber)) {
+                        bean.deviceStatus = DeviceStatus.CONNECTING
+                    }
+                } // forEach
+                mAdapter.notifyDataSetChanged()
+            }
+            DeviceEvent.EVENT_CONNECTED_OBJ -> {
+                mDataBinding.mDeviceBeanList.forEachIndexed { index, bean ->
+                    if (bean.deviceSerialNumber.equals(event.deviceBean?.deviceSerialNumber)) {
+                        bean.deviceStatus = DeviceStatus.ONLINE
+                    }
+                } // forEach
+                mAdapter.notifyDataSetChanged()
+            }
+        } // when
+    }// onDeviceEvent
 }

@@ -10,4 +10,9 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="device_info_window">
+        <item name="android:windowEnterAnimation">@anim/alpah_show</item>
+        <item name="android:windowExitAnimation">@anim/alpha_dismss</item>
+    </style>
+
 </resources>

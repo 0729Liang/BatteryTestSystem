@@ -1,24 +1,37 @@
-package com.liang.batterytestsystem.device
+package com.liang.batterytestsystem.module.connect
 
 import android.graphics.drawable.AnimationDrawable
+import android.os.Handler
+import android.view.MotionEvent
 import android.widget.CheckBox
 import android.widget.ImageView
+import com.blankj.utilcode.util.ToastUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.liang.batterytestsystem.R
+import com.liang.batterytestsystem.device.DeviceBean
+import com.liang.batterytestsystem.device.DeviceStatus
+import com.liang.batterytestsystem.view.DeviceInfoWindow
 
 /**
  * @author : Amarao
  * CreateAt : 14:21 2019/2/20
  * Describe :
  */
-class DeviceAdapter(data: List<DeviceBean>?) : BaseQuickAdapter<DeviceBean, BaseViewHolder>(R.layout.item_device, data) {
+class DeviceConnectAdapter(data: List<DeviceBean>?) : BaseQuickAdapter<DeviceBean, BaseViewHolder>(R.layout.item_device, data) {
 
     override fun convert(helper: BaseViewHolder, item: DeviceBean) {
         val imageView = helper.getView<ImageView>(R.id.mvItemDeviceIcon)
         val checkBox = helper.getView<CheckBox>(R.id.mvItemDeviceCheckbox)
 
+        displayInfo(helper, item)
+        checkBox.isChecked = item.checkStatus
         helper.setText(R.id.mvItemDeviceNumber, item.deviceSerialNumber)
+        helper.addOnClickListener(R.id.mvItemDeviceCheckbox)
+        helper.itemView.setOnClickListener { v ->
+            // todo 未定义
+            ToastUtils.showShort("position = " + helper.adapterPosition + " number = " + item.deviceSerialNumber)
+        }
 
         when (item.deviceStatus) {
             DeviceStatus.OFFLINE -> {
@@ -44,20 +57,28 @@ class DeviceAdapter(data: List<DeviceBean>?) : BaseQuickAdapter<DeviceBean, Base
                 helper.setText(R.id.mvItemDeviceStatusTag, DeviceStatus.TESTPAUSE.statusName)
                 helper.setImageResource(R.id.mvItemDeviceIcon, R.drawable.icon_online_device)
             }
+        }// when
+
+    }
+
+    fun displayInfo(helper: BaseViewHolder, item: DeviceBean) {
+        val window = DeviceInfoWindow.create(mContext)
+        var x = 0
+        var y = 0
+        helper.itemView.setOnTouchListener { v, event ->
+            x = event.x.toInt()
+            y = event.y.toInt() - v.height
+            if (event.action == MotionEvent.ACTION_UP) {
+                Handler().postDelayed({ window.hide() }, 2000)
+            }
+            false
         }
 
-        checkBox.isChecked = item.checkStatus
-
-//
-//        LLogX.e("位置1 = "+helper.adapterPosition
-//                +" ;位置2 ="+helper.position
-//                +" ;位置3 ="+helper.layoutPosition
-//                +" ;位置4 ="+helper.oldPosition
-//                +" ;更新 "+item.checkStatus)
-
-        helper.addOnClickListener(R.id.mvItemDeviceCheckbox)
-        if (item.deviceStatus != DeviceStatus.OFFLINE) {
-            checkBox.isEnabled = false
+        helper.itemView.setOnLongClickListener {
+            //DeviceInfoWindow.create(mContext).show(it,x,y)
+            //var create = DeviceInfoWindow.create(mContext, it, x, y, item)
+            window.show(it, x, y, item)
+            false
         }
     }
 }

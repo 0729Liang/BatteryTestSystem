@@ -18,6 +18,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".base.LBaseActivity" />
+        <activity android:name=".module.connect.DeviceConnect"></activity>
     </application>
 
 </manifest>

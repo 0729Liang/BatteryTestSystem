@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".module.connect.DeviceConnect">
+
+    <com.liang.liangutils.view.LTitleView
+        android:id="@+id/mvConnectTitleView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/mvConnectRecycleView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/mvConnectCardView"
+        app:layout_constraintTop_toBottomOf="@id/mvConnectTitleView" />
+
+    <ImageView
+        android:id="@+id/mvConnectWindow"
+        android:layout_width="@dimen/dp100"
+        android:layout_height="@dimen/dp100"
+        android:scaleType="centerCrop"
+        android:src="@drawable/icon_forest"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/mvConnectCardView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp50"
+        android:layout_margin="@dimen/dp10"
+        app:cardCornerRadius="@dimen/dp25"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/mvConnectChooseAll"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:drawableTop="@drawable/icon_not_choose_all"
+                android:gravity="center"
+                android:text="选择全部"
+                android:textSize="@dimen/sp10"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/mvConnectConfigTest" />
+
+            <TextView
+                android:id="@+id/mvConnectConfigTest"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:drawableTop="@drawable/icon_test_config"
+                android:elevation="@dimen/dp10"
+                android:gravity="center"
+                android:text="一键配置"
+                android:textSize="@dimen/sp10"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/mvConnectChooseAll"
+                app:layout_constraintRight_toLeftOf="@id/mvConnectTestStart" />
+
+            <TextView
+                android:id="@+id/mvConnectTestStart"
+                android:layout_width="@dimen/dp0"
+                android:layout_height="@dimen/dp50"
+                android:drawableTop="@drawable/icon_test_start"
+                android:elevation="@dimen/dp10"
+                android:gravity="center"
+                android:text="启动测试"
+                android:textSize="@dimen/sp10"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/mvConnectConfigTest"
+                app:layout_constraintRight_toRightOf="parent" />
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v7.widget.CardView>
+
+
+</android.support.constraint.ConstraintLayout>
