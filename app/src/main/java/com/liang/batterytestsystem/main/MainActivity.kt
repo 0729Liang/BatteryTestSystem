@@ -7,9 +7,9 @@ import android.widget.CheckBox
 import com.blankj.utilcode.util.ToastUtils
 import com.liang.batterytestsystem.R
 import com.liang.batterytestsystem.base.LAbstractBaseActivity
+import com.liang.batterytestsystem.constant.DeviceKey
 import com.liang.batterytestsystem.device.DeviceDataBinding
 import com.liang.batterytestsystem.device.DeviceEvent
-import com.liang.batterytestsystem.device.DeviceKey
 import com.liang.batterytestsystem.device.DeviceStatus
 import com.liang.batterytestsystem.exts.Router
 import com.liang.liangutils.mgrs.LKVMgr

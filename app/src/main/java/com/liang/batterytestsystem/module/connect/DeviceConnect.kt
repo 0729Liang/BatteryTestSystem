@@ -11,7 +11,11 @@ import android.widget.CheckBox
 import com.blankj.utilcode.util.ToastUtils
 import com.liang.batterytestsystem.R
 import com.liang.batterytestsystem.base.LAbstractBaseActivity
-import com.liang.batterytestsystem.device.*
+import com.liang.batterytestsystem.constant.DeviceKey
+import com.liang.batterytestsystem.device.DeviceBean
+import com.liang.batterytestsystem.device.DeviceDataBinding
+import com.liang.batterytestsystem.device.DeviceEvent
+import com.liang.batterytestsystem.device.DeviceStatus
 import com.liang.liangutils.mgrs.LKVMgr
 import com.liang.liangutils.utils.LResourceX
 import kotlinx.android.synthetic.main.activity_device_connect.*

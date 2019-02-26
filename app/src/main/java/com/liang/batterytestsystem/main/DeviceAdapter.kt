@@ -5,12 +5,12 @@ import android.os.Handler
 import android.view.MotionEvent
 import android.widget.CheckBox
 import android.widget.ImageView
-import com.blankj.utilcode.util.ToastUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.liang.batterytestsystem.R
 import com.liang.batterytestsystem.device.DeviceBean
 import com.liang.batterytestsystem.device.DeviceStatus
+import com.liang.batterytestsystem.exts.Router
 import com.liang.batterytestsystem.view.DeviceInfoWindow
 
 /**
@@ -64,7 +64,7 @@ class DeviceAdapter(data: List<DeviceBean>?) : BaseQuickAdapter<DeviceBean, Base
         // 点击事件
         helper.addOnClickListener(R.id.mvItemDeviceCheckbox)
         helper.itemView.setOnClickListener { v ->
-            ToastUtils.showShort("position = " + helper.adapterPosition + " number = " + item.deviceSerialNumber)
+            Router.startDeviceDetail(mContext, item)
         }
 
         // 特殊
