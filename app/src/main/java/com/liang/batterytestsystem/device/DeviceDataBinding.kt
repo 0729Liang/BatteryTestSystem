@@ -12,7 +12,7 @@ class DeviceDataBinding {
 
     internal var mDeviceBeanList: MutableList<DeviceBean> = ArrayList() // 所有设备
     internal var mChedkedDeviceList: MutableList<DeviceBean> = ArrayList() // 选中设备
-    // internal val mConnectDeviceList: MutableList<DeviceBean> = ArrayList() // 连接成功
+    internal val mConnectDeviceList: MutableList<DeviceBean> = ArrayList() // 连接成功
 
     constructor(deviceBeanList: MutableList<DeviceBean>) {
         mDeviceBeanList.addAll(deviceBeanList)
@@ -36,16 +36,25 @@ class DeviceDataBinding {
         return mChedkedDeviceList
     }
 
+    // 得到在线设备和将要连接的设备
+    fun getOnlineDeviceList(): MutableList<DeviceBean> {
+        return mDeviceBeanList.filter {
+            it.checkStatus == true  // 连接
+                    || (it.checkStatus == false && it.deviceStatus != DeviceStatus.OFFLINE) // 在线
+        }.toMutableList()
+    }
+
+
     // 得到连接成功的设备列表
-//    fun getConnectDeviceList(): MutableList<DeviceBean> {
-//        mConnectDeviceList.clear()
-//        mDeviceBeanList.forEach {
-//            if (it.deviceStatus == DeviceStatus.ONLINE) {
-//                mConnectDeviceList.add(it)
-//            }
-//        }
-//        return mConnectDeviceList
-//    }
+    fun getConnectDeviceList(): MutableList<DeviceBean> {
+        mConnectDeviceList.clear()
+        mDeviceBeanList.forEach {
+            if (it.deviceStatus == DeviceStatus.ONLINE) {
+                mConnectDeviceList.add(it)
+            }
+        }
+        return mConnectDeviceList
+    }
 
     fun addDevice(bean: DeviceBean, event: ConsumerInsertEvent?) {
         mDeviceBeanList.add(bean)

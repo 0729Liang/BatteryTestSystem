@@ -40,4 +40,6 @@ dependencies {
 
     implementation libs.lcommon
     implementation libs.eventbus
+    implementation libs.webSocket
+    implementation libs.MPAndroidChart
 }

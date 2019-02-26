@@ -83,8 +83,7 @@ class MainActivity : LAbstractBaseActivity() {
 
         // 连接按钮
         mvMainConnectBtn.setOnClickListener {
-
-            LKVMgr.memory().putList(DeviceKey.KEY_MAIN_CHECKED_DEVICE, mDataBinding.getCheckedDeviceList())
+            LKVMgr.memory().putList(DeviceKey.KEY_ONLINE_DEVICE, mDataBinding.getOnlineDeviceList())
             Router.startDeviceConnect(this)
         }
 
@@ -112,17 +111,25 @@ class MainActivity : LAbstractBaseActivity() {
                 mDataBinding.mDeviceBeanList.forEachIndexed { index, bean ->
                     if (bean.deviceSerialNumber.equals(event.serialNumber)) {
                         bean.deviceStatus = DeviceStatus.CONNECTING
+                        mAdapter.notifyItemChanged(index)
                     }
                 } // forEach
-                mAdapter.notifyDataSetChanged()
             }
             DeviceEvent.EVENT_CONNECTED_OBJ -> {
                 mDataBinding.mDeviceBeanList.forEachIndexed { index, bean ->
                     if (bean.deviceSerialNumber.equals(event.deviceBean?.deviceSerialNumber)) {
                         bean.deviceStatus = DeviceStatus.ONLINE
+                        mAdapter.notifyItemChanged(index)
                     }
                 } // forEach
-                mAdapter.notifyDataSetChanged()
+            }
+            DeviceEvent.EVENT_START_DISCONNECT -> {
+                mDataBinding.mDeviceBeanList.forEachIndexed { index, bean ->
+                    if (bean.deviceSerialNumber.equals(event.serialNumber)) {
+                        bean.deviceStatus = DeviceStatus.OFFLINE
+                        mAdapter.notifyItemChanged(index)
+                    }
+                } // forEach
             }
         } // when
     }// onDeviceEvent

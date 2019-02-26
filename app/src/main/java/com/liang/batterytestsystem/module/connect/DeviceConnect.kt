@@ -4,12 +4,10 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.os.Handler
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.View
 import android.widget.CheckBox
-import android.widget.PopupWindow
 import com.blankj.utilcode.util.ToastUtils
 import com.liang.batterytestsystem.R
 import com.liang.batterytestsystem.base.LAbstractBaseActivity
@@ -26,8 +24,6 @@ class DeviceConnect : LAbstractBaseActivity() {
     private val mAdapter: DeviceConnectAdapter = DeviceConnectAdapter(mDataBinding.mDeviceBeanList)
 
     private var mFlagChooseAll = true  //是否全部被选中
-    lateinit var mDevideInfoWindow: PopupWindow
-    lateinit var mTimer: CountDownTimer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,11 +33,10 @@ class DeviceConnect : LAbstractBaseActivity() {
         initView()
         clicEvent()
 
-
     }
 
     override fun initData() {
-        val list = LKVMgr.memory().getList(DeviceKey.KEY_MAIN_CHECKED_DEVICE, DeviceBean::class.java)
+        val list = LKVMgr.memory().getList(DeviceKey.KEY_ONLINE_DEVICE, DeviceBean::class.java)
         list?.let {
             mDataBinding.mDeviceBeanList.addAll(list)
         }
@@ -56,10 +51,6 @@ class DeviceConnect : LAbstractBaseActivity() {
                     bean.deviceStatus = DeviceStatus.ONLINE
                     DeviceEvent.postConnectSussessDeviceObj(bean)
                 }, (index + 1) * 2000L)
-            } else if (bean.deviceStatus != DeviceStatus.CONNECTING) {
-                // 已经连接的直接发送
-                bean.deviceStatus = DeviceStatus.ONLINE
-                DeviceEvent.postConnectSussessDeviceObj(bean)
             }
         }
     }
@@ -73,19 +64,34 @@ class DeviceConnect : LAbstractBaseActivity() {
         mvConnectRecycleView.layoutManager = layoutManager
         mvConnectRecycleView.adapter = mAdapter
 
-        initChooseAllBtn(mFlagChooseAll)
+        initChooseAllBtn(mDataBinding.getCheckedDeviceList().size == mDataBinding.mDeviceBeanList.size)
     }
 
     override fun clicEvent() {
         mvConnectChooseAll.setOnClickListener {
             mDataBinding.mDeviceBeanList.forEach {
-                it.checkStatus = !mFlagChooseAll
+                it.checkStatus = !mFlagChooseAll    // 切换选中状态
             }
             initChooseAllBtn(!mFlagChooseAll)
         }
 
-
-//        // chexbox点击
+        mvConnectDeviceDisconnect.setOnClickListener {
+            if (mDataBinding.getCheckedDeviceList().size <= 0) {
+                ToastUtils.showShort("未选中断开的设备")
+                return@setOnClickListener
+            }
+            if (mDataBinding.getCheckedDeviceList().any { it.deviceStatus != DeviceStatus.ONLINE }) {
+                ToastUtils.showShort("不可断开连接，请稍后重试")
+                return@setOnClickListener
+            }
+            mDataBinding.getCheckedDeviceList().forEachIndexed { index, bean ->
+                // todo websocket 断开连接
+                if (bean.deviceStatus == DeviceStatus.ONLINE) {
+                    DeviceEvent.postStartDisConnect(bean.deviceSerialNumber)
+                }
+            }
+        }
+        // chexbox点击
         mAdapter.setOnItemChildClickListener { adapter, view, position ->
             val checkBox = adapter.getViewByPosition(mvConnectRecycleView, position, R.id.mvItemDeviceCheckbox) as CheckBox
             val bean = mDataBinding.mDeviceBeanList.get(position)
@@ -94,12 +100,6 @@ class DeviceConnect : LAbstractBaseActivity() {
 
             initChooseAllBtn(mDataBinding.getCheckedDeviceList().size == mDataBinding.mDeviceBeanList.size)
         }
-
-        mAdapter.setOnItemLongClickListener { adapter, view, position ->
-
-            false
-        }
-
 
     }
 
@@ -142,12 +142,18 @@ class DeviceConnect : LAbstractBaseActivity() {
                         mAdapter.notifyItemChanged(index)
                     }
                 } // forEach
-
             }
-            DeviceEvent.EVENT_HIDE_DEVICE_INFO_WINDOW -> {
-                if (mDevideInfoWindow.isShowing) {
-                    mDevideInfoWindow.dismiss()
+            DeviceEvent.EVENT_START_DISCONNECT -> {
+
+                val iterator = mDataBinding.mDeviceBeanList.listIterator()
+                while (iterator.hasNext()) {
+                    val bean = iterator.next()
+                    if (bean.deviceSerialNumber.equals(event.serialNumber)) {
+                        iterator.remove()
+                        mAdapter.notifyItemRemoved(iterator.nextIndex())
+                    }
                 }
+
             }
         }
     }

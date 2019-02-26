@@ -16,6 +16,7 @@ class DeviceEvent : BusEvent() {
         //val EVENT_START_CONNECT = "EVENT_START_CONNECT"; // 开始连接
         val EVENT_CONNECTED_OBJ = "EVENT_CONNECTED_OBJ" // 发送已经在线的设备对象
         val EVENT_START_CONNECT = "EVENT_START_CONNECT"   // 开始连接
+        val EVENT_START_DISCONNECT = "EVENT_START_DISCONNECT"   // 断开连接
         val EVENT_HIDE_DEVICE_INFO_WINDOW = "EVENT_HIDE_DEVICE_INFO_WINDOW" // 隐藏设备信息Window
 
 
@@ -40,6 +41,14 @@ class DeviceEvent : BusEvent() {
         fun postHideDeviceInfoWindow() {
             val event = DeviceEvent()
             event.msg = EVENT_HIDE_DEVICE_INFO_WINDOW
+            BusEvent.post(event)
+        }
+
+        @JvmStatic
+        fun postStartDisConnect(serialNumber: String) {
+            val event = DeviceEvent()
+            event.msg = EVENT_START_DISCONNECT
+            event.serialNumber = serialNumber
             BusEvent.post(event)
         }
     }

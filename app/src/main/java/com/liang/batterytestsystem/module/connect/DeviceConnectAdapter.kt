@@ -24,15 +24,9 @@ class DeviceConnectAdapter(data: List<DeviceBean>?) : BaseQuickAdapter<DeviceBea
         val imageView = helper.getView<ImageView>(R.id.mvItemDeviceIcon)
         val checkBox = helper.getView<CheckBox>(R.id.mvItemDeviceCheckbox)
 
-        displayInfo(helper, item)
         checkBox.isChecked = item.checkStatus
-        helper.setText(R.id.mvItemDeviceNumber, item.deviceSerialNumber)
-        helper.addOnClickListener(R.id.mvItemDeviceCheckbox)
-        helper.itemView.setOnClickListener { v ->
-            // todo 未定义
-            ToastUtils.showShort("position = " + helper.adapterPosition + " number = " + item.deviceSerialNumber)
-        }
 
+        helper.setText(R.id.mvItemDeviceNumber, item.deviceSerialNumber)
         when (item.deviceStatus) {
             DeviceStatus.OFFLINE -> {
                 helper.setText(R.id.mvItemDeviceStatusTag, DeviceStatus.OFFLINE.statusName)
@@ -59,6 +53,14 @@ class DeviceConnectAdapter(data: List<DeviceBean>?) : BaseQuickAdapter<DeviceBea
             }
         }// when
 
+        helper.addOnClickListener(R.id.mvItemDeviceCheckbox)
+        helper.itemView.setOnClickListener { v ->
+            // todo 未定义
+            ToastUtils.showShort("position = " + helper.adapterPosition + " number = " + item.deviceSerialNumber)
+        }
+
+        displayInfo(helper, item)
+
     }
 
     fun displayInfo(helper: BaseViewHolder, item: DeviceBean) {
@@ -75,8 +77,6 @@ class DeviceConnectAdapter(data: List<DeviceBean>?) : BaseQuickAdapter<DeviceBea
         }
 
         helper.itemView.setOnLongClickListener {
-            //DeviceInfoWindow.create(mContext).show(it,x,y)
-            //var create = DeviceInfoWindow.create(mContext, it, x, y, item)
             window.show(it, x, y, item)
             false
         }

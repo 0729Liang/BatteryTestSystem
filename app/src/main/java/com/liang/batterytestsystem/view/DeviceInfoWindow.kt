@@ -12,13 +12,11 @@ import com.liang.batterytestsystem.device.DeviceBean
 /**
  * @author : Amarao
  * CreateAt : 15:29 2019/2/22
- * Describe :
+ * Describe : 设备信息展示弹框
  */
 class DeviceInfoWindow private constructor(context: Context) : PopupWindow() {
-    private val mContext: Context? = null
 
     init {
-        //super(context);
         val contentView = LayoutInflater.from(context).inflate(R.layout.window_device_info, null)
         this.contentView = contentView
         this.width = ViewGroup.LayoutParams.WRAP_CONTENT
@@ -54,8 +52,8 @@ class DeviceInfoWindow private constructor(context: Context) : PopupWindow() {
             val popupWindow = PopupWindow(context)
             val contentView = LayoutInflater.from(context).inflate(R.layout.window_device_info, null)
             popupWindow.contentView = contentView
-//            popupWindow.width = ViewGroup.LayoutParams.WRAP_CONTENT
-//            popupWindow.height = ViewGroup.LayoutParams.WRAP_CONTENT
+            popupWindow.width = ViewGroup.LayoutParams.WRAP_CONTENT
+            popupWindow.height = ViewGroup.LayoutParams.WRAP_CONTENT
             //popupWindow.setBackgroundDrawable(new ColorDrawable(Color.RED));
             popupWindow.isOutsideTouchable = true
             popupWindow.showAsDropDown(view, x, y)

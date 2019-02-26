@@ -20,22 +20,21 @@ import com.liang.batterytestsystem.view.DeviceInfoWindow
  */
 class DeviceAdapter(data: List<DeviceBean>?) : BaseQuickAdapter<DeviceBean, BaseViewHolder>(R.layout.item_device, data) {
 
+    // 数据 状态 界面 点击事件 特殊
     override fun convert(helper: BaseViewHolder, item: DeviceBean) {
         val imageView = helper.getView<ImageView>(R.id.mvItemDeviceIcon)
         val checkBox = helper.getView<CheckBox>(R.id.mvItemDeviceCheckbox)
 
-        displayInfo(helper, item)
+        // 状态
         checkBox.isChecked = item.checkStatus
-        helper.setText(R.id.mvItemDeviceNumber, item.deviceSerialNumber)
-        helper.addOnClickListener(R.id.mvItemDeviceCheckbox)
-
+        checkBox.isEnabled = (item.deviceStatus == DeviceStatus.OFFLINE)
         if (item.deviceStatus != DeviceStatus.OFFLINE) {
-            checkBox.isEnabled = false
-        }
-        helper.itemView.setOnClickListener { v ->
-            ToastUtils.showShort("position = " + helper.adapterPosition + " number = " + item.deviceSerialNumber)
+            checkBox.isChecked = true
+            item.checkStatus = true
+            // 界面
         }
 
+        helper.setText(R.id.mvItemDeviceNumber, item.deviceSerialNumber)
         when (item.deviceStatus) {
             DeviceStatus.OFFLINE -> {
                 helper.setText(R.id.mvItemDeviceStatusTag, DeviceStatus.OFFLINE.statusName)
@@ -61,8 +60,19 @@ class DeviceAdapter(data: List<DeviceBean>?) : BaseQuickAdapter<DeviceBean, Base
                 helper.setImageResource(R.id.mvItemDeviceIcon, R.drawable.icon_online_device)
             }
         }// when
+
+        // 点击事件
+        helper.addOnClickListener(R.id.mvItemDeviceCheckbox)
+        helper.itemView.setOnClickListener { v ->
+            ToastUtils.showShort("position = " + helper.adapterPosition + " number = " + item.deviceSerialNumber)
+        }
+
+        // 特殊
+        displayInfo(helper, item)
+
     }
 
+    /* 设备信息展示弹窗*/
     fun displayInfo(helper: BaseViewHolder, item: DeviceBean) {
         val window = DeviceInfoWindow.create(mContext)
         var x = 0
@@ -77,8 +87,6 @@ class DeviceAdapter(data: List<DeviceBean>?) : BaseQuickAdapter<DeviceBean, Base
         }
 
         helper.itemView.setOnLongClickListener {
-            //DeviceInfoWindow.create(mContext).show(it,x,y)
-            //var create = DeviceInfoWindow.create(mContext, it, x, y, item)
             window.show(it, x, y, item)
             false
         }
