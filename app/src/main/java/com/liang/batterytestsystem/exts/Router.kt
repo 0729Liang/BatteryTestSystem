@@ -5,6 +5,7 @@ import android.content.Context
 import com.liang.batterytestsystem.device.DeviceBean
 import com.liang.batterytestsystem.module.connect.DeviceConnect
 import com.liang.batterytestsystem.module.details.DeviceDetails
+import com.liang.batterytestsystem.service.DeviceMgrService
 
 /**
  * @author : Amarao
@@ -22,6 +23,11 @@ class Router {
         @JvmStatic // 启动设备详情页
         fun startDeviceDetail(context: Context, bean: DeviceBean) {
             DeviceDetails.startActivity(context, bean)
+        }
+
+        @JvmStatic
+        fun startDeviceMgrService(context: Context) {
+            DeviceMgrService.startService(context)
         }
     }
 }

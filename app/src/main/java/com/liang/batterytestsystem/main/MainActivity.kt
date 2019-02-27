@@ -1,5 +1,6 @@
 package com.liang.batterytestsystem.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.View
@@ -12,6 +13,7 @@ import com.liang.batterytestsystem.device.DeviceDataBinding
 import com.liang.batterytestsystem.device.DeviceEvent
 import com.liang.batterytestsystem.device.DeviceStatus
 import com.liang.batterytestsystem.exts.Router
+import com.liang.batterytestsystem.service.DeviceMgrService
 import com.liang.liangutils.mgrs.LKVMgr
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.Subscribe
@@ -33,6 +35,8 @@ class MainActivity : LAbstractBaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        Router.startDeviceMgrService(this)
 
         initData()
         initView()
@@ -78,6 +82,7 @@ class MainActivity : LAbstractBaseActivity() {
                     it.checkStatus = !mFlagChooseAll
                 }
             }
+            stopService(Intent(this, DeviceMgrService::class.java))
             initChooseAllBtn(!mFlagChooseAll)
         }
 
@@ -117,7 +122,7 @@ class MainActivity : LAbstractBaseActivity() {
             }
             DeviceEvent.EVENT_CONNECTED_OBJ -> {
                 mDataBinding.mDeviceBeanList.forEachIndexed { index, bean ->
-                    if (bean.deviceSerialNumber.equals(event.deviceBean?.deviceSerialNumber)) {
+                    if (bean.deviceSerialNumber.equals(event.serialNumber)) {
                         bean.deviceStatus = DeviceStatus.ONLINE
                         mAdapter.notifyItemChanged(index)
                     }

@@ -53,7 +53,7 @@ class DeviceConnect : LAbstractBaseActivity() {
                 // todo 模拟连接成功
                 Handler().postDelayed({
                     bean.deviceStatus = DeviceStatus.ONLINE
-                    DeviceEvent.postConnectSussessDeviceObj(bean)
+                    DeviceEvent.postConnectSussessDeviceObj(bean.deviceSerialNumber)
                 }, (index + 1) * 2000L)
             }
         }
@@ -141,7 +141,7 @@ class DeviceConnect : LAbstractBaseActivity() {
             }
             DeviceEvent.EVENT_CONNECTED_OBJ -> {
                 mDataBinding.mDeviceBeanList.forEachIndexed { index, bean ->
-                    if (bean.deviceSerialNumber.equals(event.deviceBean?.deviceSerialNumber)) {
+                    if (bean.deviceSerialNumber.equals(event.serialNumber)) {
                         bean.deviceStatus = DeviceStatus.ONLINE
                         mAdapter.notifyItemChanged(index)
                     }

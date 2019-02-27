@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/gray_bg"
     tools:context=".module.details.DeviceDetails">
 
     <com.liang.liangutils.view.LTitleView
@@ -12,16 +13,21 @@
         android:layout_height="wrap_content" />
 
     <TextView
+        android:id="@+id/mvDetailStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="配置"
-        app:layout_constraintTop_toBottomOf="@id/mvDetailTitle" />
+        android:text="离线"
+        android:textSize="@dimen/sp10"
+        app:layout_constraintBottom_toBottomOf="@id/mvDetailTitle"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
 
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/mvDetailLineChart"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp200"
+        android:background="@color/white"
         android:padding="@dimen/dp10"
         app:layout_constraintBottom_toTopOf="@id/mvDetailConnect" />
 
@@ -49,6 +55,7 @@
         app:layout_constraintLeft_toRightOf="@id/mvDetailConnect"
         app:layout_constraintRight_toRightOf="parent"
         tools:text="开始测试" />
+
 
     <View
         android:layout_width="@dimen/dp1"
