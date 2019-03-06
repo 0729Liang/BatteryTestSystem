@@ -8,7 +8,7 @@ import android.widget.PopupWindow;
 
 import com.liang.batterytestsystem.R;
 import com.liang.batterytestsystem.device.Customer2;
-import com.liang.liangutils.utils.LLogX;
+import com.liang.liangutils.utils.LSizeX;
 
 /**
  * @author : Amarao
@@ -33,13 +33,9 @@ public class DeviceOperWindow extends PopupWindow {
     public DeviceOperWindow show(View view) {
         int[] location = new int[2];
         view.getLocationOnScreen(location);
-
-        LLogX.e("h = " + this.getHeight());
-        LLogX.e("w = " + this.getWidth());
-        this.showAsDropDown(view, 0, -this.getHeight());
-        //this.showAsDropDown(view, location[0] - this.getWidth(), location[1]);
-        //this.show(view);
-
+        this.getContentView().measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);// 需要先测量，才可以得到宽高getMeasuredWidth
+        // 默认显示在view的正下方
+        this.showAsDropDown(view, 0 - this.getContentView().getMeasuredWidth() / 4, -this.getContentView().getMeasuredHeight() - view.getHeight() - LSizeX.dp2px(5));
         return this;
     }
 

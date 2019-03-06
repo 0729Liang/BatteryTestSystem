@@ -75,6 +75,7 @@ class MainActivity : LAbstractBaseActivity() {
     }
 
     override fun clicEvent() {
+        mvMainTestBtn.setOnClickListener { DeviceOperWindow.create(this).show(it) }
         // 全部/取消 选择按钮
         mvMainChooseAll.setOnClickListener {
             mDataBinding.mDeviceBeanList.forEach {
@@ -104,7 +105,8 @@ class MainActivity : LAbstractBaseActivity() {
             initChooseAllBtn(mDataBinding.getCheckedDeviceList().size == mDataBinding.mDeviceBeanList.size)
 
         }
-        mvMainTestBtn.setOnClickListener {
+
+        mvMainDeviceMore.setOnClickListener {
             DeviceOperWindow.create(this).show(it).addTestPauseClickEvent { ToastUtils.showShort("暂停") }.addTestStopClickEvent { ToastUtils.showShort("结束") }
         }
     }
