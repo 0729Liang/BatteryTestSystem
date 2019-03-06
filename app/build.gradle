@@ -16,6 +16,7 @@ android {
         packagingOptions {
             exclude 'META-INF/proguard/androidx-annotations.pro'
         }
+        /*javaCompileOptions { annotationProcessorOptions { includeCompileClasspath = true } }*/
     }
     buildTypes {
         release {
@@ -46,4 +47,5 @@ dependencies {
     implementation libs.eventbus
     implementation libs.webSocket
     implementation libs.MPAndroidChart
+
 }

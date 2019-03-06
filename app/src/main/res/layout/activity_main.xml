@@ -16,27 +16,113 @@
         android:id="@+id/mvMainRecycleView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/mvMainChooseAllBtn"
+        android:layout_marginBottom="@dimen/dp10"
+        app:layout_constraintBottom_toTopOf="@id/mvMainCardView"
         app:layout_constraintTop_toBottomOf="@id/mvMainTitleView" />
 
     <Button
-        android:id="@+id/mvMainChooseAllBtn"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/dp50"
-        android:elevation="@dimen/dp10"
-        android:text="取消选择"
+        android:id="@+id/mvMainTestBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/mvMainConnectBtn" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/mvMainConnectBtn"
-        android:layout_width="@dimen/dp0"
+    <android.support.v7.widget.CardView
+        android:id="@+id/mvMainCardView"
+        android:layout_width="match_parent"
         android:layout_height="@dimen/dp50"
-        android:elevation="@dimen/dp10"
-        android:text="立即连接"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/mvMainChooseAllBtn"
-        app:layout_constraintRight_toRightOf="parent" />
+        android:layout_margin="@dimen/dp10"
+        app:cardCornerRadius="@dimen/dp25"
+        app:layout_constraintBottom_toBottomOf="parent">
 
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/mvMainChooseAll"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:drawableTop="@drawable/icon_not_choose_all"
+                android:gravity="center"
+                android:text="选择全部"
+                android:textSize="@dimen/sp10"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/mvMainConnectBtn" />
+
+            <TextView
+                android:id="@+id/mvMainConnectBtn"
+                android:layout_width="@dimen/dp0"
+                android:layout_height="match_parent"
+                android:drawableTop="@drawable/icon_device_connect"
+                android:gravity="center"
+                android:text="立即连接"
+                android:textSize="@dimen/sp10"
+                app:layout_constraintLeft_toRightOf="@id/mvMainChooseAll"
+                app:layout_constraintRight_toLeftOf="@id/mvMainDeviceDisconnect" />
+
+            <TextView
+                android:id="@+id/mvMainDeviceDisconnect"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:drawableTop="@drawable/icon_device_disconnect"
+                android:gravity="center"
+                android:text="断开连接"
+                android:textSize="@dimen/sp10"
+                android:visibility="gone"
+                app:layout_constraintLeft_toRightOf="@id/mvMainConnectBtn"
+                app:layout_constraintRight_toLeftOf="@id/mvMainConfigTest" />
+
+            <TextView
+                android:id="@+id/mvMainConfigTest"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:drawableTop="@drawable/icon_test_config"
+                android:elevation="@dimen/dp10"
+                android:gravity="center"
+                android:text="一键配置"
+                android:textSize="@dimen/sp10"
+                app:layout_constraintLeft_toRightOf="@id/mvMainDeviceDisconnect"
+                app:layout_constraintRight_toLeftOf="@id/mvMainTestStart" />
+
+            <TextView
+                android:id="@+id/mvMainTestStart"
+                android:layout_width="@dimen/dp0"
+                android:layout_height="match_parent"
+                android:drawableTop="@drawable/icon_test_start"
+                android:elevation="@dimen/dp10"
+                android:gravity="center"
+                android:text="启动测试"
+                android:textSize="@dimen/sp10"
+                app:layout_constraintLeft_toRightOf="@id/mvMainConfigTest"
+                app:layout_constraintRight_toLeftOf="@id/mvMainTestPause" />
+
+            <TextView
+                android:id="@+id/mvMainTestPause"
+                android:layout_width="@dimen/dp0"
+                android:layout_height="match_parent"
+                android:drawableTop="@drawable/icon_test_pause"
+                android:elevation="@dimen/dp10"
+                android:gravity="center"
+                android:text="暂停测试"
+                android:textSize="@dimen/sp10"
+                android:visibility="gone"
+                app:layout_constraintLeft_toRightOf="@id/mvMainTestStart"
+                app:layout_constraintRight_toLeftOf="@id/mvMainDeviceMore" />
+
+            <TextView
+                android:id="@+id/mvMainDeviceMore"
+                android:layout_width="@dimen/dp0"
+                android:layout_height="match_parent"
+                android:drawableTop="@drawable/icon_device_more"
+                android:gravity="center"
+                android:text="更多"
+                android:textSize="@dimen/sp10"
+                app:layout_constraintLeft_toRightOf="@id/mvMainTestPause"
+                app:layout_constraintRight_toRightOf="parent" />
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v7.widget.CardView>
 </android.support.constraint.ConstraintLayout>

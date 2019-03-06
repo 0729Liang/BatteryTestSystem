@@ -23,7 +23,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="url" value="jar:file:/E:/learn/Androidtudio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_settings_power_black_24dp.xml" />
+                                                <entry key="url" value="jar:file:/E:/learn/Androidtudio/plugins/android/lib/android.jar!/images/material_design_icons/navigation/ic_more_vert_black_24dp.xml" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -33,7 +33,7 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="outputName" value="icon_device_disconnect" />
+                                      <entry key="outputName" value="icon_device_more" />
                                       <entry key="theme" value="CUSTOM" />
                                     </map>
                                   </option>
@@ -53,6 +53,11 @@
                 </map>
               </option>
             </PersistentState>
+          </value>
+        </entry>
+        <entry key="vectorWizard">
+          <value>
+            <PersistentState />
           </value>
         </entry>
       </map>

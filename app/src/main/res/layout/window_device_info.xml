@@ -4,19 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@color/gray_bg"
+    android:background="@drawable/shape_device_info_window_bg"
     android:padding="@dimen/dp10">
 
     <TextView
         android:id="@+id/mvWindowDeviceNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/white"
         tools:text="设备编号:ox-00-01" />
 
     <TextView
         android:id="@+id/mvWindowDeviceName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@id/mvWindowDeviceNumber"
         tools:text="设备名字:？？？？" />
 
@@ -24,6 +26,7 @@
         android:id="@+id/mvWindowDeviceCheckStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@id/mvWindowDeviceName"
         tools:text="是否选中:是" />
 
@@ -31,6 +34,7 @@
         android:id="@+id/mvWindowDeviceStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@id/mvWindowDeviceCheckStatus"
         tools:text="设备状态:在线" />
 

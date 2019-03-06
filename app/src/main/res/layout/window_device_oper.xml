@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="@dimen/dp100"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_device_info_window_bg"
+    android:paddingLeft="@dimen/dp10"
+    android:paddingRight="@dimen/dp10">
+
+    <TextView
+        android:id="@+id/mvWindowTestPause"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp40"
+        android:gravity="left|center"
+        android:text="暂停测试"
+        android:textColor="@color/white" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dp1"
+        android:background="@color/white"
+        app:layout_constraintLeft_toLeftOf="@id/mvWindowTestPause"
+        app:layout_constraintRight_toRightOf="@id/mvWindowTestPause"
+        app:layout_constraintTop_toBottomOf="@id/mvWindowTestPause" />
+
+    <TextView
+        android:id="@+id/mvWindowDisconnect"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp40"
+        android:gravity="left|center"
+        android:text="停止测试"
+        android:textColor="@color/white"
+        app:layout_constraintTop_toBottomOf="@id/mvWindowTestPause" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dp1"
+        android:background="@color/white"
+        app:layout_constraintLeft_toLeftOf="@id/mvWindowTestPause"
+        app:layout_constraintRight_toRightOf="@id/mvWindowTestPause"
+        app:layout_constraintTop_toBottomOf="@id/mvWindowDisconnect" />
+
+    <TextView
+        android:id="@+id/mvWindowTestStop"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp40"
+        android:gravity="left|center"
+        android:text="断开连接"
+        android:textColor="@color/white"
+        app:layout_constraintTop_toBottomOf="@id/mvWindowDisconnect" />
+
+</android.support.constraint.ConstraintLayout>
