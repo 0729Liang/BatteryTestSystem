@@ -2,20 +2,23 @@ package com.liang.batterytestsystem.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.support.v7.widget.StaggeredGridLayoutManager
+import android.view.MotionEvent
 import android.view.View
 import android.widget.CheckBox
 import com.blankj.utilcode.util.ToastUtils
 import com.liang.batterytestsystem.R
 import com.liang.batterytestsystem.base.LAbstractBaseActivity
-import com.liang.batterytestsystem.constant.DeviceKey
+import com.liang.batterytestsystem.demo.Arithmetic
 import com.liang.batterytestsystem.device.DeviceDataBinding
 import com.liang.batterytestsystem.device.DeviceEvent
 import com.liang.batterytestsystem.device.DeviceStatus
 import com.liang.batterytestsystem.exts.Router
 import com.liang.batterytestsystem.module.service.DeviceService
+import com.liang.batterytestsystem.view.DeviceInfoWindow
 import com.liang.batterytestsystem.view.DeviceOperWindow
-import com.liang.liangutils.mgrs.LKVMgr
+import com.liang.liangutils.utils.LLogX
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -42,6 +45,40 @@ class MainActivity : LAbstractBaseActivity() {
         initData()
         initView()
         clicEvent()
+
+
+        test()
+        test2()
+
+    }
+
+    private fun test2() {
+
+        val s = "ABCDEFG"
+        LLogX.e("二分法翻转字符：" + Arithmetic.resverByDichotomy(s))
+        LLogX.e("CharAt 拼接：" + Arithmetic.reverseByCharAt(s))
+    }
+
+
+    private fun test() {
+        var x = 0
+        var y = 0
+        val window = DeviceInfoWindow.create(this)
+        mvMainTestBtn.setOnTouchListener { v, event ->
+            x = event.x.toInt()
+            y = event.y.toInt() - v.height
+            if (event.action == MotionEvent.ACTION_UP) {
+                Handler().postDelayed({ window.hide() }, 2000)
+            }
+            false
+        }
+
+        mvMainTestBtn.setOnLongClickListener {
+            window.show(it, x, y, mDataBinding.mDeviceBeanList.get(0))
+            true
+        }
+
+        mvMainTestBtn.setOnClickListener { Router.startDeviceDetail(this, mDataBinding.mDeviceBeanList.get(0)) }
     }
 
     override fun initData() {
@@ -75,34 +112,31 @@ class MainActivity : LAbstractBaseActivity() {
     }
 
     override fun clicEvent() {
-        mvMainTestBtn.setOnClickListener { DeviceOperWindow.create(this).show(it) }
-        // 全部/取消 选择按钮
-        mvMainChooseAll.setOnClickListener {
-            mDataBinding.mDeviceBeanList.forEach {
-                if (it.deviceStatus == DeviceStatus.OFFLINE) {
-                    it.checkStatus = !mFlagChooseAll
-                }
-            }
-            initChooseAllBtn(!mFlagChooseAll)
-        }
-        // 连接按钮
-        mvMainConnectBtn.setOnClickListener {
-            LKVMgr.memory().putList(DeviceKey.KEY_ONLINE_DEVICE, mDataBinding.getOnlineDeviceList())
-            Router.startDeviceConnect(this)
-        }
         // chexbox点击
         mAdapter.setOnItemChildClickListener { adapter, view, position ->
             val checkBox = adapter.getViewByPosition(mvMainRecycleView, position, R.id.mvItemDeviceCheckbox) as CheckBox
             val bean = mDataBinding.mDeviceBeanList.get(position)
 
-            if (bean.deviceStatus == DeviceStatus.OFFLINE) {
-                bean.checkStatus = checkBox.isChecked
-                ToastUtils.showShort("This is status = " + bean.checkStatus)
-            } else {
-                ToastUtils.showShort(bean.deviceStatus.statusName)
-            }
+            bean.checkStatus = checkBox.isChecked
+            ToastUtils.showShort("This is status = " + bean.checkStatus)
 
             initChooseAllBtn(mDataBinding.getCheckedDeviceList().size == mDataBinding.mDeviceBeanList.size)
+
+        }
+
+        // 全部/取消 选择按钮
+        mvMainChooseAll.setOnClickListener {
+            mDataBinding.mDeviceBeanList.forEach {
+                it.checkStatus = !mFlagChooseAll
+            }
+            initChooseAllBtn(!mFlagChooseAll)
+        }
+
+        // 连接按钮
+        mvMainConnectBtn.setOnClickListener {
+            //            LKVMgr.memory().putList(DeviceKey.KEY_ONLINE_DEVICE, mDataBinding.getOnlineDeviceList())
+//            Router.startDeviceConnect(this)
+
 
         }
 

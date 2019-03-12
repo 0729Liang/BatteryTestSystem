@@ -20,7 +20,6 @@ import com.liang.batterytestsystem.device.DeviceBean
 import com.liang.batterytestsystem.device.DeviceEvent
 import com.liang.batterytestsystem.device.DeviceStatus
 import com.liang.liangutils.mgrs.LKVMgr
-import com.liang.liangutils.utils.LLogX
 import com.liang.liangutils.utils.LResourceX
 import com.liang.liangutils.utils.LSizeX
 import kotlinx.android.synthetic.main.activity_device_details.*
@@ -154,7 +153,7 @@ class DeviceDetails : LAbstractBaseActivity() {
             val IValue = value.toInt()
             val format = DateFormat.format("MM/dd", System.currentTimeMillis() - (list.size - IValue).toLong() * 24 * 60 * 60 * 1000)
             val time = SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS").format(Date())
-            LLogX.e(time + " value = " + value)
+//            LLogX.e(time + " value = " + value)
             value.toString()
         }
 

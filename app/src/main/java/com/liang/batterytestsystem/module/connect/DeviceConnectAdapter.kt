@@ -77,7 +77,7 @@ class DeviceConnectAdapter(data: List<DeviceBean>?) : BaseQuickAdapter<DeviceBea
 
         helper.itemView.setOnLongClickListener {
             window.show(it, x, y, item)
-            false
+            true
         }
     }
 }

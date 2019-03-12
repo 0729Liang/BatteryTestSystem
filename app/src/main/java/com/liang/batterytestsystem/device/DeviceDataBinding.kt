@@ -24,7 +24,6 @@ class DeviceDataBinding {
 
     constructor()
 
-
     // 得到选中的设备列表
     fun getCheckedDeviceList(): MutableList<DeviceBean> {
         mChedkedDeviceList.clear()
@@ -45,7 +44,7 @@ class DeviceDataBinding {
     }
 
 
-    // 得到连接成功的设备列表
+    // 得到连接成功的设备列表  Leak Canary​​​​​​​
     fun getConnectDeviceList(): MutableList<DeviceBean> {
         mConnectDeviceList.clear()
         mDeviceBeanList.forEach {
@@ -54,6 +53,18 @@ class DeviceDataBinding {
             }
         }
         return mConnectDeviceList
+    }
+
+    fun isAllSameDeviceStatus(list: List<DeviceBean>, vararg status: DeviceStatus): Boolean {
+        list.forEachIndexed { index1, bean ->
+            status.forEachIndexed { index2, state ->
+                if (bean.deviceStatus != state) {
+                    return false
+                }
+            }
+        }
+
+        return false
     }
 
     fun addDevice(bean: DeviceBean, event: ConsumerInsertEvent?) {

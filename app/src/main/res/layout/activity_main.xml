@@ -21,6 +21,7 @@
         app:layout_constraintTop_toBottomOf="@id/mvMainTitleView" />
 
     <Button
+        android:visibility="gone"
         android:id="@+id/mvMainTestBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

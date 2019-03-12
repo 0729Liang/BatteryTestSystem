@@ -27,12 +27,12 @@ class DeviceAdapter(data: List<DeviceBean>?) : BaseQuickAdapter<DeviceBean, Base
 
         // 状态
         checkBox.isChecked = item.checkStatus
-        checkBox.isEnabled = (item.deviceStatus == DeviceStatus.OFFLINE)
-        if (item.deviceStatus != DeviceStatus.OFFLINE) {
-            checkBox.isChecked = true
-            item.checkStatus = true
-            // 界面
-        }
+//        checkBox.isEnabled = (item.deviceStatus == DeviceStatus.OFFLINE)
+//        if (item.deviceStatus != DeviceStatus.OFFLINE) {
+//            checkBox.isChecked = true
+//            item.checkStatus = true
+//            // 界面
+//        }
 
         helper.setText(R.id.mvItemDeviceNumber, item.deviceSerialNumber)
         when (item.deviceStatus) {
@@ -88,7 +88,7 @@ class DeviceAdapter(data: List<DeviceBean>?) : BaseQuickAdapter<DeviceBean, Base
 
         helper.itemView.setOnLongClickListener {
             window.show(it, x, y, item)
-            false
+            true
         }
     }
 }

@@ -22,9 +22,11 @@
         <activity android:name=".module.details.DeviceDetails" />
 
         <service
-            android:name="com.liang.batterytestsystem.module.service.DeviceService"
+            android:name=".module.service.DeviceService"
             android:enabled="true"
             android:exported="false" />
+
+        <activity android:name=".demo.DemoActivity"></activity>
     </application>
 
 </manifest>
