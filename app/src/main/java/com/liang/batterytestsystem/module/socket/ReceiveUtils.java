@@ -1,5 +1,8 @@
 package com.liang.batterytestsystem.module.socket;
 
+import com.liang.batterytestsystem.device.DeviceEvent;
+import com.liang.batterytestsystem.module.config.UdpInfoStorage;
+import com.liang.batterytestsystem.utils.DigitalTrans;
 import com.liang.liangutils.utils.LLogX;
 
 import java.io.IOException;
@@ -13,7 +16,8 @@ import java.net.SocketException;
  * Describe :
  */
 public class ReceiveUtils {
-    private static final int PHONE_PORT = 54915;//手机端口号
+    private static final int PHONE_PORT  = 54915;//手机端口号
+    private static       int SERVER_PORT = UdpInfoStorage.getClientListenPort();//手机端口号
 
     private static DatagramSocket socket;
     private static DatagramPacket packet;
@@ -22,11 +26,13 @@ public class ReceiveUtils {
 
     public static void receiveMessage() {
         LLogX.e("等待接收");
+
+        SERVER_PORT = UdpInfoStorage.getClientListenPort();//手机端口号
         new Thread() {
             @Override
             public void run() {
                 try {
-                    socket = new DatagramSocket(PHONE_PORT);
+                    socket = new DatagramSocket(SERVER_PORT);
                 } catch (SocketException e) {
                     e.printStackTrace();
                 }
@@ -35,8 +41,10 @@ public class ReceiveUtils {
                 while (!stopReceiver) {
                     try {
                         socket.receive(packet);
-                        String receive = new String(packet.getData(), 0, packet.getLength(), "utf-8");
-                        LLogX.e("huawei", "收到的内容为：" + receive);
+                        //String receive = new String(packet.getData(), 0, packet.getLength(), "utf-8");
+                        String receive = DigitalTrans.byte2hex(packet.getData());
+                        LLogX.e("huawei", "收到" + receive.length() / 2 + "字节 内容:" + receive);
+                        DeviceEvent.postRecvMsg(receive);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

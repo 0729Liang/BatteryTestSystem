@@ -20,6 +20,7 @@ import com.liang.batterytestsystem.exts.Router
 import com.liang.batterytestsystem.module.service.DeviceService
 import com.liang.batterytestsystem.module.socket.ReceiveUtils
 import com.liang.batterytestsystem.module.socket.SendUtils
+import com.liang.batterytestsystem.utils.LTime
 import com.liang.batterytestsystem.view.DeviceInfoWindow
 import com.liang.batterytestsystem.view.DeviceOperWindow
 import com.liang.liangutils.utils.LLogX
@@ -152,7 +153,12 @@ class MainActivity : LAbstractBaseActivity() {
 
         }
 
+        mvMainConfigTest.setOnClickListener {
+            Router.startUdpConfig(this)
+        }
+
         mvMainTestStart.setOnClickListener {
+            ToastUtils.showShort("开始测试")
             SendUtils.sendCommand(DeviceCommand.createCommandStartTest(DeviceCommand.DEVICE_1, DeviceCommand.CHANNEL_1))
         }
 
@@ -209,6 +215,10 @@ class MainActivity : LAbstractBaseActivity() {
                         mAdapter.notifyItemChanged(index)
                     }
                 } // forEach
+            }
+            DeviceEvent.EVENT_RECV_MSG -> {
+                var msg = LTime.convertStampToTime(System.currentTimeMillis()) + " : " + event.recvMsg
+                mvMainTestText.text = msg
             }
         } // when
     }// onDeviceEvent

@@ -3,6 +3,7 @@ package com.liang.batterytestsystem.exts
 import android.app.Activity
 import android.content.Context
 import com.liang.batterytestsystem.device.DeviceBean
+import com.liang.batterytestsystem.module.config.UdpConfigActivity
 import com.liang.batterytestsystem.module.connect.DeviceConnect
 import com.liang.batterytestsystem.module.details.DeviceDetails
 import com.liang.batterytestsystem.module.service.DeviceService
@@ -28,6 +29,11 @@ class Router {
         @JvmStatic
         fun startDeviceMgrService(context: Context) {
             DeviceService.startService(context)
+        }
+
+        @JvmStatic
+        fun startUdpConfig(context: Context) {
+            UdpConfigActivity.startActivity(context)
         }
     }
 }

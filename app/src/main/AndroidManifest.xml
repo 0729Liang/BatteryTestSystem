@@ -33,7 +33,8 @@
             android:enabled="true"
             android:exported="false" />
 
-        <activity android:name=".demo.DemoActivity"></activity>
+        <activity android:name=".demo.DemoActivity" />
+        <activity android:name=".module.config.UdpConfigActivity"></activity>
     </application>
 
 </manifest>

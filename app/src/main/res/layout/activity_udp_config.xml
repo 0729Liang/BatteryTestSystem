@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".module.config.UdpConfigActivity">
+
+    <com.liang.liangutils.view.LTitleView
+        android:id="@+id/mvConfigTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/mvConfigClientIp"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dp50"
+        android:gravity="center_vertical"
+        android:text="本机IP:"
+        app:layout_constraintTop_toBottomOf="@id/mvConfigTitle" />
+
+    <TextView
+        android:id="@+id/mvConfigClientIpEt"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dp50"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/dp10"
+        app:layout_constraintLeft_toRightOf="@id/mvConfigClientIp"
+        app:layout_constraintTop_toTopOf="@id/mvConfigClientIp"
+        tools:text=" 192.168.100.152" />
+
+    <TextView
+        android:id="@+id/mvConfigSendPort"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dp50"
+        android:digits="1234567890."
+        android:gravity="center_vertical"
+        android:inputType="number"
+        android:text="发送端口:"
+        app:layout_constraintTop_toBottomOf="@id/mvConfigClientIp" />
+
+    <EditText
+        android:id="@+id/mvConfigSendPortEt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:digits="1234567890"
+        android:hint="请输入发送端口"
+        android:inputType="number"
+        android:lines="1"
+        android:paddingLeft="@dimen/dp10"
+        android:singleLine="true"
+        app:layout_constraintLeft_toRightOf="@id/mvConfigSendPort"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/mvConfigClientIp" />
+
+    <TextView
+        android:id="@+id/mvConfigServerIp"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dp50"
+        android:gravity="center_vertical"
+        android:text="服务器IP:"
+        app:layout_constraintTop_toBottomOf="@id/mvConfigSendPort" />
+
+    <EditText
+        android:id="@+id/mvConfigServerIpEt"
+        android:layout_width="@dimen/dp0"
+        android:layout_height="wrap_content"
+        android:digits="1234567890."
+        android:hint="请输入服务器IP"
+        android:inputType="number"
+        android:lines="1"
+        android:paddingLeft="@dimen/dp10"
+        android:singleLine="true"
+        app:layout_constraintLeft_toRightOf="@id/mvConfigServerIp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/mvConfigSendPort" />
+
+    <TextView
+        android:id="@+id/mvConfigListenPort"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dp50"
+        android:digits="1234567890"
+        android:gravity="center_vertical"
+        android:inputType="number"
+        android:text="监听端口:"
+        app:layout_constraintTop_toBottomOf="@id/mvConfigServerIpEt" />
+
+    <EditText
+        android:id="@+id/mvConfigListenPortEt"
+        android:layout_width="@dimen/dp0"
+        android:layout_height="wrap_content"
+        android:hint="请输入监听端口"
+        android:lines="1"
+        android:paddingLeft="@dimen/dp10"
+        android:singleLine="true"
+        app:layout_constraintLeft_toRightOf="@id/mvConfigListenPort"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/mvConfigServerIp" />
+
+</android.support.constraint.ConstraintLayout>

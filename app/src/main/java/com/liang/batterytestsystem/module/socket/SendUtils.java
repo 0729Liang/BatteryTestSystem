@@ -2,6 +2,8 @@ package com.liang.batterytestsystem.module.socket;
 
 import android.content.Context;
 
+import com.liang.batterytestsystem.module.config.UdpInfoStorage;
+import com.liang.batterytestsystem.utils.DigitalTrans;
 import com.liang.liangutils.utils.LLogX;
 
 import java.io.IOException;
@@ -14,17 +16,19 @@ import java.net.UnknownHostException;
 
 public class SendUtils {
 
-    public static final  String NET_ALL   = "255.255.255.255"; // 发给整个局域网
-    public static final  String NET_GROUP = "192.168.100.255";// 发给同一网段
-    public static final  String NET_OBJ   = "192.168.100.8"; // 发给指定IP
-    private static final int    SEND_PORT = 61001; // server端口
-    private static       String IP        = NET_GROUP; // server IP
+    public static final String NET_ALL   = "255.255.255.255"; // 发给整个局域网
+    public static final String NET_GROUP = "192.168.100.255";// 发给同一网段
+    public static final String NET_OBJ   = "192.168.100.8"; // 发给指定IP
+    private static      int    SEND_PORT = UdpInfoStorage.getClientSendPort(); // server端口
+    private static      String IP        = NET_GROUP; // server IP
 
     private static InetAddress mAddress; // 服务器网址
     private static DatagramSocket socket = null;
     private static DatagramPacket msg    = null;
 
     public static void sendCommand(final byte[] content) {
+
+        SEND_PORT = UdpInfoStorage.getClientSendPort(); // server端口
         //初始化socket
         try {
             socket = new DatagramSocket();
@@ -48,7 +52,9 @@ public class SendUtils {
                 try {
                     socket.send(msg);
                     socket.close();
-                    LLogX.e("客户端发送：" + new String(content, "UTF-8"));
+                    String msg = DigitalTrans.byte2hex(content);
+                    LLogX.e("客户端发送" + msg.length() / 2 + "字节 内容:" + msg);
+                    System.out.println();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
