@@ -5,7 +5,7 @@ package com.liang.batterytestsystem.demo;
  * CreateAt : 15:28 2019/3/11
  * Describe :
  */
-public class Arithmetic {
+public class ResverString {
 
 
     /**

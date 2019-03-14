@@ -10,12 +10,16 @@ import android.widget.CheckBox
 import com.blankj.utilcode.util.ToastUtils
 import com.liang.batterytestsystem.R
 import com.liang.batterytestsystem.base.LAbstractBaseActivity
-import com.liang.batterytestsystem.demo.Arithmetic
+import com.liang.batterytestsystem.constant.DeviceCommand
+import com.liang.batterytestsystem.demo.FastSort
+import com.liang.batterytestsystem.demo.ResverString
 import com.liang.batterytestsystem.device.DeviceDataBinding
 import com.liang.batterytestsystem.device.DeviceEvent
 import com.liang.batterytestsystem.device.DeviceStatus
 import com.liang.batterytestsystem.exts.Router
 import com.liang.batterytestsystem.module.service.DeviceService
+import com.liang.batterytestsystem.module.socket.ReceiveUtils
+import com.liang.batterytestsystem.module.socket.SendUtils
 import com.liang.batterytestsystem.view.DeviceInfoWindow
 import com.liang.batterytestsystem.view.DeviceOperWindow
 import com.liang.liangutils.utils.LLogX
@@ -46,19 +50,28 @@ class MainActivity : LAbstractBaseActivity() {
         initView()
         clicEvent()
 
-
         test()
-        test2()
+        //test2()
+        ReceiveUtils.receiveMessage()
 
     }
+
 
     private fun test2() {
 
+        // 字符串翻转
         val s = "ABCDEFG"
-        LLogX.e("二分法翻转字符：" + Arithmetic.resverByDichotomy(s))
-        LLogX.e("CharAt 拼接：" + Arithmetic.reverseByCharAt(s))
-    }
+        LLogX.e("-------------字符串翻转-----------------")
+        LLogX.e("二分法翻转字符：" + ResverString.resverByDichotomy(s))
+        LLogX.e("CharAt 拼接：" + ResverString.reverseByCharAt(s))
 
+        // 快排
+        val num = intArrayOf(1, 5, 2, 4, 3, 3, 7)
+        LLogX.e("-------------快排-----------------" + num.size)
+        //FastSort.quickSort(num,0,num.size-1)
+        FastSort.sort(num, 0, num.size - 1)
+        LLogX.e("快排：" + FastSort.arrayToString(num))
+    }
 
     private fun test() {
         var x = 0
@@ -137,11 +150,31 @@ class MainActivity : LAbstractBaseActivity() {
             //            LKVMgr.memory().putList(DeviceKey.KEY_ONLINE_DEVICE, mDataBinding.getOnlineDeviceList())
 //            Router.startDeviceConnect(this)
 
+        }
 
+        mvMainTestStart.setOnClickListener {
+            SendUtils.sendCommand(DeviceCommand.createCommandStartTest(DeviceCommand.DEVICE_1, DeviceCommand.CHANNEL_1))
         }
 
         mvMainDeviceMore.setOnClickListener {
-            DeviceOperWindow.create(this).show(it).addTestPauseClickEvent { ToastUtils.showShort("暂停") }.addTestStopClickEvent { ToastUtils.showShort("结束") }
+            DeviceOperWindow.create(this).show(it)
+                    .addTestPauseClickEvent {
+                        ToastUtils.showShort("发送 暂停")
+                        SendUtils.sendCommand(DeviceCommand.createCommandPauseTest(DeviceCommand.DEVICE_1, DeviceCommand.CHANNEL_1))
+
+                    }
+                    .addTestStopClickEvent {
+                        ToastUtils.showShort("发送继续")
+                        SendUtils.sendCommand(DeviceCommand.createCommandResumeTest(DeviceCommand.DEVICE_1, DeviceCommand.CHANNEL_1))
+                    }
+                    .addDisconnectClickEvent {
+                        ToastUtils.showShort("发送查询")
+                        //SendUtils.sendCommand(DeviceCommand.createCommandQueryTest(DeviceCommand.DEVICE_1,DeviceCommand.CHANNEL_1))
+                        val msg = byteArrayOf(0x7B, 0x00, 0x08, 0x71.toByte(), 0x01, 0x02, 0x00, 0x7D)
+
+                        SendUtils.sendCommand(msg)
+                    }
+
         }
     }
 
