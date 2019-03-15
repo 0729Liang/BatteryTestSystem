@@ -36,14 +36,14 @@ public class ReceiveUtils {
                 } catch (SocketException e) {
                     e.printStackTrace();
                 }
-                byte[] receBuf = new byte[1024];
+                byte[] receBuf = new byte[100];//1024
                 packet = new DatagramPacket(receBuf, receBuf.length);
                 while (!stopReceiver) {
                     try {
                         socket.receive(packet);
                         //String receive = new String(packet.getData(), 0, packet.getLength(), "utf-8");
                         String receive = DigitalTrans.byte2hex(packet.getData());
-                        LLogX.e("huawei", "收到" + receive.length() / 2 + "字节 内容:" + receive);
+                        LLogX.e("收到" + receive.length() / 2 + "字节 内容:" + receive);
                         DeviceEvent.postRecvMsg(receive);
                     } catch (IOException e) {
                         e.printStackTrace();

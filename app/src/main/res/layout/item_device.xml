@@ -3,34 +3,47 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/dp5">
+
+    <View
+        android:id="@+id/mvItemDeviceAboveDivider"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp1"
+        android:layout_marginBottom="@dimen/dp5"
+        android:background="@color/colorPrimary"
+        app:layout_constraintBottom_toTopOf="@id/mvItemDeviceId" />
+
+    <TextView
+        android:id="@+id/mvItemDeviceId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/dp10"
+        app:layout_constraintTop_toBottomOf="@id/mvItemDeviceAboveDivider"
+        tools:text="设备号: 0x01" />
 
     <CheckBox
         android:id="@+id/mvItemDeviceCheckbox"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toRightOf="parent" />
 
-    <TextView
-        android:id="@+id/mvItemDeviceStatusTag"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/mvItemDeviceRecycleView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/shape_device_tag"
-        android:padding="@dimen/dp3"
-        app:layout_constraintRight_toRightOf="parent"
-        tools:text="正在测试" />
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/mvItemDeviceBelowDivider"
+        app:layout_constraintTop_toBottomOf="@id/mvItemDeviceId" />
 
-    <ImageView
-        android:id="@+id/mvItemDeviceIcon"
+    <View
+        android:id="@+id/mvItemDeviceBelowDivider"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp100"
-        android:src="@drawable/icon_offline_device" />
-
-    <TextView
-        android:id="@+id/mvItemDeviceNumber"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/mvItemDeviceIcon"
-        tools:text="编号：ox00-xx" />
+        android:layout_height="@dimen/dp1"
+        android:layout_marginTop="@dimen/dp5"
+        android:background="@color/colorPrimary"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/mvItemDeviceRecycleView" />
 
 </android.support.constraint.ConstraintLayout>

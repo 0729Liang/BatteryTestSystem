@@ -97,7 +97,7 @@ class DeviceConnect : LAbstractBaseActivity() {
         }
         // chexbox点击
         mAdapter.setOnItemChildClickListener { adapter, view, position ->
-            val checkBox = adapter.getViewByPosition(mvConnectRecycleView, position, R.id.mvItemDeviceCheckbox) as CheckBox
+            val checkBox = adapter.getViewByPosition(mvConnectRecycleView, position, R.id.mvItemDeviceChannelCheckbox) as CheckBox
             val bean = mDataBinding.mDeviceBeanList.get(position)
             bean.checkStatus = checkBox.isChecked
             ToastUtils.showShort("This is status = " + bean.checkStatus)

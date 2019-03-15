@@ -51,48 +51,8 @@ class MainActivity : LAbstractBaseActivity() {
         initView()
         clicEvent()
 
-        test()
-        //test2()
         ReceiveUtils.receiveMessage()
 
-    }
-
-
-    private fun test2() {
-
-        // 字符串翻转
-        val s = "ABCDEFG"
-        LLogX.e("-------------字符串翻转-----------------")
-        LLogX.e("二分法翻转字符：" + ResverString.resverByDichotomy(s))
-        LLogX.e("CharAt 拼接：" + ResverString.reverseByCharAt(s))
-
-        // 快排
-        val num = intArrayOf(1, 5, 2, 4, 3, 3, 7)
-        LLogX.e("-------------快排-----------------" + num.size)
-        //FastSort.quickSort(num,0,num.size-1)
-        FastSort.sort(num, 0, num.size - 1)
-        LLogX.e("快排：" + FastSort.arrayToString(num))
-    }
-
-    private fun test() {
-        var x = 0
-        var y = 0
-        val window = DeviceInfoWindow.create(this)
-        mvMainTestBtn.setOnTouchListener { v, event ->
-            x = event.x.toInt()
-            y = event.y.toInt() - v.height
-            if (event.action == MotionEvent.ACTION_UP) {
-                Handler().postDelayed({ window.hide() }, 2000)
-            }
-            false
-        }
-
-        mvMainTestBtn.setOnLongClickListener {
-            window.show(it, x, y, mDataBinding.mDeviceBeanList.get(0))
-            true
-        }
-
-        mvMainTestBtn.setOnClickListener { Router.startDeviceDetail(this, mDataBinding.mDeviceBeanList.get(0)) }
     }
 
     override fun initData() {
@@ -128,7 +88,7 @@ class MainActivity : LAbstractBaseActivity() {
     override fun clicEvent() {
         // chexbox点击
         mAdapter.setOnItemChildClickListener { adapter, view, position ->
-            val checkBox = adapter.getViewByPosition(mvMainRecycleView, position, R.id.mvItemDeviceCheckbox) as CheckBox
+            val checkBox = adapter.getViewByPosition(mvMainRecycleView, position, R.id.mvItemDeviceChannelCheckbox) as CheckBox
             val bean = mDataBinding.mDeviceBeanList.get(position)
 
             bean.checkStatus = checkBox.isChecked
@@ -217,9 +177,47 @@ class MainActivity : LAbstractBaseActivity() {
                 } // forEach
             }
             DeviceEvent.EVENT_RECV_MSG -> {
-                var msg = LTime.convertStampToTime(System.currentTimeMillis()) + " : " + event.recvMsg
+                val msg = LTime.convertStampToTime(System.currentTimeMillis()) + " : " + event.recvMsg
                 mvMainTestText.text = msg
             }
         } // when
     }// onDeviceEvent
+
+
+    private fun test() {
+        var x = 0
+        var y = 0
+        val window = DeviceInfoWindow.create(this)
+        mvMainTestBtn.setOnTouchListener { v, event ->
+            x = event.x.toInt()
+            y = event.y.toInt() - v.height
+            if (event.action == MotionEvent.ACTION_UP) {
+                Handler().postDelayed({ window.hide() }, 2000)
+            }
+            false
+        }
+
+        mvMainTestBtn.setOnLongClickListener {
+            window.show(it, x, y, mDataBinding.mDeviceBeanList.get(0))
+            true
+        }
+
+        mvMainTestBtn.setOnClickListener { Router.startDeviceDetail(this, mDataBinding.mDeviceBeanList.get(0)) }
+    }
+
+    private fun test2() {
+
+        // 字符串翻转
+        val s = "ABCDEFG"
+        LLogX.e("-------------字符串翻转-----------------")
+        LLogX.e("二分法翻转字符：" + ResverString.resverByDichotomy(s))
+        LLogX.e("CharAt 拼接：" + ResverString.reverseByCharAt(s))
+
+        // 快排
+        val num = intArrayOf(1, 5, 2, 4, 3, 3, 7)
+        LLogX.e("-------------快排-----------------" + num.size)
+        //FastSort.quickSort(num,0,num.size-1)
+        FastSort.sort(num, 0, num.size - 1)
+        LLogX.e("快排：" + FastSort.arrayToString(num))
+    }
 }

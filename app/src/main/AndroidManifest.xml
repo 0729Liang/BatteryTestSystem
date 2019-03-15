@@ -17,24 +17,26 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".main.MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <activity android:name=".base.LBaseActivity" />
         <activity android:name=".module.connect.DeviceConnect" />
         <activity android:name=".module.details.DeviceDetails" />
+
+        <activity android:name=".main.MainActivity"></activity>
+        <activity android:name=".module.home.DeviceMainActivty">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".demo.DemoActivity" />
+        <activity android:name=".module.config.UdpConfigActivity" />
 
         <service
             android:name=".module.service.DeviceService"
             android:enabled="true"
             android:exported="false" />
 
-        <activity android:name=".demo.DemoActivity" />
-        <activity android:name=".module.config.UdpConfigActivity"></activity>
     </application>
 
 </manifest>

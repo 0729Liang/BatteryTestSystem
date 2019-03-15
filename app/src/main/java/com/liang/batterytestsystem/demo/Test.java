@@ -1,4 +1,4 @@
-package com.liang.batterytestsystem.device;
+package com.liang.batterytestsystem.demo;
 
 
 /**

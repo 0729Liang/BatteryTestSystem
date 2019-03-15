@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/dp200"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/dp5"
+    android:background="@drawable/shape_device_channel_bg"
+    android:padding="@dimen/dp5">
+
+    <CheckBox
+        android:id="@+id/mvItemDeviceChannelCheckbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <!--通道号-->
+    <TextView
+        android:id="@+id/mvItemDeviceChannelId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="@dimen/dp5"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:text="通道号：0x01" />
+
+    <TextView
+        android:id="@+id/mvItemDeviceChannelStatusTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp5"
+        android:background="@drawable/shape_device_tag"
+        android:ems="1"
+        app:layout_constraintHorizontal_bias="0.8"
+        app:layout_constraintLeft_toRightOf="@id/mvItemDeviceChannelId"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/mvItemDeviceChannelId"
+        tools:text="正在测试" />
+
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/mvItemDeviceChannelId">
+
+        <!--步时间-->
+        <TextView
+            android:id="@+id/mvItemDeviceChannelStepTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            tools:text="步时间: 720 S" />
+
+        <!--电流-->
+        <TextView
+            android:id="@+id/mvItemDeviceChannelElectric"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/mvItemDeviceChannelStepTime"
+            tools:text="电流: 0 A" />
+
+        <!--电压-->
+        <TextView
+            android:id="@+id/mvItemDeviceChannelVoltage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/mvItemDeviceChannelElectric"
+            tools:text="电压: 0 V" />
+
+        <!--功率-->
+        <TextView
+            android:id="@+id/mvItemDeviceChannelPower"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/mvItemDeviceChannelVoltage"
+            tools:text="功率: 0 W" />
+        <!--温度-->
+        <TextView
+            android:id="@+id/mvItemDeviceChannelTemp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/mvItemDeviceChannelPower"
+            tools:text="温度: 0 ℃" />
+        <!--安时-->
+        <TextView
+            android:id="@+id/mvItemDeviceChannelAh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/mvItemDeviceChannelTemp"
+            tools:text="安时: 0 Ah" />
+
+    </android.support.constraint.ConstraintLayout>
+</android.support.constraint.ConstraintLayout>
