@@ -56,7 +56,7 @@ public class LThreadMgr {
         ThreadFactory threadFactory = new ThreadFactory() {
             @Override
             public Thread newThread(@NonNull Runnable r) {
-                return null;
+                return new Thread("");
             }
         };
         return threadPoolExecutor;
