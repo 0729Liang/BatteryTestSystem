@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Handler
 import android.os.IBinder
 import android.os.Message
+import com.liang.batterytestsystem.module.socket.ReceiveUtils
 import com.liang.liangutils.utils.LLogX
 import java.lang.ref.WeakReference
 
@@ -19,6 +20,11 @@ class DeviceService : Service() {
 
     val mHandler = MyHandler(this)
 
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        ReceiveUtils.receiveMessage()
+        return super.onStartCommand(intent, flags, startId)
+    }
 
     override fun onDestroy() {
         super.onDestroy()

@@ -46,12 +46,11 @@ class MainActivity : LAbstractBaseActivity() {
         setContentView(R.layout.activity_main)
 
         Router.startDeviceMgrService(this)
-
+        ReceiveUtils.receiveMessage()
         initData()
         initView()
         clicEvent()
 
-        ReceiveUtils.receiveMessage()
 
     }
 
