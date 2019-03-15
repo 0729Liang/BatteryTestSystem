@@ -20,7 +20,7 @@ public class SendUtils {
     public static final String NET_GROUP = "192.168.100.255";// 发给同一网段
     public static final String NET_OBJ   = "192.168.100.8"; // 发给指定IP
     private static      int    SEND_PORT = UdpInfoStorage.getClientSendPort(); // server端口
-    private static      String IP        = NET_GROUP; // server IP
+    private static      String IP        = UdpInfoStorage.getServerIp(); // server IP
 
     private static InetAddress mAddress; // 服务器网址
     private static DatagramSocket socket = null;
@@ -29,6 +29,7 @@ public class SendUtils {
     public static void sendCommand(final byte[] content) {
 
         SEND_PORT = UdpInfoStorage.getClientSendPort(); // server端口
+        IP = UdpInfoStorage.getServerIp(); // server IP
         //初始化socket
         try {
             socket = new DatagramSocket();

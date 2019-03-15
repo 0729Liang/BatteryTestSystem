@@ -19,7 +19,7 @@
         android:text="本机IP:"
         app:layout_constraintTop_toBottomOf="@id/mvConfigTitle" />
 
-    <TextView
+    <EditText
         android:id="@+id/mvConfigClientIpEt"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/dp50"

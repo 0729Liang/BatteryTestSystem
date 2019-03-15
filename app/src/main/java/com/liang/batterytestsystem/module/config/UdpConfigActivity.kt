@@ -26,7 +26,7 @@ class UdpConfigActivity : LAbstractBaseActivity() {
 
 
     override fun initView() {
-        mvConfigClientIpEt.text = LNetwork.getIPAddress(LCommon.getContext())
+        mvConfigClientIpEt.setText(LNetwork.getIPAddress(LCommon.getContext()))
         mvConfigSendPortEt.setText(UdpInfoStorage.getClientSendPort().toString())
         mvConfigServerIpEt.setText(UdpInfoStorage.getServerIp())
         mvConfigListenPortEt.setText(UdpInfoStorage.getClientListenPort().toString())

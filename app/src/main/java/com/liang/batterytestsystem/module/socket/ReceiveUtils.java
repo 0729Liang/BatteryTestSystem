@@ -25,9 +25,9 @@ public class ReceiveUtils {
 
 
     public static void receiveMessage() {
-        LLogX.e("等待接收");
 
         SERVER_PORT = UdpInfoStorage.getClientListenPort();//手机端口号
+        LLogX.e("等待接收 监听端口:" + SERVER_PORT);
         new Thread() {
             @Override
             public void run() {
