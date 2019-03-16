@@ -18,7 +18,6 @@ import com.liang.batterytestsystem.device.DeviceEvent
 import com.liang.batterytestsystem.device.DeviceStatus
 import com.liang.batterytestsystem.exts.Router
 import com.liang.batterytestsystem.module.service.DeviceService
-import com.liang.batterytestsystem.module.socket.ReceiveUtils
 import com.liang.batterytestsystem.module.socket.SendUtils
 import com.liang.batterytestsystem.utils.LTime
 import com.liang.batterytestsystem.view.DeviceInfoWindow
@@ -46,7 +45,7 @@ class MainActivity : LAbstractBaseActivity() {
         setContentView(R.layout.activity_main)
 
         Router.startDeviceMgrService(this)
-        ReceiveUtils.receiveMessage()
+        //ReceiveUtils.receiveMessage()
         initData()
         initView()
         clicEvent()

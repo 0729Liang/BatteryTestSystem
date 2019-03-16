@@ -19,20 +19,18 @@ class DeviceMainActivty : LAbstractBaseActivity() {
     val mDeviceList: MutableList<DeviceItemBean> = ArrayList()
     val mDeviceChannelList: MutableList<DeviceItemChannelBean> = ArrayList()
     val mAdapter = DeviceItemAdapter(mDeviceList)
+    val mSendName = "发送线程"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_device_main_activty)
 
         Router.startDeviceMgrService(this)
-
-
         initData()
         initView()
         clicEvent()
-
-
     }
+
 
     override fun initData() {
         // 创建通道
@@ -92,25 +90,25 @@ class DeviceMainActivty : LAbstractBaseActivity() {
 
         mvMain2TestStart.setOnClickListener {
             ToastUtils.showShort("开始 测试")
-            SendUtils.sendCommand(DeviceCommand.createCommandStartTest(DeviceCommand.DEVICE_1, DeviceCommand.CHANNEL_1))
+            SendUtils.sendCommand(DeviceCommand.createCommandStartTest(DeviceCommand.DEVICE_1, DeviceCommand.CHANNEL_1), mSendName)
         }
 
         mvMain2DeviceMore.setOnClickListener {
             DeviceOperWindow.create(this).show(it)
                     .addTestPauseClickEvent {
                         ToastUtils.showShort("发送 暂停")
-                        SendUtils.sendCommand(DeviceCommand.createCommandPauseTest(DeviceCommand.DEVICE_1, DeviceCommand.CHANNEL_1))
+                        SendUtils.sendCommand(DeviceCommand.createCommandPauseTest(DeviceCommand.DEVICE_1, DeviceCommand.CHANNEL_1), mSendName)
 
                     }
                     .addTestStopClickEvent {
                         ToastUtils.showShort("发送 继续")
-                        SendUtils.sendCommand(DeviceCommand.createCommandResumeTest(DeviceCommand.DEVICE_1, DeviceCommand.CHANNEL_1))
+                        SendUtils.sendCommand(DeviceCommand.createCommandResumeTest(DeviceCommand.DEVICE_1, DeviceCommand.CHANNEL_1), mSendName)
                     }
                     .addDisconnectClickEvent {
                         ToastUtils.showShort("发送 查询")
                         val msg = byteArrayOf(0x7B, 0x00, 0x08, 0x71.toByte(), 0x01, 0x02, 0x00, 0x7D)
 
-                        SendUtils.sendCommand(msg)
+                        SendUtils.sendCommand(msg, mSendName)
                     }
 
         }

@@ -1,13 +1,16 @@
 package com.liang.batterytestsystem.module.service
 
-import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.IBinder
 import android.os.Message
+import com.liang.batterytestsystem.base.LBaseService
+import com.liang.batterytestsystem.module.config.UdpEvent
 import com.liang.batterytestsystem.module.socket.ReceiveUtils
 import com.liang.liangutils.utils.LLogX
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.lang.ref.WeakReference
 
 /**
@@ -16,14 +19,15 @@ import java.lang.ref.WeakReference
  * Describe : 设备管理类
  *
  */
-class DeviceService : Service() {
+class DeviceService : LBaseService() {
 
     val mHandler = MyHandler(this)
+    val mRecvName = "接收线程"
 
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        ReceiveUtils.receiveMessage()
-        return super.onStartCommand(intent, flags, startId)
+    override fun onCreate() {
+        super.onCreate()
+        ReceiveUtils.receiveMessage(mRecvName)
+        LLogX.e("启动服务")
     }
 
     override fun onDestroy() {
@@ -31,6 +35,17 @@ class DeviceService : Service() {
         mHandler.removeCallbacksAndMessages(null)
     }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onUdpEvent(event: UdpEvent) {
+        when (event.msg) {
+            UdpEvent.EVENT_CREATE_NEW_UDP_RECV -> {
+                ReceiveUtils.receiveMessage(mRecvName)
+            }
+        }
+    }
+
+    // 静态Handler
     class MyHandler(service: DeviceService) : Handler() {
 
         internal var mWeakReference: WeakReference<DeviceService>

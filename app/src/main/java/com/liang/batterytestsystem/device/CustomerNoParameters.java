@@ -3,8 +3,8 @@ package com.liang.batterytestsystem.device;
 /**
  * @author : Amarao
  * CreateAt : 17:13 2019/3/4
- * Describe :
+ * Describe : 无事可做
  */
-public interface Customer2 {
+public interface CustomerNoParameters {
     void accept();
 }

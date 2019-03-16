@@ -40,6 +40,7 @@ class UdpConfigActivity : LAbstractBaseActivity() {
                     mvConfigServerIpEt.text.toString(),
                     Integer.valueOf(mvConfigListenPortEt.text.toString()))
             ToastUtils.showShort("保存成功")
+            UdpEvent.postCreateNewUdpRecv()
         }
     }
 

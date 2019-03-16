@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.liang.batterytestsystem.module.config.UdpInfoStorage;
 import com.liang.batterytestsystem.utils.DigitalTrans;
+import com.liang.batterytestsystem.utils.LThreadPoolMgr;
 import com.liang.liangutils.utils.LLogX;
 
 import java.io.IOException;
@@ -26,6 +27,42 @@ public class SendUtils {
     private static DatagramSocket socket = null;
     private static DatagramPacket msg    = null;
 
+    public static void sendCommand(final byte[] content, String threadName) {
+
+        SEND_PORT = UdpInfoStorage.getClientSendPort(); // server端口
+        IP = UdpInfoStorage.getServerIp(); // server IP
+        //初始化socket
+        try {
+            socket = new DatagramSocket();
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+        try {
+            mAddress = InetAddress.getByName(IP);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        Runnable runnable = new Runnable() {
+            byte[] sendBuf;
+
+            @Override
+            public void run() {
+                sendBuf = content;
+                msg = new DatagramPacket(sendBuf, sendBuf.length, mAddress, SEND_PORT);
+                try {
+                    socket.send(msg);
+                    socket.close();
+                    String msg = DigitalTrans.byte2hex(content);
+                    LLogX.e(threadName + "发送" + msg.length() / 2 + "字节 内容:" + msg);
+                    System.out.println();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        LThreadPoolMgr.getInstance().execute(runnable, threadName);
+    }
+
     public static void sendCommand(final byte[] content) {
 
         SEND_PORT = UdpInfoStorage.getClientSendPort(); // server端口
@@ -41,10 +78,8 @@ public class SendUtils {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-
-        //创建线程发送信息
-        new Thread() {
-            private byte[] sendBuf;
+        Runnable runnable = new Runnable() {
+            byte[] sendBuf;
 
             @Override
             public void run() {
@@ -54,13 +89,14 @@ public class SendUtils {
                     socket.send(msg);
                     socket.close();
                     String msg = DigitalTrans.byte2hex(content);
-                    LLogX.e("客户端发送" + msg.length() / 2 + "字节 内容:" + msg);
+                    LLogX.e("发送" + msg.length() / 2 + "字节 内容:" + msg);
                     System.out.println();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-        }.start();
+        };
+        LThreadPoolMgr.getInstance().execute(runnable);
     }
 
     public static void SendUtils(final Context context, final String content) {

@@ -53,12 +53,10 @@ public class LThreadMgr {
                 sFactory,
                 sHandler);
         //threadPoolExecutor.allowCoreThreadTimeOut(true);// 设置核心线程也会超时
-        ThreadFactory threadFactory = new ThreadFactory() {
-            @Override
-            public Thread newThread(@NonNull Runnable r) {
-                return new Thread("");
-            }
-        };
         return threadPoolExecutor;
+    }
+
+    public static Thread createNewThread(@NonNull Runnable runnable) {
+        return sFactory.newThread(runnable);
     }
 }

@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.PopupWindow;
 
 import com.liang.batterytestsystem.R;
-import com.liang.batterytestsystem.device.Customer2;
+import com.liang.batterytestsystem.device.CustomerNoParameters;
 import com.liang.liangutils.utils.LSizeX;
 
 /**
@@ -39,19 +39,19 @@ public class DeviceOperWindow extends PopupWindow {
         return this;
     }
 
-    public DeviceOperWindow addTestPauseClickEvent(Customer2 customer) {
+    public DeviceOperWindow addTestPauseClickEvent(CustomerNoParameters customer) {
         View view = this.getContentView().findViewById(R.id.mvWindowTestPause);
         view.setOnClickListener(v -> customer.accept());
         return this;
     }
 
-    public DeviceOperWindow addTestStopClickEvent(Customer2 customer) {
+    public DeviceOperWindow addTestStopClickEvent(CustomerNoParameters customer) {
         View view = this.getContentView().findViewById(R.id.mvWindowTestStop);
         view.setOnClickListener(v -> customer.accept());
         return this;
     }
 
-    public DeviceOperWindow addDisconnectClickEvent(Customer2 customer) {
+    public DeviceOperWindow addDisconnectClickEvent(CustomerNoParameters customer) {
         View view = this.getContentView().findViewById(R.id.mvWindowDisconnect);
         view.setOnClickListener(v -> customer.accept());
         return this;
