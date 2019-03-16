@@ -61,6 +61,8 @@ class DeviceMainActivty : LAbstractBaseActivity() {
     }
 
     override fun initView() {
+        mvMain2Title.setTitle("电池测试系统")
+        mvMain2Title.setClickLeftFinish(this)
         val layoutManager = LinearLayoutManager(this)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
         mvMain2RecycleView.layoutManager = layoutManager

@@ -27,7 +27,6 @@ class DeviceService : LBaseService() {
     override fun onCreate() {
         super.onCreate()
         ReceiveUtils.receiveMessage(mRecvName)
-        LLogX.e("启动服务")
     }
 
     override fun onDestroy() {
