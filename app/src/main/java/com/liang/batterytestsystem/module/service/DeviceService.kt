@@ -7,6 +7,7 @@ import android.os.IBinder
 import android.os.Message
 import com.liang.batterytestsystem.base.LBaseService
 import com.liang.batterytestsystem.module.config.UdpEvent
+import com.liang.batterytestsystem.module.item.DeviceItemChannelBean
 import com.liang.batterytestsystem.module.socket.ReceiveUtils
 import com.liang.liangutils.utils.LLogX
 import org.greenrobot.eventbus.Subscribe
@@ -24,6 +25,9 @@ class DeviceService : LBaseService() {
     val mHandler = MyHandler(this)
     val mRecvName = "接收线程"
 
+    val mDeviceTestChannelList: MutableList<DeviceItemChannelBean> = ArrayList() // 选中通道
+
+
     override fun onCreate() {
         super.onCreate()
         ReceiveUtils.receiveMessage(mRecvName)
@@ -40,6 +44,23 @@ class DeviceService : LBaseService() {
         when (event.msg) {
             UdpEvent.EVENT_CREATE_NEW_UDP_RECV -> {
                 ReceiveUtils.receiveMessage(mRecvName)
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onDeviceTestEvent(event: DeviceTestEvent) {
+        val bean: DeviceItemChannelBean = event.mDeviceItemChannelBean
+        when (event.msg) {
+            DeviceTestEvent.EVENT_ADD_DEVICE_TEST_CHANNEL -> {
+                mDeviceTestChannelList.add(bean)
+                DeviceTestEvent.showDeviceInfo(true, bean)
+            }
+            DeviceTestEvent.EVENT_REMOVE_DEVICE_TEST_CHANNEL -> {
+                if (mDeviceTestChannelList.contains(bean)) {
+                    mDeviceTestChannelList.remove(bean)
+                    DeviceTestEvent.showDeviceInfo(false, bean)
+                }
             }
         }
     }

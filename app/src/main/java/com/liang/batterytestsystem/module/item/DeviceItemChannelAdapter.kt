@@ -4,6 +4,7 @@ import android.widget.CheckBox
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.liang.batterytestsystem.R
+import com.liang.batterytestsystem.module.service.DeviceTestEvent
 import com.liang.batterytestsystem.utils.DigitalTrans
 
 /**
@@ -22,14 +23,22 @@ class DeviceItemChannelAdapter(data: List<DeviceItemChannelBean>?)
         item.checkState = checkBox.isChecked
 
         // 数据赋值
-        helper.setText(R.id.mvItemDeviceChannelId, "通道号: " + DigitalTrans.byte2hex(byteArrayOf(item.channelId)))
+        helper.setText(R.id.mvItemDeviceChannelId, "通道号: " + DigitalTrans.byte2hex(byteArrayOf(item.channelId)) + "-" + item.deviceId)
         helper.setText(R.id.mvItemDeviceChannelStepTime, "步时间: " + item.stepTime.toString() + " S")
         helper.setText(R.id.mvItemDeviceChannelElectric, "电流: " + item.electric.toString() + " A")
         helper.setText(R.id.mvItemDeviceChannelVoltage, "电压: " + item.voltage.toString() + " V")
         helper.setText(R.id.mvItemDeviceChannelPower, "功率: " + item.power.toString() + " W")
         helper.setText(R.id.mvItemDeviceChannelTemp, "温度: " + item.temperture.toString() + " ℃")
-        helper.setText(R.id.mvItemDeviceChannelAh, "安时:" + item.ampereHour.toString() + " Ah")
+        helper.setText(R.id.mvItemDeviceChannelAh, "安时: " + item.ampereHour.toString() + " Ah")
 
+        checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
+            item.checkState = checkBox.isChecked
+            if (item.checkState) {
+                DeviceTestEvent.postAddDeviceTestChannel(item)
+            } else {
+                DeviceTestEvent.postRemoveDeviceTestChannel(item)
+            }
+        }
     }
 
 

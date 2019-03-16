@@ -12,9 +12,7 @@ import com.liang.batterytestsystem.module.item.DeviceItemChannelBean
 class DeviceItemBean(var deviceId: Byte) {
     var checkState = false // 通道选中状态
     var deviceStatus = DeviceStatus.OFFLINE // 设备连接状态
-
-    // 设备通道
-    val channelList: MutableList<DeviceItemChannelBean> = ArrayList()
+    val channelList: MutableList<DeviceItemChannelBean> = ArrayList()// 设备通道
 
     // 添加通道
     fun addChannel(channelBean: DeviceItemChannelBean) {
@@ -23,6 +21,21 @@ class DeviceItemBean(var deviceId: Byte) {
 
     // 添加通道
     fun addChannelList(list: MutableList<DeviceItemChannelBean>) {
-        channelList.addAll(list)
+        val tempList: MutableList<DeviceItemChannelBean> = ArrayList()
+        tempList.addAll(list)
+        tempList.forEach {
+            it.deviceId = deviceId
+        }
+        channelList.addAll(tempList)
+    }
+
+    // 添加通道
+    fun addChannelList(deviceId: Byte, list: MutableList<DeviceItemChannelBean>) {
+        val tempList: MutableList<DeviceItemChannelBean> = ArrayList()
+        tempList.addAll(list)
+        tempList.forEach {
+            it.deviceId = deviceId
+        }
+        channelList.addAll(tempList)
     }
 }

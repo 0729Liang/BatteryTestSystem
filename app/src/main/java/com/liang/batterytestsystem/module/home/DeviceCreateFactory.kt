@@ -25,5 +25,16 @@ class DeviceCreateFactory {
             val channelBean = DeviceItemChannelBean(channelId)
             return channelBean
         }
+
+        // 创建一个通道列表
+        @JvmStatic
+        fun createDeviceChannelList(vararg channelIdList: Byte): MutableList<DeviceItemChannelBean> {
+            val channelList = arrayListOf<DeviceItemChannelBean>()
+            channelIdList.forEach {
+                val channelBean = DeviceItemChannelBean(it)
+                channelList.add(channelBean)
+            }
+            return channelList
+        }
     }
 }

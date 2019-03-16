@@ -22,8 +22,7 @@ class DeviceEvent : BusEvent() {
         val EVENT_PAUSE_TEST = "EVENT_PAUSE_TEST"   // 暂停测试
         val EVENT_STOP_TEST = "EVENT_STOP_TEST"    // 停止测试
         val EVENT_HIDE_DEVICE_INFO_WINDOW = "EVENT_HIDE_DEVICE_INFO_WINDOW" // 隐藏设备信息Window
-
-        val EVENT_RECV_MSG = "EVENT_RECV_MSG"
+        val EVENT_RECV_MSG = "EVENT_RECV_MSG" // 收到信息
 
 
         @JvmStatic

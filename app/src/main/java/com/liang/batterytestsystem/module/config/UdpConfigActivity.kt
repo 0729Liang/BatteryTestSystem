@@ -26,14 +26,20 @@ class UdpConfigActivity : LAbstractBaseActivity() {
 
 
     override fun initView() {
-        mvConfigClientIpEt.setText(LNetwork.getIPAddress(LCommon.getContext()))
+        val ipAddress = LNetwork.getIPAddress(LCommon.getContext())
+        //var substring = ipAddress.substring(0, ipAddress.lastIndexOf(".") + 1)
+
+        mvConfigClientIpEt.setText(ipAddress)
         mvConfigSendPortEt.setText(UdpInfoStorage.getClientSendPort().toString())
-        mvConfigServerIpEt.setText(UdpInfoStorage.getServerIp())
+        mvConfigServerIpEt.setText(ipAddress)
         mvConfigListenPortEt.setText(UdpInfoStorage.getClientListenPort().toString())
+        mvConfigServerIpEt.requestFocus() // 申请焦点
+
 
         mvConfigTitle.setTitle("一键配置")
         mvConfigTitle.setClickLeftFinish(this)
         mvConfigTitle.setRightText("保存")
+
         mvConfigTitle.rightTextView.setOnClickListener {
             storageUdpInfo(mvConfigClientIpEt.text.toString(),
                     Integer.valueOf(mvConfigSendPortEt.text.toString()),
@@ -41,6 +47,7 @@ class UdpConfigActivity : LAbstractBaseActivity() {
                     Integer.valueOf(mvConfigListenPortEt.text.toString()))
             ToastUtils.showShort("保存成功")
             UdpEvent.postCreateNewUdpRecv()
+            this.finish()
         }
     }
 
