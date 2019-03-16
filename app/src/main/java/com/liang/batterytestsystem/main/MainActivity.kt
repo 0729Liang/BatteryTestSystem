@@ -10,13 +10,13 @@ import android.widget.CheckBox
 import com.blankj.utilcode.util.ToastUtils
 import com.liang.batterytestsystem.R
 import com.liang.batterytestsystem.base.LAbstractBaseActivity
-import com.liang.batterytestsystem.constant.DeviceCommand
 import com.liang.batterytestsystem.demo.FastSort
 import com.liang.batterytestsystem.demo.ResverString
 import com.liang.batterytestsystem.device.DeviceDataBinding
 import com.liang.batterytestsystem.device.DeviceEvent
 import com.liang.batterytestsystem.device.DeviceStatus
 import com.liang.batterytestsystem.exts.Router
+import com.liang.batterytestsystem.module.home.DeviceCommand
 import com.liang.batterytestsystem.module.service.DeviceService
 import com.liang.batterytestsystem.module.socket.SendUtils
 import com.liang.batterytestsystem.utils.LTime
@@ -127,11 +127,11 @@ class MainActivity : LAbstractBaseActivity() {
                         SendUtils.sendCommand(DeviceCommand.createCommandPauseTest(DeviceCommand.DEVICE_1, DeviceCommand.CHANNEL_1))
 
                     }
-                    .addTestStopClickEvent {
+                    .addTestResumeClickEvent {
                         ToastUtils.showShort("发送继续")
                         SendUtils.sendCommand(DeviceCommand.createCommandResumeTest(DeviceCommand.DEVICE_1, DeviceCommand.CHANNEL_1))
                     }
-                    .addDisconnectClickEvent {
+                    .addQueryClickEvent {
                         ToastUtils.showShort("发送查询")
                         //SendUtils.sendCommand(DeviceCommand.createCommandQueryTest(DeviceCommand.DEVICE_1,DeviceCommand.CHANNEL_1))
                         val msg = byteArrayOf(0x7B, 0x00, 0x08, 0x71.toByte(), 0x01, 0x02, 0x00, 0x7D)

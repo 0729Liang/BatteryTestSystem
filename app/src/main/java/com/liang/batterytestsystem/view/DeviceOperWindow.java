@@ -45,14 +45,14 @@ public class DeviceOperWindow extends PopupWindow {
         return this;
     }
 
-    public DeviceOperWindow addTestStopClickEvent(CustomerNoParameters customer) {
-        View view = this.getContentView().findViewById(R.id.mvWindowTestStop);
+    public DeviceOperWindow addTestResumeClickEvent(CustomerNoParameters customer) {
+        View view = this.getContentView().findViewById(R.id.mvWindowTestResume);
         view.setOnClickListener(v -> customer.accept());
         return this;
     }
 
-    public DeviceOperWindow addDisconnectClickEvent(CustomerNoParameters customer) {
-        View view = this.getContentView().findViewById(R.id.mvWindowDisconnect);
+    public DeviceOperWindow addQueryClickEvent(CustomerNoParameters customer) {
+        View view = this.getContentView().findViewById(R.id.mvWindowQuery);
         view.setOnClickListener(v -> customer.accept());
         return this;
     }

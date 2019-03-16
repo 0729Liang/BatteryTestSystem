@@ -6,11 +6,10 @@ import android.support.v7.widget.LinearLayoutManager
 import com.blankj.utilcode.util.ToastUtils
 import com.liang.batterytestsystem.R
 import com.liang.batterytestsystem.base.LAbstractBaseActivity
-import com.liang.batterytestsystem.constant.DeviceCommand
 import com.liang.batterytestsystem.exts.Router
 import com.liang.batterytestsystem.module.service.DeviceService
-import com.liang.batterytestsystem.module.socket.SendUtils
 import com.liang.batterytestsystem.view.DeviceOperWindow
+import com.liang.liangutils.utils.LLogX
 import kotlinx.android.synthetic.main.activity_device_main_activty.*
 
 class DeviceMainActivty : LAbstractBaseActivity() {
@@ -28,7 +27,9 @@ class DeviceMainActivty : LAbstractBaseActivity() {
         initView()
         clicEvent()
 
-        //Test.listTest()
+        val s = "7B0000710205060708017B01010C1400000107000000D4000000AE000000DB000002B1C3A0C38F001A00510003003C000000510000029F0000028D0000022900000000000001C5000000000000000E010B0000011D000000BC000000000000067D007D"
+        LLogX.e("length = " + s.length)
+
     }
 
 
@@ -67,47 +68,36 @@ class DeviceMainActivty : LAbstractBaseActivity() {
     }
 
     override fun clicEvent() {
-        // chexbox点击
-        mAdapter.setOnItemChildClickListener { adapter, view, position ->
-
-        }
-
-        // 全部/取消 选择按钮
-        mvMain2ChooseAll.setOnClickListener {
-
-        }
-
-        // 连接按钮
-        mvMain2ConnectBtn.setOnClickListener {
-
-
-        }
-
         mvMain2ConfigTest.setOnClickListener {
             Router.startUdpConfig(this)
         }
 
         mvMain2TestStart.setOnClickListener {
-            ToastUtils.showShort("开始 测试")
-            SendUtils.sendCommand(DeviceCommand.createCommandStartTest(DeviceCommand.DEVICE_1, DeviceCommand.CHANNEL_1), mSendName)
+            val list = DeviceService.mDeviceTestChannelList
+            ToastUtils.showShort("开始测试 测试通道数=" + list.size)
+            val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_START_TEST)
+            DeviceCommand.sendCommandList(commandList, mSendName)
         }
 
         mvMain2DeviceMore.setOnClickListener {
             DeviceOperWindow.create(this).show(it)
                     .addTestPauseClickEvent {
-                        ToastUtils.showShort("发送 暂停")
-                        SendUtils.sendCommand(DeviceCommand.createCommandPauseTest(DeviceCommand.DEVICE_1, DeviceCommand.CHANNEL_1), mSendName)
-
+                        val list = DeviceService.mDeviceTestChannelList
+                        ToastUtils.showShort("发送暂停 测试通道数=" + list.size)
+                        val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_PAUSE_TEST)
+                        DeviceCommand.sendCommandList(commandList, mSendName)
                     }
-                    .addTestStopClickEvent {
-                        ToastUtils.showShort("发送 继续")
-                        SendUtils.sendCommand(DeviceCommand.createCommandResumeTest(DeviceCommand.DEVICE_1, DeviceCommand.CHANNEL_1), mSendName)
+                    .addTestResumeClickEvent {
+                        val list = DeviceService.mDeviceTestChannelList
+                        ToastUtils.showShort("发送继续 测试通道数=" + list.size)
+                        val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_RESUME_TEST)
+                        DeviceCommand.sendCommandList(commandList, mSendName)
                     }
-                    .addDisconnectClickEvent {
-                        ToastUtils.showShort("发送 查询")
-                        val msg = byteArrayOf(0x7B, 0x00, 0x08, 0x71.toByte(), 0x01, 0x02, 0x00, 0x7D)
-
-                        SendUtils.sendCommand(msg, mSendName)
+                    .addQueryClickEvent {
+                        val list = DeviceService.mDeviceTestChannelList
+                        ToastUtils.showShort("发送查询 测试通道数=" + list.size)
+                        val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_QUERY_TEST)
+                        DeviceCommand.sendCommandList(commandList, mSendName)
                     }
 
         }

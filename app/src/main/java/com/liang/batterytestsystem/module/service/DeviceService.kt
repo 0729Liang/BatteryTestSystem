@@ -25,7 +25,7 @@ class DeviceService : LBaseService() {
     val mHandler = MyHandler(this)
     val mRecvName = "接收线程"
 
-    val mDeviceTestChannelList: MutableList<DeviceItemChannelBean> = ArrayList() // 选中通道
+
 
 
     override fun onCreate() {
@@ -87,7 +87,9 @@ class DeviceService : LBaseService() {
     }
 
     companion object {
-        val device = DeviceMgr
+        val device = DeviceMgr // 设备管理对象
+        val mDeviceTestChannelList: MutableList<DeviceItemChannelBean> = ArrayList() // 选中通道
+
         fun startService(context: Context) {
             context.startService(Intent(context, DeviceService::class.java))
         }

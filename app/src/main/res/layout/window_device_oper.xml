@@ -24,11 +24,11 @@
         app:layout_constraintTop_toBottomOf="@id/mvWindowTestPause" />
 
     <TextView
-        android:id="@+id/mvWindowTestStop"
+        android:id="@+id/mvWindowTestResume"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp40"
         android:gravity="left|center"
-        android:text="停止测试"
+        android:text="恢复测试"
         android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@id/mvWindowTestPause" />
 
@@ -38,15 +38,15 @@
         android:background="@color/white"
         app:layout_constraintLeft_toLeftOf="@id/mvWindowTestPause"
         app:layout_constraintRight_toRightOf="@id/mvWindowTestPause"
-        app:layout_constraintTop_toBottomOf="@id/mvWindowTestStop" />
+        app:layout_constraintTop_toBottomOf="@id/mvWindowTestResume" />
 
     <TextView
-        android:id="@+id/mvWindowDisconnect"
+        android:id="@+id/mvWindowQuery"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp40"
         android:gravity="left|center"
-        android:text="断开连接"
+        android:text="查询信息"
         android:textColor="@color/white"
-        app:layout_constraintTop_toBottomOf="@id/mvWindowTestStop" />
+        app:layout_constraintTop_toBottomOf="@id/mvWindowTestResume" />
 
 </android.support.constraint.ConstraintLayout>
