@@ -17,10 +17,11 @@ class DeviceItemChannelAdapter(data: List<DeviceItemChannelBean>?)
     : BaseQuickAdapter<DeviceItemChannelBean, BaseViewHolder>(R.layout.item_device_channel, data) {
 
     override fun convert(helper: BaseViewHolder, item: DeviceItemChannelBean) {
-        val checkBox = helper.getView<CheckBox>(R.id.mvItemDeviceChannelCheckbox)
+        val checkBox = helper.getView(R.id.mvItemDeviceChannelCheckbox) as CheckBox
 
         // 状态同步
-        item.checkState = checkBox.isChecked
+        checkBox.isChecked = item.checkState
+
 
         // 数据赋值
         helper.setText(R.id.mvItemDeviceChannelId, "通道号: " + DigitalTrans.byte2hex(byteArrayOf(item.channelId)) + "-" + item.deviceId)
@@ -31,14 +32,23 @@ class DeviceItemChannelAdapter(data: List<DeviceItemChannelBean>?)
         helper.setText(R.id.mvItemDeviceChannelTemp, "温度: " + item.temperture.toString() + " ℃")
         helper.setText(R.id.mvItemDeviceChannelAh, "安时: " + item.ampereHour.toString() + " Ah")
 
-        checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
-            item.checkState = checkBox.isChecked
+        checkBox.setOnClickListener {
+            val view = it as CheckBox
+            item.checkState = view.isChecked
             if (item.checkState) {
                 DeviceTestEvent.postAddDeviceTestChannel(item)
             } else {
                 DeviceTestEvent.postRemoveDeviceTestChannel(item)
             }
+//            if (item.deviceId.equals(id)) {
+//                LLogX.e("点击 channelId = " + item.channelId + " state = " + item.checkState + " state2 = " + checkBox.isChecked)
+//            }
+//            val id = 0x02.toByte()
+//            if (item.deviceId.equals(id)) {
+//                LLogX.e(" channelId = " + item.channelId + " state = " + item.checkState + " state2 = " + checkBox.isChecked)
+//            }
         }
+
     }
 
 

@@ -2,8 +2,6 @@ package com.liang.batterytestsystem.module.home
 
 import com.liang.batterytestsystem.module.item.DeviceItemChannelBean
 import com.liang.batterytestsystem.module.socket.SendUtils
-import com.liang.batterytestsystem.utils.DigitalTrans
-import com.liang.liangutils.utils.LLogX
 
 /**
  * @author : Amarao
@@ -19,22 +17,39 @@ class DeviceCommand {
         private val FRAME_HEADER: Byte = 0x7B
         // 总字节数
         private val ALL_HIGH_NUMBER: Byte = 0x00
-        private val ALL_LOW_NUMBER: Byte = 0x08
+        private val ALL_LOW_NUMBER: Byte = 0x00
         // 控制命令
         val COMMAND_START_TEST: Byte = 0x8F.toByte()
         val COMMAND_PAUSE_TEST: Byte = 0x65
         val COMMAND_RESUME_TEST: Byte = 0x6A
         val COMMAND_QUERY_TEST: Byte = 0x71
         // 设备号
-        val DEVICE_1: Byte = 0x01
-        val DEVICE_2: Byte = 0x02
+        val DEVICE_1: Byte = 0x0001
+        val DEVICE_2: Byte = 0x0010
         val DEVICE_3: Byte = 0x03
         val DEVICE_4: Byte = 0x04
         // 通道信息
-        val CHANNEL_1: Byte = 0x01
+        val CHANNEL_1: Byte = 0x07
         val CHANNEL_2: Byte = 0x02
         val CHANNEL_3: Byte = 0x03
         val CHANNEL_4: Byte = 0x04
+
+        val CHANNEL_5: Byte = 0x05
+        val CHANNEL_6: Byte = 0x06
+        val CHANNEL_7: Byte = 0x07
+        val CHANNEL_8: Byte = 0x08
+
+        val CHANNEL_9: Byte = 0x09
+        val CHANNEL_10: Byte = 0x0A
+        val CHANNEL_11: Byte = 0x0B
+        val CHANNEL_12: Byte = 0x0C
+
+
+        val CHANNEL_13: Byte = 0x0D
+        val CHANNEL_14: Byte = 0x0E
+        val CHANNEL_15: Byte = 0x0F
+        val CHANNEL_16: Byte = 0x10
+
         // 校验和
         private val CHECK_SUM: Byte = 0x00
         // 帧尾
@@ -74,7 +89,7 @@ class DeviceCommand {
         @JvmStatic
         fun createDeviceCommand(deviceId: Byte, channelId: Byte, command: Byte): ByteArray {
             sCommand = byteArrayOf(FRAME_HEADER, ALL_HIGH_NUMBER, ALL_LOW_NUMBER,
-                    command, deviceId, channelId, CHECK_SUM, FRAME_TAIL)
+                    command, deviceId, 0x00, channelId, CHECK_SUM, FRAME_TAIL)
             return sCommand
         }
 
@@ -92,7 +107,7 @@ class DeviceCommand {
         // 发送命令
         fun sendCommandList(commandList: MutableList<ByteArray>, threadName: String) {
             commandList.forEach {
-                LLogX.e("控制命令 = " + DigitalTrans.byte2hex(it))
+                //                LLogX.e("控制命令 = " + DigitalTrans.byte2hex(it))
                 SendUtils.sendCommand(it, threadName)
             }
         }

@@ -29,13 +29,4 @@ class DeviceItemBean(var deviceId: Byte) {
         channelList.addAll(tempList)
     }
 
-    // 添加通道
-    fun addChannelList(deviceId: Byte, list: MutableList<DeviceItemChannelBean>) {
-        val tempList: MutableList<DeviceItemChannelBean> = ArrayList()
-        tempList.addAll(list)
-        tempList.forEach {
-            it.deviceId = deviceId
-        }
-        channelList.addAll(tempList)
-    }
 }

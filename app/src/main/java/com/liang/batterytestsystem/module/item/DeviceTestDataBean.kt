@@ -9,8 +9,8 @@ import java.io.Serializable
  * Describe : 设备某一通道的详情信息
  *
  */
-class DeviceItemChannelBean(var channelId: Byte) : Serializable {
-    var deviceId: Byte = 0x00 // 设备号
+class DeviceTestDataBean(var channelId: Byte) : Serializable {
+    var deviceId: Byte = 0x01 // 设备号
     var checkState = false // 通道选中状态
     var deviceStatus = DeviceStatus.OFFLINE // 设备连接状态
 

@@ -36,7 +36,7 @@ public class ReceiveUtils {
             } catch (SocketException e) {
                 e.printStackTrace();
             }
-            byte[] receBuf = new byte[101];//1024
+            byte[] receBuf = new byte[1400];//1024
             packet = new DatagramPacket(receBuf, receBuf.length);
             while (!stopReceiver) {
                 try {
