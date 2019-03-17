@@ -24,12 +24,12 @@ class DeviceCommand {
         val COMMAND_RESUME_TEST: Byte = 0x6A
         val COMMAND_QUERY_TEST: Byte = 0x71
         // 设备号
-        val DEVICE_1: Byte = 0x0001
-        val DEVICE_2: Byte = 0x0010
+        val DEVICE_1: Byte = 0x01
+        val DEVICE_2: Byte = 0x02
         val DEVICE_3: Byte = 0x03
         val DEVICE_4: Byte = 0x04
         // 通道信息
-        val CHANNEL_1: Byte = 0x07
+        val CHANNEL_1: Byte = 0x01
         val CHANNEL_2: Byte = 0x02
         val CHANNEL_3: Byte = 0x03
         val CHANNEL_4: Byte = 0x04
@@ -43,7 +43,6 @@ class DeviceCommand {
         val CHANNEL_10: Byte = 0x0A
         val CHANNEL_11: Byte = 0x0B
         val CHANNEL_12: Byte = 0x0C
-
 
         val CHANNEL_13: Byte = 0x0D
         val CHANNEL_14: Byte = 0x0E

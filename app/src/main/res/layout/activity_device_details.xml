@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,62 +8,78 @@
     android:background="@color/gray_bg"
     tools:context=".module.details.DeviceDetails">
 
-    <com.liang.liangutils.view.LTitleView
-        android:id="@+id/mvDetailTitle"
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/mvDetailStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="离线"
-        android:textSize="@dimen/sp10"
-        app:layout_constraintBottom_toBottomOf="@id/mvDetailTitle"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/redPrimary">
 
+            <com.liang.liangutils.view.LTitleView
+                android:id="@+id/mvDetailTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/mvDetailLineChart"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp200"
-        android:background="@color/white"
-        android:padding="@dimen/dp10"
-        app:layout_constraintBottom_toTopOf="@id/mvDetailConnect" />
-
-    <TextView
-        android:id="@+id/mvDetailConnect"
-        android:layout_width="@dimen/dp0"
-        android:layout_height="@dimen/dp50"
-        android:background="@color/white"
-        android:gravity="center"
-        android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/mvDetailTest"
-        tools:text="连接" />
+            <TextView
+                android:id="@+id/mvDetailStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="离线"
+                android:textSize="@dimen/sp10"
+                app:layout_constraintBottom_toBottomOf="@id/mvDetailTitle"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent" />
 
 
-    <TextView
-        android:id="@+id/mvDetailTest"
-        android:layout_width="@dimen/dp0"
-        android:layout_height="@dimen/dp50"
-        android:background="@color/white"
-        android:gravity="center"
-        android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/mvDetailConnect"
-        app:layout_constraintRight_toRightOf="parent"
-        tools:text="开始测试" />
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/mvDetailLineChart"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp200"
+                android:background="@color/white"
+                android:padding="@dimen/dp10"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/mvDetailTitle" />
+
+            <TextView
+                android:id="@+id/mvDetailConnect"
+                android:layout_width="@dimen/dp0"
+                android:layout_height="@dimen/dp50"
+                android:background="@color/white"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/mvDetailTest"
+                tools:text="连接" />
 
 
-    <View
-        android:layout_width="@dimen/dp1"
-        android:layout_height="@dimen/dp30"
-        android:background="@color/text_gray"
-        app:layout_constraintBottom_toBottomOf="@id/mvDetailConnect"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/mvDetailConnect" />
+            <TextView
+                android:id="@+id/mvDetailTest"
+                android:layout_width="@dimen/dp0"
+                android:layout_height="@dimen/dp50"
+                android:background="@color/white"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/mvDetailConnect"
+                app:layout_constraintRight_toRightOf="parent"
+                tools:text="开始测试" />
+
+
+            <View
+                android:layout_width="@dimen/dp1"
+                android:layout_height="@dimen/dp30"
+                android:background="@color/text_gray"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/mvDetailConnect"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/mvDetailConnect" />
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v4.widget.NestedScrollView>
+
 </android.support.constraint.ConstraintLayout>

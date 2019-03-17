@@ -15,29 +15,23 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.liang.batterytestsystem.R
 import com.liang.batterytestsystem.base.LAbstractBaseActivity
 import com.liang.batterytestsystem.constant.DeviceKey
-import com.liang.batterytestsystem.device.DeviceBean
 import com.liang.batterytestsystem.device.DeviceEvent
 import com.liang.batterytestsystem.device.DeviceStatus
+import com.liang.batterytestsystem.module.item.DeviceItemChannelBean
+import com.liang.batterytestsystem.utils.DigitalTrans
 import com.liang.liangutils.mgrs.LKVMgr
-import com.liang.liangutils.utils.LLogX
 import com.liang.liangutils.utils.LResourceX
 import com.liang.liangutils.utils.LSizeX
 import kotlinx.android.synthetic.main.activity_device_details.*
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import org.java_websocket.client.WebSocketClient
-import org.java_websocket.handshake.ServerHandshake
-import java.net.URI
-import java.net.URISyntaxException
 import java.text.SimpleDateFormat
 import java.util.*
 
 
 class DeviceDetails : LAbstractBaseActivity() {
 
-    lateinit var deviceBean: DeviceBean
-    var mWebSocketClient: WebSocketClient? = null
-    private val address = "ws://192.168.100.8:61001"
+    lateinit var mChannelBean: DeviceItemChannelBean
     val MSG_QUERY_DEVICE = "7B00088F0102007D"
     private val MSG_QUERY_DEVICE2 = byteArrayOf(0x7B, 0x00, 0x08, 0x8F.toByte(), 0x01, 0x02, 0x00, 0x7D)
 
@@ -54,23 +48,24 @@ class DeviceDetails : LAbstractBaseActivity() {
     }
 
     override fun initData() {
-        deviceBean = LKVMgr.memory().getObj(DeviceKey.KEY_DETAIL_INFO, DeviceBean::class.java)
+        mChannelBean = LKVMgr.memory().getObj(DeviceKey.KEY_DETAIL_INFO, DeviceItemChannelBean::class.java)
     }
 
     override fun initView() {
+        val title = "设备" + DigitalTrans.byte2hex(byteArrayOf(mChannelBean.deviceId)) + "-通道" + DigitalTrans.byte2hex(byteArrayOf(mChannelBean.channelId))
         mvDetailTitle.setClickLeftFinish(this)
-        mvDetailTitle.setTitle(deviceBean.deviceSerialNumber)
+        mvDetailTitle.setTitle(title)
         mvDetailTitle.lineView.visibility = View.VISIBLE
         mvDetailTitle.setRightText("停止")
-        mvDetailStatus.text = deviceBean.deviceStatus.statusName
+        mvDetailStatus.text = mChannelBean.deviceStatus.statusName
 
-        when (deviceBean.deviceStatus) {
+        when (mChannelBean.deviceStatus) {
             DeviceStatus.OFFLINE -> mvDetailConnect.text = "连接"
             DeviceStatus.CONNECTING -> mvDetailConnect.text = "连接中"
             else -> mvDetailConnect.text = "断开连接"
         }
 
-        when (deviceBean.deviceStatus) {
+        when (mChannelBean.deviceStatus) {
             DeviceStatus.TESTPAUSE -> mvDetailTest.text = "继续测试"
             DeviceStatus.TESTING -> mvDetailTest.text = "暂停测试"
             else -> mvDetailTest.text = "开始测试"
@@ -79,30 +74,13 @@ class DeviceDetails : LAbstractBaseActivity() {
 
     override fun clicEvent() {
         mvDetailTitle.rightTextView.setOnClickListener {
-            DeviceEvent.postStopTest(deviceBean.deviceSerialNumber)
+
         }
         mvDetailConnect.setOnClickListener {
-            //            when (deviceBean.deviceStatus) {
-//                DeviceStatus.OFFLINE -> DeviceEvent.postStartConnect(deviceBean.deviceSerialNumber)
-//                DeviceStatus.CONNECTING -> ToastUtils.showShort("正在连接，请稍后点击。。。")
-//                else -> DeviceEvent.postStartDisConnect(deviceBean.deviceSerialNumber)
-//            }
+
         }
         mvDetailTest.setOnClickListener {
-            //            if (deviceBean.isConnected()) {
-//
-//            }
-//            when (deviceBean.deviceStatus) {
-//                DeviceStatus.TESTPAUSE -> DeviceEvent.postStartTest(deviceBean.deviceSerialNumber)
-//                DeviceStatus.TESTING -> DeviceEvent.postPauseTest(deviceBean.deviceSerialNumber)
-//                else -> {
-//                    when (deviceBean.deviceStatus) {
-//                        DeviceStatus.OFFLINE -> ToastUtils.showShort("请先连接设备")
-//                        DeviceStatus.CONNECTING -> ToastUtils.showShort("正在连接，请稍后点击。。。")
-//                        else -> DeviceEvent.postStartTest(deviceBean.deviceSerialNumber)
-//                    }
-//                }
-//            }
+
         }
     }
 
@@ -186,96 +164,27 @@ class DeviceDetails : LAbstractBaseActivity() {
         //mvDetailLineChart.invalidate()
     }
 
-    // 初始化socket
-    @Throws(URISyntaxException::class)
-    private fun initSocketClient() {
-        if (mWebSocketClient == null) {
-            mWebSocketClient = object : WebSocketClient(URI(address)) {
-                override fun onOpen(serverHandshake: ServerHandshake) {
-                    //连接成功
-                    showInfo("opened connection")
-                }
-
-                override fun onMessage(s: String) {
-                    //服务端消息
-                    showInfo("received:$s")
-                }
-
-
-                override fun onClose(i: Int, s: String, remote: Boolean) {
-                    //连接断开，remote判定是客户端断开还是服务端断开
-                    showInfo("Connection closed by " + (if (remote) "remote peer" else "us") + ", info=" + s)
-                    //
-                    closeConnect()
-                }
-
-
-                override fun onError(e: Exception) {
-                    showInfo("error:$e")
-                }
-            }
-        }
-    }
-
-    private fun showInfo(s: String) {
-        LLogX.e("客户端 " + s)
-    }
-
-
-    //连接
-    private fun connect() {
-        try {
-            object : Thread() {
-                override fun run() {
-                    mWebSocketClient?.connect()
-                }
-            }.start()
-        } catch (e: Exception) {
-            LLogX.e("error")
-        }
-    }
-
-
-    //断开连接
-    private fun closeConnect() {
-        try {
-            mWebSocketClient?.close()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        } finally {
-            mWebSocketClient = null
-        }
-    }
-
-
-//发送消息
-    /**
-     *
-     */
-    private fun sendMsg(msg: String) {
-        mWebSocketClient?.send(msg)
-    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onDeviceEvent(event: DeviceEvent) {
-        if (!deviceBean.deviceSerialNumber.equals(event.serialNumber)) {
-            return
-        }
+//        if (!mChannelBean.deviceId.equals(event.serialNumber)) {
+//            return
+//        }
         when (event.msg) {
             DeviceEvent.EVENT_START_DISCONNECT -> {
-                deviceBean.deviceStatus = DeviceStatus.OFFLINE
+                mChannelBean.deviceStatus = DeviceStatus.OFFLINE
             }
             DeviceEvent.EVENT_START_CONNECT -> {
-                deviceBean.deviceStatus = DeviceStatus.CONNECTING
+                mChannelBean.deviceStatus = DeviceStatus.CONNECTING
             }
             DeviceEvent.EVENT_CONNECTED_OBJ -> {
-                deviceBean.deviceStatus = DeviceStatus.ONLINE
+                mChannelBean.deviceStatus = DeviceStatus.ONLINE
             }
             DeviceEvent.EVENT_START_TEST -> {
-                deviceBean.deviceStatus = DeviceStatus.TESTING
+                mChannelBean.deviceStatus = DeviceStatus.TESTING
             }
             DeviceEvent.EVENT_PAUSE_TEST -> {
-                deviceBean.deviceStatus = DeviceStatus.TESTPAUSE
+                mChannelBean.deviceStatus = DeviceStatus.TESTPAUSE
             }
             DeviceEvent.EVENT_STOP_TEST -> {
             }
@@ -285,7 +194,7 @@ class DeviceDetails : LAbstractBaseActivity() {
 
     companion object {
         @JvmStatic
-        fun startActivity(context: Context, bean: DeviceBean) {
+        fun startActivity(context: Context, bean: DeviceItemChannelBean) {
             val intent = Intent(context, DeviceDetails::class.java)
             LKVMgr.memory().putObj(DeviceKey.KEY_DETAIL_INFO, bean)
             context.startActivity(intent)
