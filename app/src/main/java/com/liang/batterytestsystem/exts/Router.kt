@@ -5,6 +5,7 @@ import android.content.Context
 import com.liang.batterytestsystem.module.config.UdpConfigActivity
 import com.liang.batterytestsystem.module.connect.DeviceConnect
 import com.liang.batterytestsystem.module.details.DeviceDetails
+import com.liang.batterytestsystem.module.details.MpTestActivity
 import com.liang.batterytestsystem.module.item.DeviceItemChannelBean
 import com.liang.batterytestsystem.module.service.DeviceService
 
@@ -19,6 +20,11 @@ class Router {
         @JvmStatic // 启动设备连接成功界面
         fun startDeviceConnect(activity: Activity) {
             DeviceConnect.startActivity(activity)
+        }
+
+        @JvmStatic // 启动设备详情页
+        fun startDeviceDetailTest(context: Context, bean: DeviceItemChannelBean) {
+            MpTestActivity.startActivity(context)
         }
 
         @JvmStatic // 启动设备详情页

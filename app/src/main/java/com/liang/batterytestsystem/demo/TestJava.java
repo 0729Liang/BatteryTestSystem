@@ -12,6 +12,7 @@ import java.util.List;
  */
 public class TestJava implements Cloneable {
 
+
     List<String> mList = new ArrayList<>();
 
     public static void listTest() {

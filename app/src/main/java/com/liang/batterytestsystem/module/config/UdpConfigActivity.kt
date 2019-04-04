@@ -6,6 +6,8 @@ import android.os.Bundle
 import com.blankj.utilcode.util.ToastUtils
 import com.liang.batterytestsystem.R
 import com.liang.batterytestsystem.base.LAbstractBaseActivity
+import com.liang.batterytestsystem.exts.Router
+import com.liang.batterytestsystem.module.service.DeviceService
 import com.liang.batterytestsystem.utils.LNetwork
 import com.liang.liangutils.init.LCommon
 import kotlinx.android.synthetic.main.activity_udp_config.*
@@ -47,7 +49,8 @@ class UdpConfigActivity : LAbstractBaseActivity() {
                     Integer.valueOf(mvConfigListenPortEt.text.toString()))
             ToastUtils.showShort("保存成功")
             UdpEvent.postCreateNewUdpRecv()
-            this.finish()
+            //this.finish()
+            Router.startDeviceDetail(this, DeviceService.mDeviceTestChannelList.get(0))
         }
     }
 

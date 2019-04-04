@@ -44,7 +44,7 @@ class DeviceItemChannelAdapter(data: List<DeviceItemChannelBean>?)
         }
 
         helper.itemView.setOnClickListener {
-            Router.startDeviceDetail(mContext, item)
+            Router.startDeviceDetailTest(mContext, item)
         }
 
     }

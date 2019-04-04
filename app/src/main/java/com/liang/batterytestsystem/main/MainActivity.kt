@@ -200,7 +200,7 @@ class MainActivity : LAbstractBaseActivity() {
             true
         }
 
-        // mvMainTestBtn.setOnClickListener { Router.startDeviceDetail(this, mDataBinding.mDeviceBeanList.get(0)) }
+        // mvMainTestBtn.setOnClickListener { Router.startDeviceDetailTest(this, mDataBinding.mDeviceBeanList.get(0)) }
     }
 
     private fun test2() {
