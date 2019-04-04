@@ -19,9 +19,15 @@ public class LBaseApplication extends Application {
         super.onCreate();
         LCommon.init(this, BuildConfig.class);
         Utils.init(this);
+
+        LCrashHandler handler = LCrashHandler.getInstance();
+        handler.init(getApplicationContext());
+        Thread.setDefaultUncaughtExceptionHandler(handler);
         if (LeakCanary.isInAnalyzerProcess(this)) {
             return;
         }
         LeakCanary.install(this);
+
+
     }
 }

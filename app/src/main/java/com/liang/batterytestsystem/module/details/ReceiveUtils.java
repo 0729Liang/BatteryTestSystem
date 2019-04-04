@@ -5,5 +5,5 @@ package com.liang.batterytestsystem.module.details;
  * CreateAt : 12:49 2019/3/14
  * Describe :
  */
-public class SendAndReceiveUtils {
-}
+//public class SendAndReceiveUtils {
+//}
