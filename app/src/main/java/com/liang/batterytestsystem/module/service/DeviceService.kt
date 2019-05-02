@@ -7,6 +7,7 @@ import android.os.IBinder
 import android.os.Message
 import com.liang.batterytestsystem.base.LBaseService
 import com.liang.batterytestsystem.module.config.UdpEvent
+import com.liang.batterytestsystem.module.config.UdpInfoStorage
 import com.liang.batterytestsystem.module.item.DeviceItemChannelBean
 import com.liang.batterytestsystem.module.socket.ReceiveUtils
 import com.liang.liangutils.utils.LLogX
@@ -44,6 +45,7 @@ class DeviceService : LBaseService() {
         when (event.msg) {
             UdpEvent.EVENT_CREATE_NEW_UDP_RECV -> {
                 ReceiveUtils.receiveMessage(mRecvName)
+                //LLogX.e("更改监听："+UdpInfoStorage.getClientListenPort())
             }
         }
     }

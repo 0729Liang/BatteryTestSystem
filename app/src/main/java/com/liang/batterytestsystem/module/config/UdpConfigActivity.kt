@@ -32,9 +32,11 @@ class UdpConfigActivity : LAbstractBaseActivity() {
         //var substring = ipAddress.substring(0, ipAddress.lastIndexOf(".") + 1)
 
         mvConfigClientIpEt.setText(ipAddress)
-        mvConfigSendPortEt.setText(UdpInfoStorage.getClientSendPort().toString())
-        mvConfigServerIpEt.setText(ipAddress)
         mvConfigListenPortEt.setText(UdpInfoStorage.getClientListenPort().toString())
+        mvConfigServerIpEt.setText(UdpInfoStorage.getServerIp())
+        mvConfigSendPortEt.setText(UdpInfoStorage.getClientSendPort().toString())
+
+
         mvConfigServerIpEt.requestFocus() // 申请焦点
 
 
@@ -49,8 +51,8 @@ class UdpConfigActivity : LAbstractBaseActivity() {
                     Integer.valueOf(mvConfigListenPortEt.text.toString()))
             ToastUtils.showShort("保存成功")
             UdpEvent.postCreateNewUdpRecv()
-            //this.finish()
-            Router.startDeviceDetail(this, DeviceService.mDeviceTestChannelList.get(0))
+            this.finish()
+            //Router.startDeviceDetail(this, DeviceService.mDeviceTestChannelList.get(0))
         }
     }
 

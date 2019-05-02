@@ -14,6 +14,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 
 public class SendUtils {
 
@@ -31,6 +32,7 @@ public class SendUtils {
 
         SEND_PORT = UdpInfoStorage.getClientSendPort(); // server端口
         IP = UdpInfoStorage.getServerIp(); // server IP
+
         //初始化socket
         try {
             socket = new DatagramSocket();
@@ -118,11 +120,7 @@ public class SendUtils {
 
             @Override
             public void run() {
-                try {
-                    sendBuf = content.getBytes("utf-8");
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
+                sendBuf = content.getBytes(StandardCharsets.UTF_8);
                 DatagramPacket msg = new DatagramPacket(sendBuf, sendBuf.length, mAddress, SEND_PORT);
                 try {
                     socket.send(msg);

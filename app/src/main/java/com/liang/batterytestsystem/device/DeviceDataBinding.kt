@@ -1,6 +1,5 @@
 package com.liang.batterytestsystem.device
 
-import com.liang.batterytestsystem.main.DeviceAdapter
 import java.util.*
 
 /**
@@ -83,12 +82,12 @@ class DeviceDataBinding {
         event?.insertEvent()
     }
 
-    fun addDevice(deviceSerialNumber: String, status: DeviceStatus, adapter: DeviceAdapter) {
-        val bean = DeviceBean(deviceSerialNumber)
-        bean.deviceStatus = status
-        mDeviceBeanList.add(bean)
-        adapter.notifyItemInserted(mDeviceBeanList.size)
-    }
+//    fun addDevice(deviceSerialNumber: String, status: DeviceStatus, adapter: DeviceAdapter) {
+//        val bean = DeviceBean(deviceSerialNumber)
+//        bean.deviceStatus = status
+//        mDeviceBeanList.add(bean)
+//        adapter.notifyItemInserted(mDeviceBeanList.size)
+//    }
 
     // 插入数据后的用户操作接口
     interface ConsumerInsertEvent {

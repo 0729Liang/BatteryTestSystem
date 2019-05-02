@@ -1,9 +1,16 @@
 package com.liang.batterytestsystem.demo;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+
+import com.liang.batterytestsystem.module.home.DeviceMainActivty;
 import com.liang.liangutils.utils.LLogX;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import java.util.logging.LogRecord;
 
 /**
  * @author : Amarao
@@ -34,7 +41,9 @@ public class TestJava implements Cloneable {
         LLogX.e(list2.toString());
     }
 
+
     public void et() {
+
 
     }
 
@@ -48,4 +57,6 @@ public class TestJava implements Cloneable {
         }
         return student;
     }
+
+
 }
