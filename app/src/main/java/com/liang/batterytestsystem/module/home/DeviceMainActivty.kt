@@ -2,9 +2,6 @@ package com.liang.batterytestsystem.module.home
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.os.Message
 import android.support.v7.widget.LinearLayoutManager
 import com.blankj.utilcode.util.ToastUtils
 import com.liang.batterytestsystem.R
@@ -12,7 +9,6 @@ import com.liang.batterytestsystem.base.LAbstractBaseActivity
 import com.liang.batterytestsystem.exts.Router
 import com.liang.batterytestsystem.module.service.DeviceService
 import com.liang.batterytestsystem.view.DeviceOperWindow
-import com.liang.liangutils.utils.LLogX
 import kotlinx.android.synthetic.main.activity_device_main_activty.*
 
 class DeviceMainActivty : LAbstractBaseActivity() {
@@ -30,6 +26,7 @@ class DeviceMainActivty : LAbstractBaseActivity() {
         initData()
         initView()
         clicEvent()
+
 
     }
 
@@ -50,11 +47,12 @@ class DeviceMainActivty : LAbstractBaseActivity() {
         mDeviceList.forEach {
             it.addChannelList(
                     // 为每台设备添加测试通道
-                    DeviceCreateFactory.createDeviceChannelList(
+                    DeviceCreateFactory.createDeviceChannelList(it,
                             DeviceCommand.CHANNEL_1, DeviceCommand.CHANNEL_2, DeviceCommand.CHANNEL_3, DeviceCommand.CHANNEL_4,
-                            DeviceCommand.CHANNEL_5, DeviceCommand.CHANNEL_6, DeviceCommand.CHANNEL_7, DeviceCommand.CHANNEL_8,
-                            DeviceCommand.CHANNEL_9, DeviceCommand.CHANNEL_10, DeviceCommand.CHANNEL_11, DeviceCommand.CHANNEL_12,
-                            DeviceCommand.CHANNEL_13, DeviceCommand.CHANNEL_14, DeviceCommand.CHANNEL_15, DeviceCommand.CHANNEL_16))
+                            DeviceCommand.CHANNEL_5, DeviceCommand.CHANNEL_6, DeviceCommand.CHANNEL_7, DeviceCommand.CHANNEL_8
+//                            DeviceCommand.CHANNEL_9, DeviceCommand.CHANNEL_10, DeviceCommand.CHANNEL_11, DeviceCommand.CHANNEL_12,
+//                            DeviceCommand.CHANNEL_13, DeviceCommand.CHANNEL_14, DeviceCommand.CHANNEL_15, DeviceCommand.CHANNEL_16
+                    ))
         }
     }
 
@@ -75,28 +73,33 @@ class DeviceMainActivty : LAbstractBaseActivity() {
         }
 
         mvMain2TestStart.setOnClickListener {
-            val list = DeviceService.mDeviceTestChannelList
-            ToastUtils.showShort("开始测试 测试通道数=" + list.size)
-            val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_START_TEST)
+            //            val list = DeviceService.sDeviceTestChannelList
+//            val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_START_TEST)
+//            DeviceCommand.sendCommandList(commandList, mSendName)
+
+            val deviceItemBeanList = DeviceService.sDeviceItemBeanList
+            val commandList = DeviceCommand.createDeviceTestComposeCommandList(deviceItemBeanList, DeviceCommand.COMMAND_START_TEST)
+            ToastUtils.showShort("开始测试 设备数 =" + deviceItemBeanList.size + " 命令数 = " + commandList.size)
             DeviceCommand.sendCommandList(commandList, mSendName)
+
         }
 
         mvMain2DeviceMore.setOnClickListener {
             DeviceOperWindow.create(this).show(it)
                     .addTestPauseClickEvent {
-                        val list = DeviceService.mDeviceTestChannelList
+                        val list = DeviceService.sDeviceTestChannelList
                         ToastUtils.showShort("发送暂停 测试通道数=" + list.size)
                         val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_PAUSE_TEST)
                         DeviceCommand.sendCommandList(commandList, mSendName)
                     }
                     .addTestResumeClickEvent {
-                        val list = DeviceService.mDeviceTestChannelList
+                        val list = DeviceService.sDeviceTestChannelList
                         ToastUtils.showShort("发送继续 测试通道数=" + list.size)
                         val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_RESUME_TEST)
                         DeviceCommand.sendCommandList(commandList, mSendName)
                     }
                     .addQueryClickEvent {
-                        val list = DeviceService.mDeviceTestChannelList
+                        val list = DeviceService.sDeviceTestChannelList
                         ToastUtils.showShort("发送查询 测试通道数=" + list.size)
                         val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_QUERY_TEST)
                         DeviceCommand.sendCommandList(commandList, mSendName)

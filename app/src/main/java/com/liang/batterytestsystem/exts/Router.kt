@@ -3,7 +3,6 @@ package com.liang.batterytestsystem.exts
 import android.app.Activity
 import android.content.Context
 import com.liang.batterytestsystem.module.config.UdpConfigActivity
-import com.liang.batterytestsystem.module.connect.DeviceConnect
 import com.liang.batterytestsystem.module.details.DeviceDetails
 import com.liang.batterytestsystem.module.details.NewDeviceDetails
 import com.liang.batterytestsystem.module.item.DeviceItemChannelBean
@@ -17,10 +16,6 @@ import com.liang.batterytestsystem.module.service.DeviceService
  */
 class Router {
     companion object {
-        @JvmStatic // 启动设备连接成功界面
-        fun startDeviceConnect(activity: Activity) {
-            DeviceConnect.startActivity(activity)
-        }
 
         @JvmStatic // 启动设备详情页
         fun startDeviceDetailTest(context: Context, bean: DeviceItemChannelBean) {

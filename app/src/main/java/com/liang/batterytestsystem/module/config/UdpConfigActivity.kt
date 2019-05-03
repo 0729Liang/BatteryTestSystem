@@ -52,7 +52,7 @@ class UdpConfigActivity : LAbstractBaseActivity() {
             ToastUtils.showShort("保存成功")
             UdpEvent.postCreateNewUdpRecv()
             this.finish()
-            //Router.startDeviceDetail(this, DeviceService.mDeviceTestChannelList.get(0))
+            //Router.startDeviceDetail(this, DeviceService.sDeviceTestChannelList.get(0))
         }
     }
 

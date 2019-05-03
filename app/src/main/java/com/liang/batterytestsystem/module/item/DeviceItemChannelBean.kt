@@ -1,6 +1,7 @@
 package com.liang.batterytestsystem.module.item
 
 import com.liang.batterytestsystem.device.DeviceStatus
+import com.liang.batterytestsystem.module.home.DeviceItemBean
 import java.io.Serializable
 
 /**
@@ -9,7 +10,7 @@ import java.io.Serializable
  * Describe : 设备某一通道的详情信息
  *
  */
-class DeviceItemChannelBean(var channelId: Byte) : Serializable {
+class DeviceItemChannelBean(var deviceItemBean: DeviceItemBean, var channelId: Byte) : Serializable {
     var deviceId: Byte = 0x00 // 设备号
     var checkState = false // 通道选中状态
     var deviceStatus = DeviceStatus.OFFLINE // 设备连接状态

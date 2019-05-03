@@ -22,6 +22,7 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.liang.batterytestsystem.R;
 import com.liang.batterytestsystem.utils.LColor;
 import com.liang.liangutils.utils.LLogX;
+import com.liang.liangutils.utils.LRecycleX;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -86,8 +87,8 @@ public class NewDeviceDetails extends AppCompatActivity implements View.OnClickL
 //                addLine(list, "www", LColor.getRandomColor());
 //                LLogX.e("随机颜色 ——:" + LColor.getRandomColor());
 
+                //mDetailHandler.sendEmptyMessageDelayed(MSG_ADD_DATASET, 1000);
 
-                mDetailHandler.sendEmptyMessageDelayed(MSG_ADD_DATASET, 1000);
 
                 break;
             default:
@@ -144,6 +145,7 @@ public class NewDeviceDetails extends AppCompatActivity implements View.OnClickL
         mLegend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
         //是否绘制在图表里面
         mLegend.setDrawInside(false);
+
     }
 
     /**
@@ -249,6 +251,12 @@ public class NewDeviceDetails extends AppCompatActivity implements View.OnClickL
         super.onDestroy();
         mDetailHandler.removeCallbacksAndMessages(null);
         mDetailHandler = null;
+
+        mLineChart.clear();
+        mLineChart.clearAllViewportJobs();
+        mLineChart.removeAllViews();
+        mLineChart = null;
+        //mLegend
     }
 
     private static class DetailHandler extends Handler {

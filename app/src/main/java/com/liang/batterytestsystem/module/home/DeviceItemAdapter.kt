@@ -33,6 +33,8 @@ class DeviceItemAdapter(data: List<DeviceItemBean>?)
         mLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
         mRecyclerView.layoutManager = mLayoutManager
         mRecyclerView.adapter = mChannelAdpter
+
+
     }
 
 }

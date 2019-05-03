@@ -20,7 +20,7 @@ public class ReceiveUtils {
     private static final int PHONE_PORT  = 54915;//手机端口号
     private static       int SERVER_PORT = UdpInfoStorage.getClientListenPort();//手机端口号
 
-    private static DatagramSocket socket;
+    public static DatagramSocket socket = null;
     private static DatagramPacket packet;
     private static volatile boolean stopReceiver = false;
 
@@ -30,12 +30,22 @@ public class ReceiveUtils {
         SERVER_PORT = UdpInfoStorage.getClientListenPort();//手机端口号
 
         Runnable runnable = () -> {
-            LLogX.e("等待接收 监听端口:" + SERVER_PORT);
+
             try {
-                socket = new DatagramSocket(SERVER_PORT);
+                if (socket == null) {
+                    socket = new DatagramSocket(SERVER_PORT);
+                } else {
+                    socket.close();
+                    socket = null;
+                    socket = new DatagramSocket(SERVER_PORT);
+                }
+
             } catch (SocketException e) {
                 e.printStackTrace();
             }
+
+            LLogX.e("等待接收 监听端口:" + socket.getLocalPort());
+
             byte[] receBuf = new byte[1400];//1024
             packet = new DatagramPacket(receBuf, receBuf.length);
             while (!stopReceiver) {

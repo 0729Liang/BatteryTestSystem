@@ -1,5 +1,13 @@
 package com.liang.batterytestsystem.utils;
 
+import android.os.Build;
+
+import com.liang.liangutils.utils.LLogX;
+
+import java.util.Base64;
+
+import androidx.annotation.RequiresApi;
+
 /**
  * @author : Amarao
  * CreateAt : 15:35 2019/3/14
@@ -182,6 +190,8 @@ public class DigitalTrans {
             temp = (char) aBytearray;
             result.append(temp);
         }
+
+
         return result.toString();
     }
 
@@ -334,6 +344,17 @@ public class DigitalTrans {
             }
         }
         return hs.toString().toUpperCase();
+    }
+
+
+    /**
+     * 字节数组转换为十六进制字符串
+     *
+     * @param b byte[] 需要转换的字节数组
+     * @return String 十六进制字符串
+     */
+    public static String byte2hex(byte b) {
+        return Integer.toHexString(b & 0xff).toUpperCase();
     }
 }
 
