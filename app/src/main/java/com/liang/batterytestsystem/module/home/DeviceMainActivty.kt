@@ -73,10 +73,6 @@ class DeviceMainActivty : LAbstractBaseActivity() {
         }
 
         mvMain2TestStart.setOnClickListener {
-            //            val list = DeviceService.sDeviceTestChannelList
-//            val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_START_TEST)
-//            DeviceCommand.sendCommandList(commandList, mSendName)
-
             val deviceItemBeanList = DeviceService.sDeviceItemBeanList
             val commandList = DeviceCommand.createDeviceTestComposeCommandList(deviceItemBeanList, DeviceCommand.COMMAND_START_TEST)
             ToastUtils.showShort("开始测试 设备数 =" + deviceItemBeanList.size + " 命令数 = " + commandList.size)
@@ -87,21 +83,49 @@ class DeviceMainActivty : LAbstractBaseActivity() {
         mvMain2DeviceMore.setOnClickListener {
             DeviceOperWindow.create(this).show(it)
                     .addTestPauseClickEvent {
-                        val list = DeviceService.sDeviceTestChannelList
-                        ToastUtils.showShort("发送暂停 测试通道数=" + list.size)
-                        val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_PAUSE_TEST)
+                        //                        val list = DeviceService.sDeviceTestChannelList
+//                        ToastUtils.showShort("发送暂停 测试通道数=" + list.size)
+//                        val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_PAUSE_TEST)
+//                        DeviceCommand.sendCommandList(commandList, mSendName)
+
+                        val deviceItemBeanList = DeviceService.sDeviceItemBeanList
+                        val commandList = DeviceCommand.createDeviceTestComposeCommandList(deviceItemBeanList, DeviceCommand.COMMAND_PAUSE_TEST)
+                        ToastUtils.showShort("发送暂停 设备数 =" + deviceItemBeanList.size + " 命令数 = " + commandList.size)
                         DeviceCommand.sendCommandList(commandList, mSendName)
                     }
                     .addTestResumeClickEvent {
-                        val list = DeviceService.sDeviceTestChannelList
-                        ToastUtils.showShort("发送继续 测试通道数=" + list.size)
-                        val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_RESUME_TEST)
+                        //                        val list = DeviceService.sDeviceTestChannelList
+//                        ToastUtils.showShort("发送继续 测试通道数=" + list.size)
+//                        val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_RESUME_TEST)
+//                        DeviceCommand.sendCommandList(commandList, mSendName)
+
+                        val deviceItemBeanList = DeviceService.sDeviceItemBeanList
+                        val commandList = DeviceCommand.createDeviceTestComposeCommandList(deviceItemBeanList, DeviceCommand.COMMAND_RESUME_TEST)
+                        ToastUtils.showShort("发送继续 设备数 =" + deviceItemBeanList.size + " 命令数 = " + commandList.size)
                         DeviceCommand.sendCommandList(commandList, mSendName)
                     }
-                    .addQueryClickEvent {
+                    .addStopClickEvent {
+                        //                        val list = DeviceService.sDeviceTestChannelList
+//                        ToastUtils.showShort("发送停止 测试通道数=" + list.size)
+//                        val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_PAUSE_TEST)
+//                        DeviceCommand.sendCommandList(commandList, mSendName)
+
+                        val deviceItemBeanList = DeviceService.sDeviceItemBeanList
+                        val commandList = DeviceCommand.createDeviceTestComposeCommandList(deviceItemBeanList, DeviceCommand.COMMAND_STOP_TEST)
+                        ToastUtils.showShort("发送停止 设备数 =" + deviceItemBeanList.size + " 命令数 = " + commandList.size)
+                        DeviceCommand.sendCommandList(commandList, mSendName)
+                    }
+                    // 通道单独发
+                    .addQueryDataClickEvent {
                         val list = DeviceService.sDeviceTestChannelList
-                        ToastUtils.showShort("发送查询 测试通道数=" + list.size)
-                        val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_QUERY_TEST)
+                        ToastUtils.showShort("发送查询数据 测试通道数=" + list.size)
+                        val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_QUERY_DATA_TEST)
+                        DeviceCommand.sendCommandList(commandList, mSendName)
+                    }
+                    .addQueryChannelStatusClickEvent {
+                        val list = DeviceService.sDeviceTestChannelList
+                        ToastUtils.showShort("发送查询通道状态 测试通道数=" + list.size)
+                        val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_QUERY_CHANNEL_STATUS_TEST)
                         DeviceCommand.sendCommandList(commandList, mSendName)
                     }
 

@@ -4,7 +4,6 @@ import com.liang.batterytestsystem.module.item.DeviceItemChannelBean
 import com.liang.batterytestsystem.module.socket.SendUtils
 import com.liang.batterytestsystem.utils.DigitalTrans
 import com.liang.liangutils.utils.LLogX
-import kotlin.experimental.and
 import kotlin.experimental.or
 
 /**
@@ -23,10 +22,14 @@ class DeviceCommand {
         private val ALL_HIGH_NUMBER: Byte = 0x00
         private val ALL_LOW_NUMBER: Byte = 0x00
         // 控制命令
-        val COMMAND_START_TEST: Byte = 0x8F.toByte()
-        val COMMAND_PAUSE_TEST: Byte = 0x65
-        val COMMAND_RESUME_TEST: Byte = 0x6A
-        val COMMAND_QUERY_TEST: Byte = 0x71
+        val COMMAND_START_TEST: Byte = 0x8F.toByte() // 启动
+        val COMMAND_PAUSE_TEST: Byte = 0x65 // 暂停
+        val COMMAND_RESUME_TEST: Byte = 0x6A // 恢复
+        val COMMAND_STOP_TEST: Byte = 0x60 // 停止
+
+        val COMMAND_QUERY_DATA_TEST: Byte = 0x71 // 查询数据
+        val COMMAND_QUERY_CHANNEL_STATUS_TEST: Byte = 0x80.toByte() // 查询通道状态
+
         // 设备号
         val DEVICE_1: Byte = 0x01
         val DEVICE_2: Byte = 0x02
@@ -92,7 +95,7 @@ class DeviceCommand {
         @JvmStatic
         fun createCommandQueryTest(deviceNumber: Byte, channel: Byte): ByteArray {
             sCommand = byteArrayOf(FRAME_HEADER, ALL_HIGH_NUMBER, ALL_LOW_NUMBER,
-                    COMMAND_QUERY_TEST, deviceNumber, channel, CHECK_SUM, FRAME_TAIL)
+                    COMMAND_QUERY_DATA_TEST, deviceNumber, channel, CHECK_SUM, FRAME_TAIL)
             return sCommand
         }
 
