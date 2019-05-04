@@ -303,6 +303,28 @@ public class DigitalTrans {
     }
 
     /**
+     * Hex string to bytes.
+     * <p>e.g. hexString2Bytes("00A8") returns { 0, (byte) 0xA8 }</p>
+     *
+     * @param hexString The hex string.
+     * @return the bytes
+     */
+    public static byte[] hexString2Bytes(String hexString) {
+        if (isSpace(hexString)) return null;
+        int len = hexString.length();
+        if (len % 2 != 0) {
+            hexString = "0" + hexString;
+            len = len + 1;
+        }
+        char[] hexBytes = hexString.toUpperCase().toCharArray();
+        byte[] ret = new byte[len >> 1];
+        for (int i = 0; i < len; i += 2) {
+            ret[i >> 1] = (byte) (hex2Int(hexBytes[i]) << 4 | hex2Int(hexBytes[i + 1]));
+        }
+        return ret;
+    }
+
+    /**
      * 十六进制串转化为byte数组
      *
      * @return the array of byte
@@ -325,18 +347,18 @@ public class DigitalTrans {
     /**
      * 字节数组转换为十六进制字符串
      *
-     * @param b byte[] 需要转换的字节数组
+     * @param byteArray byte[] 需要转换的字节数组
      * @return String 十六进制字符串
      */
-    public static String byte2hex(byte b[]) {
-        if (b == null) {
+    public static String byte2hex(byte byteArray[]) {
+        if (byteArray == null) {
             throw new IllegalArgumentException(
                     "Argument b ( byte array ) is null! ");
         }
         StringBuilder hs = new StringBuilder();
         String stmp = "";
-        for (byte aB : b) {
-            stmp = Integer.toHexString(aB & 0xff);
+        for (byte b : byteArray) {
+            stmp = Integer.toHexString(b & 0xff);
             if (stmp.length() == 1) {
                 hs.append("0").append(stmp);
             } else {
@@ -354,7 +376,40 @@ public class DigitalTrans {
      * @return String 十六进制字符串
      */
     public static String byte2hex(byte b) {
-        return Integer.toHexString(b & 0xff).toUpperCase();
+        StringBuilder hs = new StringBuilder();
+        String s = Integer.toHexString(b & 0xff);
+        if (s.length() == 1) {
+            hs.append("0").append(s);
+        } else {
+            hs.append(s);
+        }
+        return hs.toString().toUpperCase();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // other utils methods
+    ///////////////////////////////////////////////////////////////////////////
+
+    private static int hex2Int(final char hexChar) {
+        if (hexChar >= '0' && hexChar <= '9') {
+            return hexChar - '0';
+        } else if (hexChar >= 'A' && hexChar <= 'F') {
+            return hexChar - 'A' + 10;
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private static boolean isSpace(final String s) {
+        if (s == null) {
+            return true;
+        }
+        for (int i = 0, len = s.length(); i < len; ++i) {
+            if (!Character.isWhitespace(s.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 }
 

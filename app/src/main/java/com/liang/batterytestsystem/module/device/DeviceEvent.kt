@@ -1,4 +1,4 @@
-package com.liang.batterytestsystem.device
+package com.liang.batterytestsystem.module.device
 
 import com.liang.liangutils.msg.BusEvent
 

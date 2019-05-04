@@ -1,6 +1,6 @@
 package com.liang.batterytestsystem.module.item
 
-import com.liang.batterytestsystem.device.DeviceStatus
+import com.liang.batterytestsystem.module.device.DeviceStatus
 import com.liang.batterytestsystem.module.home.DeviceItemBean
 import java.io.Serializable
 

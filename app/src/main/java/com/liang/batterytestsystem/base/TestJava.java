@@ -1,16 +1,9 @@
-package com.liang.batterytestsystem.demo;
+package com.liang.batterytestsystem.base;
 
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-
-import com.liang.batterytestsystem.module.home.DeviceMainActivty;
 import com.liang.liangutils.utils.LLogX;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import java.util.logging.LogRecord;
 
 /**
  * @author : Amarao
@@ -20,6 +13,9 @@ import java.util.logging.LogRecord;
 public class TestJava implements Cloneable {
 
 
+    static {
+
+    }
     List<String> mList = new ArrayList<>();
 
     public static void listTest() {

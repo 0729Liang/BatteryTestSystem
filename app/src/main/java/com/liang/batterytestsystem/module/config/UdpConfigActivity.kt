@@ -6,11 +6,10 @@ import android.os.Bundle
 import com.blankj.utilcode.util.ToastUtils
 import com.liang.batterytestsystem.R
 import com.liang.batterytestsystem.base.LAbstractBaseActivity
-import com.liang.batterytestsystem.exts.Router
-import com.liang.batterytestsystem.module.service.DeviceService
 import com.liang.batterytestsystem.utils.LNetwork
 import com.liang.liangutils.init.LCommon
 import kotlinx.android.synthetic.main.activity_udp_config.*
+
 
 class UdpConfigActivity : LAbstractBaseActivity() {
 
@@ -25,7 +24,6 @@ class UdpConfigActivity : LAbstractBaseActivity() {
 
     override fun initData() {
     }
-
 
     override fun initView() {
         val ipAddress = LNetwork.getIPAddress(LCommon.getContext())
@@ -52,7 +50,7 @@ class UdpConfigActivity : LAbstractBaseActivity() {
             ToastUtils.showShort("保存成功")
             UdpEvent.postCreateNewUdpRecv()
             this.finish()
-            //Router.startDeviceDetail(this, DeviceService.sDeviceTestChannelList.get(0))
+            //Router.startDeviceDetail(this, DeviceMgrService.sDeviceTestChannelList.get(0))
         }
     }
 

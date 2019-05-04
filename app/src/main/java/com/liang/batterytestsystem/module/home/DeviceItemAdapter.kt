@@ -34,7 +34,6 @@ class DeviceItemAdapter(data: List<DeviceItemBean>?)
         mRecyclerView.layoutManager = mLayoutManager
         mRecyclerView.adapter = mChannelAdpter
 
-
     }
 
 }

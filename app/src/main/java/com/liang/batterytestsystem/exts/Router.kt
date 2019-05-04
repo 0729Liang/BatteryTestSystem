@@ -1,12 +1,11 @@
 package com.liang.batterytestsystem.exts
 
-import android.app.Activity
 import android.content.Context
 import com.liang.batterytestsystem.module.config.UdpConfigActivity
-import com.liang.batterytestsystem.module.details.DeviceDetails
 import com.liang.batterytestsystem.module.details.NewDeviceDetails
 import com.liang.batterytestsystem.module.item.DeviceItemChannelBean
-import com.liang.batterytestsystem.module.service.DeviceService
+import com.liang.batterytestsystem.module.service.DeviceMgrService
+import com.liang.batterytestsystem.module.service.DeviceQueryService
 
 /**
  * @author : Amarao
@@ -17,24 +16,42 @@ import com.liang.batterytestsystem.module.service.DeviceService
 class Router {
     companion object {
 
-        @JvmStatic // 启动设备详情页
+        /**
+         * 功能：启动设备详情页
+         */
+        @JvmStatic
         fun startDeviceDetailTest(context: Context, bean: DeviceItemChannelBean) {
             NewDeviceDetails.startActivity(context, bean)
         }
 
-        @JvmStatic // 启动设备详情页
-        fun startDeviceDetail(context: Context, bean: DeviceItemChannelBean) {
-            DeviceDetails.startActivity(context, bean)
-        }
-
+        /**
+         * 功能：启动设备管理服务类
+         */
         @JvmStatic
         fun startDeviceMgrService(context: Context) {
-            DeviceService.startService(context)
+            DeviceMgrService.startService(context)
         }
 
+        /**
+         * 功能：启动配置界面
+         */
         @JvmStatic
         fun startUdpConfig(context: Context) {
             UdpConfigActivity.startActivity(context)
         }
+
+        /**
+         * 功能：启动查询服务类
+         */
+        @JvmStatic
+        fun startDeviceQueryService(context: Context) {
+            DeviceQueryService.startService(context)
+        }
+
+//        @JvmStatic // 启动设备详情页
+//        fun startDeviceDetail(context: Context, bean: DeviceItemChannelBean) {
+//            DeviceDetails.startActivity(context, bean)
+//        }
+
     }
 }

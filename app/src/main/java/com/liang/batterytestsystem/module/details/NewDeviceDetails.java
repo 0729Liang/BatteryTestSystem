@@ -350,6 +350,7 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
         mLineData.notifyDataChanged();
         mLineChart.notifyDataSetChanged();
 
+        // TODO: 2019/5/4 内存泄漏，异步 待修复
         //移到某个位置
         mLineChart.moveViewToX(count - 6);
 
@@ -363,7 +364,7 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
     public void addEntry(float yValues, int index) {
 
         int count = mLineData.getDataSetByIndex(index).getEntryCount();
-        LLogX.e("data = " + yValues + " 线：" + index + " 点数：" + count + " 总共点数：" + mLineData.getEntryCount() + " 线条数：" + mLineData.getDataSetCount());
+        //LLogX.e("data = " + yValues + " 线：" + index + " 点数：" + count + " 总共点数：" + mLineData.getEntryCount() + " 线条数：" + mLineData.getDataSetCount());
 
         Entry entry = new Entry(count, yValues);
         mLineData.addEntry(entry, index);

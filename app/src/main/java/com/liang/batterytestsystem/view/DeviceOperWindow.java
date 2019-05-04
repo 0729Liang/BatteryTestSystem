@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.PopupWindow;
 
 import com.liang.batterytestsystem.R;
-import com.liang.batterytestsystem.device.CustomerNoParameters;
+import com.liang.batterytestsystem.module.device.CustomerNoParameters;
 import com.liang.liangutils.utils.LSizeX;
 
 /**

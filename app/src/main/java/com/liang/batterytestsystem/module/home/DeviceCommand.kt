@@ -120,24 +120,25 @@ class DeviceCommand {
 
 
         // 生成命令列表，同一设备通道号按位或
+        /**
+         * @param compose 是否合成（按位或）通道
+         * */
         @JvmStatic
-        fun createDeviceTestComposeCommandList(deviceItemBeanList: MutableList<DeviceItemBean>, command: Byte): MutableList<ByteArray> {
+        fun createDeviceTestComposeCommandList(deviceItemBeanList: MutableList<DeviceItemBean>, command: Byte, compose: Boolean): MutableList<ByteArray> {
 
             val commandList: MutableList<ByteArray> = arrayListOf()
             deviceItemBeanList.forEach {
-                LLogX.e(
-                        "选中设备数 = " + deviceItemBeanList.size +
-                                " 设备" + it.deviceId +
-                                "选中通道数 = " + it.channeChooselList.size)
+                //LLogX.e("选中设备数 = " + deviceItemBeanList.size + " 设备" + it.deviceId + "选中通道数 = " + it.channeChooselList.size)
 
                 // 合成通道
                 var channel: Byte = 0x00
-                it.channeChooselList.forEach {
-                    channel = channel.or(it.channelId)
-                    //
+                if (compose) {
+                    it.channeChooselList.forEach {
+                        channel = channel.or(it.channelId)
+                    }
                 }
 
-                LLogX.e(" 合成通道号 = " + DigitalTrans.byte2hex(byteArrayOf(channel)))
+                //LLogX.e(" 合成通道号 = " + DigitalTrans.byte2hex(byteArrayOf(channel)))
                 // 生成命令
                 commandList.add(DeviceCommand.createDeviceCommand(it.deviceId, channel, command))
 

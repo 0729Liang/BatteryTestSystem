@@ -12,7 +12,8 @@ import com.liang.liangutils.msg.Exts
  *
  */
 open class LBaseService : Service() {
-    override fun onBind(intent: Intent?): IBinder {
+
+    override fun onBind(intent: Intent): IBinder {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

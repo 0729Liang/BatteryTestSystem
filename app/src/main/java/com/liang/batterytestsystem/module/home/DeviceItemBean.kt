@@ -1,6 +1,6 @@
 package com.liang.batterytestsystem.module.home
 
-import com.liang.batterytestsystem.device.DeviceStatus
+import com.liang.batterytestsystem.module.device.DeviceStatus
 import com.liang.batterytestsystem.module.item.DeviceItemChannelBean
 import com.liang.batterytestsystem.utils.DigitalTrans
 import com.liang.liangutils.utils.LLogX

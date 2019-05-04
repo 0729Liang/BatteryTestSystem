@@ -26,12 +26,11 @@ public class LBaseApplication extends Application {
         handler.init(getApplicationContext());
         Thread.setDefaultUncaughtExceptionHandler(handler);
 
-        // 内存不足
-
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            return;
-        }
-        LeakCanary.install(this);
+        // TODO: 2019/5/4 待启动
+//        if (LeakCanary.isInAnalyzerProcess(this)) {
+//            return;
+//        }
+//        LeakCanary.install(this);
 
 
     }

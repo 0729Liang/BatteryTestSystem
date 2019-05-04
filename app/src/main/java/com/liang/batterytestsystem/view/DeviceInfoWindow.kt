@@ -7,7 +7,7 @@
 //import android.widget.PopupWindow
 //import android.widget.TextView
 //import com.liang.batterytestsystem.R
-//import com.liang.batterytestsystem.device.DeviceBean
+//import com.liang.batterytestsystem.module.device.DeviceBean
 //
 ///**
 // * @author : Amarao

@@ -7,6 +7,8 @@ import android.os.IBinder
 import android.os.Message
 import com.liang.batterytestsystem.base.LBaseService
 import com.liang.batterytestsystem.module.config.UdpEvent
+import com.liang.batterytestsystem.module.home.DeviceCommand
+import com.liang.batterytestsystem.module.home.DeviceCreateFactory
 import com.liang.batterytestsystem.module.home.DeviceItemBean
 import com.liang.batterytestsystem.module.item.DeviceItemChannelBean
 import com.liang.batterytestsystem.module.socket.ReceiveUtils
@@ -18,10 +20,10 @@ import java.lang.ref.WeakReference
 /**
  * @author : Amarao
  * CreateAt : 13:16 2019/2/28
- * Describe : 设备管理类
+ * Describe : 设备管理服务类
  *
  */
-class DeviceService : LBaseService() {
+class DeviceMgrService : LBaseService() {
 
     val mHandler = MyHandler(this)
     val mRecvName = "接收线程"
@@ -29,7 +31,34 @@ class DeviceService : LBaseService() {
 
     override fun onCreate() {
         super.onCreate()
+        createDevice()
         ReceiveUtils.receiveMessage(mRecvName)
+    }
+
+    fun createDevice() {
+        //创建设备
+        val device1 = DeviceCreateFactory.createDevice(DeviceCommand.DEVICE_1)
+        val device2 = DeviceCreateFactory.createDevice(DeviceCommand.DEVICE_2)
+        val device3 = DeviceCreateFactory.createDevice(DeviceCommand.DEVICE_3)
+        val device4 = DeviceCreateFactory.createDevice(DeviceCommand.DEVICE_4)
+        // 设备列表生成
+        addDeviceList(device1, device2, device3, device4)
+
+    }
+
+
+    private fun addDeviceList(vararg deviceList: DeviceItemBean) {
+        sDeviceList.addAll(deviceList)
+        sDeviceList.forEach {
+            it.addChannelList(
+                    // 为每台设备添加测试通道
+                    DeviceCreateFactory.createDeviceChannelList(it,
+                            DeviceCommand.CHANNEL_1, DeviceCommand.CHANNEL_2, DeviceCommand.CHANNEL_3, DeviceCommand.CHANNEL_4,
+                            DeviceCommand.CHANNEL_5, DeviceCommand.CHANNEL_6, DeviceCommand.CHANNEL_7, DeviceCommand.CHANNEL_8
+//                            DeviceCommand.CHANNEL_9, DeviceCommand.CHANNEL_10, DeviceCommand.CHANNEL_11, DeviceCommand.CHANNEL_12,
+//                            DeviceCommand.CHANNEL_13, DeviceCommand.CHANNEL_14, DeviceCommand.CHANNEL_15, DeviceCommand.CHANNEL_16
+                    ))
+        }
     }
 
     override fun onDestroy() {
@@ -97,9 +126,9 @@ class DeviceService : LBaseService() {
     }
 
     // 静态Handler
-    class MyHandler(service: DeviceService) : Handler() {
+    class MyHandler(service: DeviceMgrService) : Handler() {
 
-        internal var mWeakReference: WeakReference<DeviceService>
+        internal var mWeakReference: WeakReference<DeviceMgrService>
 
         init {
             mWeakReference = WeakReference(service)
@@ -117,17 +146,21 @@ class DeviceService : LBaseService() {
         }
     }
 
+
     companion object {
 
-        val sDeviceTestChannelList: MutableList<DeviceItemChannelBean> = ArrayList() // 选中通道
+        val sDeviceList: MutableList<DeviceItemBean> = ArrayList() // 所有的设备
         val sDeviceItemBeanList: MutableList<DeviceItemBean> = ArrayList() // 选中设备
+        val sDeviceTestChannelList: MutableList<DeviceItemChannelBean> = ArrayList() // 选中通道
 
         fun startService(context: Context) {
-            context.startService(Intent(context, DeviceService::class.java))
+            context.startService(Intent(context, DeviceMgrService::class.java))
         }
+
     }
 
-    override fun onBind(intent: Intent?): IBinder {
+
+    override fun onBind(intent: Intent): IBinder {
         LLogX.e("onBind")
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
