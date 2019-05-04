@@ -19,7 +19,7 @@ class Router {
 
         @JvmStatic // 启动设备详情页
         fun startDeviceDetailTest(context: Context, bean: DeviceItemChannelBean) {
-            NewDeviceDetails.startActivity(context)
+            NewDeviceDetails.startActivity(context, bean)
         }
 
         @JvmStatic // 启动设备详情页
