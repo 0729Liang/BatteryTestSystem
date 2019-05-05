@@ -8,6 +8,8 @@ import com.chad.library.adapter.base.BaseViewHolder
 import com.liang.batterytestsystem.R
 import com.liang.batterytestsystem.module.item.DeviceItemChannelAdapter
 import com.liang.batterytestsystem.utils.DigitalTrans
+import com.liang.liangutils.utils.LLogX
+import org.jetbrains.annotations.NotNull
 
 /**
  * @author : Amarao
@@ -17,6 +19,8 @@ import com.liang.batterytestsystem.utils.DigitalTrans
  */
 class DeviceItemAdapter(data: List<DeviceItemBean>?)
     : BaseQuickAdapter<DeviceItemBean, BaseViewHolder>(R.layout.item_device, data) {
+
+    var mChannelAdpterList: MutableList<DeviceItemChannelAdapter> = ArrayList()
 
     override fun convert(helper: BaseViewHolder, item: DeviceItemBean) {
         val checkBox = helper.getView<CheckBox>(R.id.mvItemDeviceCheckbox)
@@ -33,7 +37,22 @@ class DeviceItemAdapter(data: List<DeviceItemBean>?)
         mLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
         mRecyclerView.layoutManager = mLayoutManager
         mRecyclerView.adapter = mChannelAdpter
+        mChannelAdpter.bindToRecyclerView(mRecyclerView)
 
+        mChannelAdpterList.add(mChannelAdpter)
+    }
+
+    override fun remove(position: Int) {
+        super.remove(position)
+        mChannelAdpterList.removeAt(position)
+    }
+
+    // 布告栏
+    fun notification(@NotNull byteArray: ByteArray) {
+        LLogX.e(" x = " + mChannelAdpterList.size)
+        mChannelAdpterList.forEach {
+            it.updateStatus(byteArray)
+        }
     }
 
 }

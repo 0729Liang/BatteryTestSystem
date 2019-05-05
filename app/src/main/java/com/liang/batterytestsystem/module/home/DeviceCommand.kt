@@ -17,10 +17,10 @@ class DeviceCommand {
     // 命令格式（16位）： 帧头+高位节数+低位字节数+控制命令+设备号+通道号+校验和+帧尾
     companion object {
         // 帧头
-        private val FRAME_HEADER: Byte = 0x7B
+        val FRAME_HEADER: Byte = 0x7B
         // 总字节数
-        private val ALL_HIGH_NUMBER: Byte = 0x00
-        private val ALL_LOW_NUMBER: Byte = 0x00
+        val ALL_HIGH_NUMBER: Byte = 0x00
+        val ALL_LOW_NUMBER: Byte = 0x00
         // 控制命令
         val COMMAND_START_TEST: Byte = 0x8F.toByte() // 启动
         val COMMAND_PAUSE_TEST: Byte = 0x65 // 暂停

@@ -1,6 +1,7 @@
 package com.liang.batterytestsystem.module.socket;
 
 import com.liang.batterytestsystem.module.config.UdpInfoStorage;
+import com.liang.batterytestsystem.module.service.DeviceQueryEvent;
 import com.liang.batterytestsystem.utils.DigitalTrans;
 import com.liang.batterytestsystem.utils.LThreadPoolMgr;
 import com.liang.liangutils.utils.LLogX;
@@ -51,6 +52,9 @@ public class ReceiveUtils {
                     socket.receive(packet);
                     String receive = DigitalTrans.byte2hex(packet.getData());
                     LLogX.e(recvName + "接收" + receive.length() / 2 + "字节 内容:" + receive);
+
+                    // 发出查询信息
+                    DeviceQueryEvent.postQueryChannelStatusResult(receBuf);
 
                 } catch (IOException e) {
                     e.printStackTrace();

@@ -288,7 +288,7 @@ public class DigitalTrans {
      * @param hex 十六进制字符串
      * @return byte 转换结果
      */
-    public static byte[] hexStringToByte(String hex) {
+    private static byte[] hexStringToByte(String hex) {
         int max = hex.length() / 2;
         byte[] bytes = new byte[max];
         String binarys = DigitalTrans.hexStringToBinary(hex);

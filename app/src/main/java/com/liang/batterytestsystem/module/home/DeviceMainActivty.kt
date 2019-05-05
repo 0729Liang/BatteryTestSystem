@@ -10,14 +10,20 @@ import com.liang.batterytestsystem.exts.Router
 import com.liang.batterytestsystem.module.data.DeviceDataAnalysisUtils
 import com.liang.batterytestsystem.module.device.DeviceStatus
 import com.liang.batterytestsystem.module.service.DeviceMgrService
+import com.liang.batterytestsystem.module.service.DeviceQueryEvent
+import com.liang.batterytestsystem.module.service.DeviceQueryService
+import com.liang.batterytestsystem.module.service.DeviceTestEvent
 import com.liang.batterytestsystem.utils.DigitalTrans
 import com.liang.batterytestsystem.view.DeviceOperWindow
 import com.liang.liangutils.utils.LLogX
 import kotlinx.android.synthetic.main.activity_device_main_activty.*
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 class DeviceMainActivty : LAbstractBaseActivity() {
 
     val mSendName = "发送线程"
+    lateinit var mDeviceItemAdapter: DeviceItemAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +36,7 @@ class DeviceMainActivty : LAbstractBaseActivity() {
         initView()
         clicEvent()
 
-        DeviceDataAnalysisUtils.test()
+        //DeviceDataAnalysisUtils.test()
     }
 
 
@@ -44,7 +50,8 @@ class DeviceMainActivty : LAbstractBaseActivity() {
         val layoutManager = LinearLayoutManager(this)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
         mvMain2RecycleView.layoutManager = layoutManager
-        mvMain2RecycleView.adapter = DeviceItemAdapter(DeviceMgrService.sDeviceList)
+        mDeviceItemAdapter = DeviceItemAdapter(DeviceMgrService.sDeviceList)
+        mvMain2RecycleView.adapter = mDeviceItemAdapter
     }
 
     override fun clicEvent() {
@@ -128,6 +135,19 @@ class DeviceMainActivty : LAbstractBaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
         stopService(Intent(this, DeviceMgrService::class.java))
+        stopService(Intent(this, DeviceQueryService::class.java))
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onDeviceQueryEvent(event: DeviceQueryEvent) {
+        when (event.msg) {
+            DeviceQueryEvent.DEVICE_QUERY_CHANNEL_STATUS_RESULT -> {
+                // 发出通知
+                mDeviceItemAdapter.notification(event.queryResultByteArray)
+            }
+            else -> {
+
+            }
+        }
+    }
 }

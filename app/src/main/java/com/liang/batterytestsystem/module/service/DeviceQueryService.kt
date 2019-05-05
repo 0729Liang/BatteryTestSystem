@@ -24,6 +24,7 @@ class DeviceQueryService : LBaseService() {
     private val mSendName: String = " 轮询服务类： "
     private val mHandler: QueryHandler = QueryHandler(this)
 
+
     fun sendQueryDeviceChannelData() {
         // 查询数据 只管设备号，
         val commandList = DeviceCommand.createDeviceTestComposeCommandList(
