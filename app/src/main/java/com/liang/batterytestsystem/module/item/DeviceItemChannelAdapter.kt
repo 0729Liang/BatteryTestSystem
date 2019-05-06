@@ -68,6 +68,8 @@ class DeviceItemChannelAdapter(data: List<DeviceItemChannelBean>?)
          * 1字节总帧头 7B   -> 0
          * 1字节命令（0x80） -> 3
          * 1字节设备号  -> 4
+         *
+         *
          */
         if (byteArray[0] == DeviceCommand.FRAME_HEADER && byteArray[3] == DeviceCommand.COMMAND_QUERY_CHANNEL_STATUS_TEST) {
             LLogX.e("设备号 = " + DigitalTrans.byte2hex(byteArray[4]))
