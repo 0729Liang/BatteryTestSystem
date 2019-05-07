@@ -146,10 +146,12 @@ class DeviceMgrService : LBaseService() {
         }
     }
 
+    /**
+     * 功能：更新选中设备的状态，并通知adapter更新
+     *
+     */
     private fun updateDeviceChannelStatus(byteArray: ByteArray) {
-//        LLogX.e("设备号 = " + DigitalTrans.byte2hex(byteArray[4]))
         if (byteArray[0] == DeviceCommand.FRAME_HEADER && byteArray[3] == DeviceCommand.COMMAND_QUERY_CHANNEL_STATUS_TEST) {
-            LLogX.e("设备号 = " + DigitalTrans.byte2hex(byteArray[4]))
             /**
              *
              * 1字节总帧头 7B   -> 0
@@ -179,9 +181,7 @@ class DeviceMgrService : LBaseService() {
                                 channelBean.deviceStatus = DeviceStatus.STOP
                             }
                         }
-//                        if (channelIndex < 3) {
-//                            LLogX.e("设备" + DigitalTrans.byte2hex(byteArray[4]) + "通道" + channelIndex + " STATUS = " + DigitalTrans.byte2hex(status))
-//                        }
+
                         // 更新一台设备数据
                         DeviceQueryEvent.postUpdateNotification(deviceBean.deviceId, channelBean.channelId)
                     }

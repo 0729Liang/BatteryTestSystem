@@ -36,23 +36,10 @@ class DeviceItemAdapter(data: List<DeviceItemBean>?)
         helper.setText(R.id.mvItemDeviceId, "设备号: " + DigitalTrans.byte2hex(byteArrayOf(item.deviceId)))
 
         val mRecyclerView = helper.getView<RecyclerView>(R.id.mvItemDeviceRecycleView)
-        //val mChannelAdpter = DeviceItemChannelAdapter(item.channelList)
         val mLayoutManager = LinearLayoutManager(mContext)
         mLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
         mRecyclerView.layoutManager = mLayoutManager
         mRecyclerView.adapter = item.channelAdapter
-
-        //mChannelAdpterList.add(mChannelAdpter)
-
-    }
-
-
-    // 布告栏
-    fun notification(@NotNull byteArray: ByteArray) {
-        LLogX.e(" x = " + mChannelAdpterList.size)
-        mChannelAdpterList.forEach {
-            it.updateStatus(byteArray)
-        }
     }
 
 }

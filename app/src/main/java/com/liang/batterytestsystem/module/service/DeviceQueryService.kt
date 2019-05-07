@@ -25,14 +25,6 @@ class DeviceQueryService : LBaseService() {
     private val mHandler: QueryHandler = QueryHandler(this)
 
 
-    override fun onCreate() {
-        super.onCreate()
-
-        postHandlerQueryAllDeviceChannelStatus()
-
-    }
-
-
     // 网络发送查询数据命令
     fun sendQueryDeviceChannelData() {
         // 查询数据 只管设备号，
