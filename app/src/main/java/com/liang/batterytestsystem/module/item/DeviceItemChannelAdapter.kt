@@ -25,7 +25,6 @@ class DeviceItemChannelAdapter(data: List<DeviceItemChannelBean>?)
     override fun convert(helper: BaseViewHolder, item: DeviceItemChannelBean) {
         val checkBox = helper.getView(R.id.mvItemDeviceChannelCheckbox) as CheckBox
 
-        LLogX.e(" a = " + helper.adapterPosition)
         // 状态同步
         checkBox.isChecked = item.checkState
 
@@ -37,6 +36,8 @@ class DeviceItemChannelAdapter(data: List<DeviceItemChannelBean>?)
         helper.setText(R.id.mvItemDeviceChannelPower, "功率: " + item.power.toString() + " W")
         helper.setText(R.id.mvItemDeviceChannelTemp, "温度: " + item.temperture.toString() + " ℃")
         helper.setText(R.id.mvItemDeviceChannelAh, "安时: " + item.ampereHour.toString() + " Ah")
+        // tag赋值
+        helper.setText(R.id.mvItemDeviceChannelStatusTag, item.deviceStatus.statusName)
 
         checkBox.setOnClickListener {
             val view = it as CheckBox
@@ -53,12 +54,6 @@ class DeviceItemChannelAdapter(data: List<DeviceItemChannelBean>?)
         }
 
     }
-
-    override fun remove(position: Int) {
-        super.remove(position)
-        LLogX.e(" r = " + position)
-    }
-
 
     // 更新数据状态
     fun updateStatus(@NotNull byteArray: ByteArray) {

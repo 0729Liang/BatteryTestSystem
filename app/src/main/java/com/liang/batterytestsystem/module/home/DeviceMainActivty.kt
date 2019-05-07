@@ -71,22 +71,12 @@ class DeviceMainActivty : LAbstractBaseActivity() {
         mvMain2DeviceMore.setOnClickListener {
             DeviceOperWindow.create(this).show(it)
                     .addTestPauseClickEvent {
-                        //                        val list = DeviceMgrService.sDeviceTestChannelList
-//                        ToastUtils.showShort("发送暂停 测试通道数=" + list.size)
-//                        val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_PAUSE_TEST)
-//                        DeviceCommand.sendCommandList(commandList, mSendName)
-
                         val deviceItemBeanList = DeviceMgrService.sDeviceItemBeanList
                         val commandList = DeviceCommand.createDeviceTestComposeCommandList(deviceItemBeanList, DeviceCommand.COMMAND_PAUSE_TEST, true)
                         ToastUtils.showShort("发送暂停 设备数 =" + deviceItemBeanList.size + " 命令数 = " + commandList.size)
                         DeviceCommand.sendCommandList(commandList, mSendName)
                     }
                     .addTestResumeClickEvent {
-                        //                        val list = DeviceMgrService.sDeviceTestChannelList
-//                        ToastUtils.showShort("发送继续 测试通道数=" + list.size)
-//                        val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_RESUME_TEST)
-//                        DeviceCommand.sendCommandList(commandList, mSendName)
-
                         val deviceItemBeanList = DeviceMgrService.sDeviceItemBeanList
                         val commandList = DeviceCommand.createDeviceTestComposeCommandList(deviceItemBeanList, DeviceCommand.COMMAND_RESUME_TEST, true)
                         ToastUtils.showShort("发送继续 设备数 =" + deviceItemBeanList.size + " 命令数 = " + commandList.size)
@@ -97,7 +87,6 @@ class DeviceMainActivty : LAbstractBaseActivity() {
 //                        ToastUtils.showShort("发送停止 测试通道数=" + list.size)
 //                        val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_PAUSE_TEST)
 //                        DeviceCommand.sendCommandList(commandList, mSendName)
-
                         val deviceItemBeanList = DeviceMgrService.sDeviceItemBeanList
                         val commandList = DeviceCommand.createDeviceTestComposeCommandList(deviceItemBeanList, DeviceCommand.COMMAND_STOP_TEST, true)
                         ToastUtils.showShort("发送停止 设备数 =" + deviceItemBeanList.size + " 命令数 = " + commandList.size)
@@ -105,10 +94,6 @@ class DeviceMainActivty : LAbstractBaseActivity() {
                     }
                     // 通道单独发
                     .addQueryDataClickEvent {
-                        //                        val list = DeviceMgrService.sDeviceTestChannelList
-//                        ToastUtils.showShort("发送查询数据 测试通道数=" + list.size)
-//                        val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_QUERY_DATA_TEST)
-//                        DeviceCommand.sendCommandList(commandList, mSendName)
 
                         // 查询数据 只管设备号，
                         val deviceItemBeanList = DeviceMgrService.sDeviceItemBeanList
@@ -141,9 +126,17 @@ class DeviceMainActivty : LAbstractBaseActivity() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onDeviceQueryEvent(event: DeviceQueryEvent) {
         when (event.msg) {
-            DeviceQueryEvent.DEVICE_QUERY_CHANNEL_STATUS_RESULT -> {
-                // 发出通知
-                mDeviceItemAdapter.notification(event.queryResultByteArray)
+            DeviceQueryEvent.DEVICE_DATA_UPDATE_NOTIFICATION -> {
+                // 更新指定设备
+                DeviceMgrService.sDeviceList.forEachIndexed { deviceIndex, deviceBean ->
+                    if (deviceBean.deviceId == event.deviceId) { // 同一设备
+                        deviceBean.channelList.forEachIndexed { channelIndex, channelBean ->
+                            if (channelBean.channelId == event.channelId) { // 同一通道
+                                deviceBean.channelAdapter.notifyItemChanged(channelIndex)
+                            }
+                        }
+                    }
+                }
             }
             else -> {
 

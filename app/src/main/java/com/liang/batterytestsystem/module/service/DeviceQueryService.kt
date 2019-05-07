@@ -25,6 +25,15 @@ class DeviceQueryService : LBaseService() {
     private val mHandler: QueryHandler = QueryHandler(this)
 
 
+    override fun onCreate() {
+        super.onCreate()
+
+        postHandlerQueryAllDeviceChannelStatus()
+
+    }
+
+
+    // 网络发送查询数据命令
     fun sendQueryDeviceChannelData() {
         // 查询数据 只管设备号，
         val commandList = DeviceCommand.createDeviceTestComposeCommandList(
@@ -34,9 +43,14 @@ class DeviceQueryService : LBaseService() {
         DeviceCommand.sendCommandList(commandList, mSendName)
     }
 
-    /**
-     * 功能：发送查询所有设备的通道状态命令
-     */
+    // handler 发送查询所有设备的通道状态命令
+    fun postHandlerQueryAllDeviceChannelStatus() {
+        if (!mHandler.hasMessages(QUERY_ALL_DEVICE_CHANNEL_STATUS)) {
+            mHandler.sendEmptyMessageDelayed(QUERY_ALL_DEVICE_CHANNEL_STATUS, 3000)
+        }
+    }
+
+    // 网络发送查询所有设备的通道状态命令
     fun sendQueryAllDeviceChannelStatus() {
         val commandList = DeviceCommand.createDeviceTestComposeCommandList(
                 DeviceMgrService.sDeviceList,
@@ -61,7 +75,8 @@ class DeviceQueryService : LBaseService() {
                 when (msg.what) {
                     QUERY_ALL_DEVICE_CHANNEL_STATUS -> {
                         service.sendQueryAllDeviceChannelStatus()
-                        service.mHandler.sendEmptyMessageDelayed(QUERY_ALL_DEVICE_CHANNEL_STATUS, 3000)
+                        //service.mHandler.sendEmptyMessageDelayed(QUERY_ALL_DEVICE_CHANNEL_STATUS, 3000)
+                        service.postHandlerQueryAllDeviceChannelStatus()
                     }
                     QUERY_CHOOSE_DEVICE_CHANNEL_DATA -> {
                         service.sendQueryDeviceChannelData()

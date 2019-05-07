@@ -1,6 +1,7 @@
 package com.liang.batterytestsystem.module.home
 
 import com.liang.batterytestsystem.module.device.DeviceStatus
+import com.liang.batterytestsystem.module.item.DeviceItemChannelAdapter
 import com.liang.batterytestsystem.module.item.DeviceItemChannelBean
 import com.liang.batterytestsystem.utils.DigitalTrans
 import com.liang.liangutils.utils.LLogX
@@ -13,10 +14,10 @@ import com.liang.liangutils.utils.LLogX
  */
 class DeviceItemBean(var deviceId: Byte) {
     var checkState = false // 通道选中状态
-    var deviceStatus = DeviceStatus.OFFLINE // 设备连接状态
     val channelList: MutableList<DeviceItemChannelBean> = ArrayList()// 所有设备通道
-
     val channeChooselList: MutableList<DeviceItemChannelBean> = ArrayList()// 选中设备通道
+
+    val channelAdapter = DeviceItemChannelAdapter(channelList)
 
     // 添加通道
     fun addChannel(channelBean: DeviceItemChannelBean) {

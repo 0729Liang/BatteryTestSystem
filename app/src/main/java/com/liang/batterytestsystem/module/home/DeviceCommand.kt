@@ -45,8 +45,8 @@ class DeviceCommand {
 
         val CHANNEL_1: Byte = 0x1
         val CHANNEL_2: Byte = 0x2
-        val CHANNEL_3: Byte = 0x3
-        val CHANNEL_4: Byte = 0x4
+        val CHANNEL_3: Byte = 0x4
+        val CHANNEL_4: Byte = 0x8
 
         val CHANNEL_5: Byte = 0x10
         val CHANNEL_6: Byte = 0x20

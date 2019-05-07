@@ -22,6 +22,10 @@ class DeviceItemAdapter(data: List<DeviceItemBean>?)
 
     var mChannelAdpterList: MutableList<DeviceItemChannelAdapter> = ArrayList()
 
+    init {
+
+    }
+
     override fun convert(helper: BaseViewHolder, item: DeviceItemBean) {
         val checkBox = helper.getView<CheckBox>(R.id.mvItemDeviceCheckbox)
 
@@ -32,20 +36,16 @@ class DeviceItemAdapter(data: List<DeviceItemBean>?)
         helper.setText(R.id.mvItemDeviceId, "设备号: " + DigitalTrans.byte2hex(byteArrayOf(item.deviceId)))
 
         val mRecyclerView = helper.getView<RecyclerView>(R.id.mvItemDeviceRecycleView)
-        val mChannelAdpter = DeviceItemChannelAdapter(item.channelList)
+        //val mChannelAdpter = DeviceItemChannelAdapter(item.channelList)
         val mLayoutManager = LinearLayoutManager(mContext)
         mLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
         mRecyclerView.layoutManager = mLayoutManager
-        mRecyclerView.adapter = mChannelAdpter
-        mChannelAdpter.bindToRecyclerView(mRecyclerView)
+        mRecyclerView.adapter = item.channelAdapter
 
-        mChannelAdpterList.add(mChannelAdpter)
+        //mChannelAdpterList.add(mChannelAdpter)
+
     }
 
-    override fun remove(position: Int) {
-        super.remove(position)
-        mChannelAdpterList.removeAt(position)
-    }
 
     // 布告栏
     fun notification(@NotNull byteArray: ByteArray) {

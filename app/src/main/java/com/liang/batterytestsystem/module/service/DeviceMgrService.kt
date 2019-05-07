@@ -5,13 +5,17 @@ import android.content.Intent
 import android.os.Handler
 import android.os.IBinder
 import android.os.Message
+import android.widget.TextView
+import com.liang.batterytestsystem.R
 import com.liang.batterytestsystem.base.LBaseService
 import com.liang.batterytestsystem.module.config.UdpEvent
+import com.liang.batterytestsystem.module.device.DeviceStatus
 import com.liang.batterytestsystem.module.home.DeviceCommand
 import com.liang.batterytestsystem.module.home.DeviceCreateFactory
 import com.liang.batterytestsystem.module.home.DeviceItemBean
 import com.liang.batterytestsystem.module.item.DeviceItemChannelBean
 import com.liang.batterytestsystem.module.socket.ReceiveUtils
+import com.liang.batterytestsystem.utils.DigitalTrans
 import com.liang.liangutils.utils.LLogX
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -55,8 +59,6 @@ class DeviceMgrService : LBaseService() {
                     DeviceCreateFactory.createDeviceChannelList(it,
                             DeviceCommand.CHANNEL_1, DeviceCommand.CHANNEL_2, DeviceCommand.CHANNEL_3, DeviceCommand.CHANNEL_4,
                             DeviceCommand.CHANNEL_5, DeviceCommand.CHANNEL_6, DeviceCommand.CHANNEL_7, DeviceCommand.CHANNEL_8
-//                            DeviceCommand.CHANNEL_9, DeviceCommand.CHANNEL_10, DeviceCommand.CHANNEL_11, DeviceCommand.CHANNEL_12,
-//                            DeviceCommand.CHANNEL_13, DeviceCommand.CHANNEL_14, DeviceCommand.CHANNEL_15, DeviceCommand.CHANNEL_16
                     ))
         }
     }
@@ -72,7 +74,6 @@ class DeviceMgrService : LBaseService() {
         when (event.msg) {
             UdpEvent.EVENT_CREATE_NEW_UDP_RECV -> {
                 ReceiveUtils.receiveMessage(mRecvName)
-                //LLogX.e("更改监听："+UdpInfoStorage.getClientListenPort())
             }
         }
     }
@@ -122,6 +123,72 @@ class DeviceMgrService : LBaseService() {
                     DeviceTestEvent.showDeviceInfo(false, bean)
                 }
             }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onDeviceQueryEvent(event: DeviceQueryEvent) {
+        when (event.msg) {
+            DeviceQueryEvent.DEVICE_QUERY_CHANNEL_STATUS_RESULT -> {
+                val byteArray = event.queryResultByteArray
+                // LLogX.e("设备号 = " + DigitalTrans.byte2hex(byteArray!![4])+" count = "+event.count)
+                // 如果是查询通道状态命令
+                if (event.queryResultByteArray != null) {
+                    updateDeviceChannelStatus(event.queryResultByteArray!!)
+                } // if 查询通道状态
+            }
+            DeviceQueryEvent.TEST -> {
+                LLogX.e("xxxxx = " + event.count + " yyyy = " + DigitalTrans.byte2hex(event.queryResultByteArray!![0]))
+            }
+            else -> {
+
+            }
+        }
+    }
+
+    private fun updateDeviceChannelStatus(byteArray: ByteArray) {
+//        LLogX.e("设备号 = " + DigitalTrans.byte2hex(byteArray[4]))
+        if (byteArray[0] == DeviceCommand.FRAME_HEADER && byteArray[3] == DeviceCommand.COMMAND_QUERY_CHANNEL_STATUS_TEST) {
+            LLogX.e("设备号 = " + DigitalTrans.byte2hex(byteArray[4]))
+            /**
+             *
+             * 1字节总帧头 7B   -> 0
+             * 1字节命令（0x80） -> 3
+             * 1字节设备号  -> 4
+             *
+             */
+
+            // 更新每条数据的tag标签
+            sDeviceItemBeanList.forEachIndexed { deviceIndex, deviceBean ->
+                if (deviceBean.deviceId == byteArray[4]) {
+                    deviceBean.channelList.forEachIndexed { channelIndex, channelBean ->
+                        // 共计 15 通道;通道信息位 n(0-14) = 6+x*4
+                        // min=6;max=2+15*4=62; 步长 4
+                        val status = byteArray.get(channelIndex * 4 + 6)
+                        when (status) {
+                            DeviceStatus.OFFLINE.statusKey -> {
+                                channelBean.deviceStatus = DeviceStatus.OFFLINE
+                            }
+                            DeviceStatus.ONLINE.statusKey -> {
+                                channelBean.deviceStatus = DeviceStatus.ONLINE
+                            }
+                            DeviceStatus.TESTPAUSE.statusKey -> {
+                                channelBean.deviceStatus = DeviceStatus.TESTPAUSE
+                            }
+                            DeviceStatus.STOP.statusKey -> {
+                                channelBean.deviceStatus = DeviceStatus.STOP
+                            }
+                        }
+//                        if (channelIndex < 3) {
+//                            LLogX.e("设备" + DigitalTrans.byte2hex(byteArray[4]) + "通道" + channelIndex + " STATUS = " + DigitalTrans.byte2hex(status))
+//                        }
+                        // 更新一台设备数据
+                        DeviceQueryEvent.postUpdateNotification(deviceBean.deviceId, channelBean.channelId)
+                    }
+                    return
+                } // deviceBean.channelList
+            } // sDeviceList.forEachIndexed
+
         }
     }
 

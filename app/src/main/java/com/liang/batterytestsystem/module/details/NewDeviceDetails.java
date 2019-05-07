@@ -23,6 +23,7 @@ import com.liang.batterytestsystem.R;
 import com.liang.batterytestsystem.base.LAbstractBaseActivity;
 import com.liang.batterytestsystem.constant.DeviceKey;
 import com.liang.batterytestsystem.module.item.DeviceItemChannelBean;
+import com.liang.batterytestsystem.module.service.DeviceQueryEvent;
 import com.liang.batterytestsystem.utils.DigitalTrans;
 import com.liang.batterytestsystem.utils.LColor;
 import com.liang.liangutils.mgrs.LKVMgr;
@@ -156,10 +157,13 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.mTestBtn1:
-                mDetailHandler.sendEmptyMessageDelayed(MSG_ADD_DATASET, 1000);
+                //mDetailHandler.sendEmptyMessageDelayed(MSG_ADD_DATASET, 1000);
+                DeviceQueryEvent.test(1);
+                DeviceQueryEvent.test(2);
                 break;
             case R.id.mTestBtn2:
-                LLogX.e("共 " + mLineData.getDataSetCount());
+                DeviceQueryEvent.test(3);
+                //LLogX.e("共 " + mLineData.getDataSetCount());
                 break;
             case R.id.mDeviceDetailStepTime:
                 showLine(0);
