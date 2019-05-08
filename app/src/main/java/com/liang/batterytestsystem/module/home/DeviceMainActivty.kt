@@ -148,6 +148,6 @@ class DeviceMainActivty : LAbstractBaseActivity() {
             }
             else -> {
             }
-        }
-    }
+        }// when
+    } // onDeviceQueryEvent
 }

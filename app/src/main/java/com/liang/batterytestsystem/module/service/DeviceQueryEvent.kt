@@ -2,6 +2,7 @@ package com.liang.batterytestsystem.module.service
 
 import android.support.annotation.NonNull
 import com.liang.liangutils.msg.BusEvent
+import com.liang.liangutils.utils.LLogX
 
 /**
  * @author : Amarao

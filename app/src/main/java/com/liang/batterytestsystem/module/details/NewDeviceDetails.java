@@ -2,6 +2,7 @@ package com.liang.batterytestsystem.module.details;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LimitLine;
@@ -22,13 +24,19 @@ import com.github.mikephil.charting.jobs.MoveViewJob;
 import com.liang.batterytestsystem.R;
 import com.liang.batterytestsystem.base.LAbstractBaseActivity;
 import com.liang.batterytestsystem.constant.DeviceKey;
+import com.liang.batterytestsystem.module.home.DeviceCommand;
+import com.liang.batterytestsystem.module.home.DeviceItemBean;
 import com.liang.batterytestsystem.module.item.DeviceItemChannelBean;
+import com.liang.batterytestsystem.module.service.DeviceMgrService;
 import com.liang.batterytestsystem.module.service.DeviceQueryEvent;
 import com.liang.batterytestsystem.utils.DigitalTrans;
 import com.liang.batterytestsystem.utils.LColor;
 import com.liang.liangutils.mgrs.LKVMgr;
 import com.liang.liangutils.utils.LLogX;
 import com.liang.liangutils.view.LTitleView;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -153,43 +161,7 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
 
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.mTestBtn1:
-                //mDetailHandler.sendEmptyMessageDelayed(MSG_ADD_DATASET, 1000);
-                DeviceQueryEvent.test(1);
-                DeviceQueryEvent.test(2);
-                break;
-            case R.id.mTestBtn2:
-                DeviceQueryEvent.test(3);
-                //LLogX.e("共 " + mLineData.getDataSetCount());
-                break;
-            case R.id.mDeviceDetailStepTime:
-                showLine(0);
-
-                //mLineChart.getLineData().getDataSets().get(0).setVisible(true);
-                //mStepTimeDataSet.setVisible(true);
-                //mLineChart.invalidate();
-                break;
-            case R.id.mDeviceDetailElectric:
-                showLine(1);
-                break;
-            case R.id.mDeviceDetailVoltage:
-                showLine(2);
-                break;
-            case R.id.mDeviceDetailPower:
-                showLine(3);
-                break;
-            case R.id.mDeviceDetailTemperture:
-                showLine(4);
-                break;
-            case R.id.mDeviceDetailAmpereHour:
-                showLine(5);
-                break;
-            default:
-        }
-    }
+    List<DeviceItemBean> mDeviceList;
 
     /**
      * 初始化图表
@@ -211,40 +183,8 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
         //setMarkerView();
     }
 
-    private void setChartBasicAttr(LineChart lineChart) {
-        /***图表设置***/
-        lineChart.setDrawGridBackground(false); //是否展示网格线
-        lineChart.setDrawBorders(true); //是否显示边界
-        lineChart.setDragEnabled(true); //是否可以拖动
-        lineChart.setScaleEnabled(true); // 是否可以缩放
-        lineChart.setTouchEnabled(true); //是否有触摸事件
-        //设置XY轴动画效果
-        lineChart.animateY(2500);
-        lineChart.animateX(1500);
-    }
-
-    private void setXYAxis(LineChart lineChart) {
-        /***XY轴的设置***/
-        mXAxis = lineChart.getXAxis(); // x轴
-        mLeftYAxis = lineChart.getAxisLeft(); // 左侧Y轴
-        mRightYAxis = lineChart.getAxisRight(); // 右侧Y轴
-        mXAxis.setPosition(XAxis.XAxisPosition.BOTTOM); //X轴设置显示位置在底部
-        mXAxis.setAxisMinimum(0f); // 设置X轴的最小值
-        mXAxis.setAxisMaximum(200f); // 设置X轴的最大值
-        mXAxis.setLabelCount(200, false); // 设置X轴的刻度数量，第二个参数表示是否平均分配
-        mXAxis.setGranularity(1f); // 设置X轴坐标之间的最小间隔
-        mLineChart.setVisibleXRangeMaximum(6);// 当前统计图表中最多在x轴坐标线上显示的总量
-        //保证Y轴从0开始，不然会上移一点
-        mLeftYAxis.setAxisMinimum(0f);
-        mRightYAxis.setAxisMinimum(0f);
-        mLeftYAxis.setAxisMaximum(200f);
-        mRightYAxis.setAxisMaximum(200f);
-        mLeftYAxis.setGranularity(1f);
-        mRightYAxis.setGranularity(1f);
-        mLeftYAxis.setLabelCount(200);
-        mLineChart.setVisibleYRangeMaximum(10, YAxis.AxisDependency.LEFT);// 当前统计图表中最多在Y轴坐标线上显示的总量
-        mLineChart.setVisibleYRangeMaximum(20, YAxis.AxisDependency.RIGHT);// 当前统计图表中最多在Y轴坐标线上显示的总量
-    }
+    List<DeviceItemChannelBean> mChannelList;
+    private DeviceItemBean mDeviceItemBean;
 
     void createLegend() {
         /***折线图例 标签 设置***/
@@ -285,31 +225,7 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
         mLineChart.invalidate();
     }
 
-    /**
-     * 曲线初始化设置 一个LineDataSet 代表一条曲线
-     *
-     * @param lineDataSet 线条
-     * @param color       线条颜色
-     * @param mode
-     */
-    private void initLineDataSet(LineDataSet lineDataSet, int color, LineDataSet.Mode mode) {
-        lineDataSet.setColor(color); // 设置曲线颜色
-        lineDataSet.setCircleColor(color);  // 设置数据点圆形的颜色
-        lineDataSet.setDrawCircleHole(false);// 设置曲线值的圆点是否是空心
-        lineDataSet.setLineWidth(1f); // 设置折线宽度
-        lineDataSet.setCircleRadius(3f); // 设置折现点圆点半径
-        lineDataSet.setValueTextSize(10f);
-
-        lineDataSet.setDrawFilled(true); //设置折线图填充
-        lineDataSet.setFormLineWidth(1f);
-        lineDataSet.setFormSize(15.f);
-        if (mode == null) {
-            //设置曲线展示为圆滑曲线（如果不设置则默认折线）
-            lineDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-        } else {
-            lineDataSet.setMode(mode);
-        }
-    }
+    private DeviceItemChannelBean mChannelItemBean;
 
 
     /**
@@ -442,6 +358,142 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
             }
         }
     }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.mTestBtn1:
+                //mDetailHandler.sendEmptyMessageDelayed(MSG_ADD_DATASET, 1000);
+
+                // 查询数据 只管设备号，
+                List<DeviceItemBean> deviceItemBeanList = DeviceMgrService.Companion.getSDeviceItemBeanList();
+
+                List<byte[]> commandList = DeviceCommand.createDeviceTestComposeCommandList(deviceItemBeanList, DeviceCommand.Companion.getCOMMAND_QUERY_DATA_TEST(), false);
+                ToastUtils.showShort("发送查询数据 设备数 =" + deviceItemBeanList.size() + " 命令数 = " + commandList.size());
+                DeviceCommand.Companion.sendCommandList(commandList, "详情页");
+                break;
+            case R.id.mTestBtn2:
+                //LLogX.e("共 " + mLineData.getDataSetCount());
+                break;
+            case R.id.mDeviceDetailStepTime:
+                showLine(0);
+
+                //mLineChart.getLineData().getDataSets().get(0).setVisible(true);
+                //mStepTimeDataSet.setVisible(true);
+                //mLineChart.invalidate();
+                break;
+            case R.id.mDeviceDetailElectric:
+                showLine(1);
+                break;
+            case R.id.mDeviceDetailVoltage:
+                showLine(2);
+                break;
+            case R.id.mDeviceDetailPower:
+                showLine(3);
+                break;
+            case R.id.mDeviceDetailTemperture:
+                showLine(4);
+                break;
+            case R.id.mDeviceDetailAmpereHour:
+                showLine(5);
+                break;
+            default:
+        }
+    }
+
+    private void setChartBasicAttr(LineChart lineChart) {
+        /***图表设置***/
+        lineChart.setDrawGridBackground(false); //是否展示网格线
+        lineChart.setDrawBorders(true); //是否显示边界
+        lineChart.setDragEnabled(true); //是否可以拖动
+        lineChart.setScaleEnabled(true); // 是否可以缩放
+        lineChart.setTouchEnabled(true); //是否有触摸事件
+
+        //设置XY轴动画效果
+        lineChart.animateY(2500);
+        lineChart.animateX(1500);
+    }
+
+    private void setXYAxis(LineChart lineChart) {
+        /***XY轴的设置***/
+        mXAxis = lineChart.getXAxis(); // x轴
+        mLeftYAxis = lineChart.getAxisLeft(); // 左侧Y轴
+        mRightYAxis = lineChart.getAxisRight(); // 右侧Y轴
+        mXAxis.setPosition(XAxis.XAxisPosition.BOTTOM); //X轴设置显示位置在底部
+        mXAxis.setAxisMinimum(0f); // 设置X轴的最小值
+        mXAxis.setAxisMaximum(500f); // 设置X轴的最大值
+        mXAxis.setLabelCount(500, false); // 设置X轴的刻度数量，第二个参数表示是否平均分配
+        mXAxis.setGranularity(1f); // 设置X轴坐标之间的最小间隔
+        mLineChart.setVisibleXRangeMaximum(6);// 当前统计图表中最多在x轴坐标线上显示的总量
+        //保证Y轴从0开始，不然会上移一点
+        mLeftYAxis.setAxisMinimum(0f);
+        mRightYAxis.setAxisMinimum(0f);
+        mLeftYAxis.setAxisMaximum(500f);
+        mRightYAxis.setAxisMaximum(500f);
+        mLeftYAxis.setGranularity(1f);
+        mRightYAxis.setGranularity(1f);
+        mLeftYAxis.setLabelCount(500);
+        mLineChart.setVisibleYRangeMaximum(10, YAxis.AxisDependency.LEFT);// 当前统计图表中最多在Y轴坐标线上显示的总量
+        mLineChart.setVisibleYRangeMaximum(20, YAxis.AxisDependency.RIGHT);// 当前统计图表中最多在Y轴坐标线上显示的总量
+//        mLeftYAxis.setCenterAxisLabels(true);// 将轴标记居中
+//        mLeftYAxis.setDrawZeroLine(true); // 原点处绘制 一条线
+//        mLeftYAxis.setZeroLineColor(Color.RED);
+//        mLeftYAxis.setZeroLineWidth(1f);
+
+    }
+
+    /**
+     * 曲线初始化设置 一个LineDataSet 代表一条曲线
+     *
+     * @param lineDataSet 线条
+     * @param color       线条颜色
+     * @param mode
+     */
+    private void initLineDataSet(LineDataSet lineDataSet, int color, LineDataSet.Mode mode) {
+        lineDataSet.setColor(color); // 设置曲线颜色
+        lineDataSet.setCircleColor(color);  // 设置数据点圆形的颜色
+        lineDataSet.setDrawCircleHole(false);// 设置曲线值的圆点是否是空心
+        lineDataSet.setLineWidth(1f); // 设置折线宽度
+        lineDataSet.setCircleRadius(3f); // 设置折现点圆点半径
+        lineDataSet.setValueTextSize(10f);
+
+        lineDataSet.setDrawFilled(false); //设置折线图填充
+        lineDataSet.setFormLineWidth(1f);
+        lineDataSet.setFormSize(15.f);
+        if (mode == null) {
+            //设置曲线展示为圆滑曲线（如果不设置则默认折线）
+            lineDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        } else {
+            lineDataSet.setMode(mode);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDeviceQueryEvent(DeviceQueryEvent event) {
+
+        if (event.msg.equals(DeviceQueryEvent.Companion.getDEVICE_DATA_UPDATE_DATA_NOTIFICATION())) {
+
+            mDeviceList = DeviceMgrService.Companion.getSDeviceList();
+            for (int i = 0; i < mDeviceList.size(); i++) {
+                mDeviceItemBean = mDeviceList.get(i);
+                // 同一设备
+                if (event.getDeviceId() == mDeviceItemBean.getDeviceId()) {
+
+                    mChannelList = mDeviceItemBean.getChannelList();
+
+                    for (int channelIndex = 0; channelIndex < mChannelList.size(); channelIndex++) {
+                        mChannelItemBean = mChannelList.get(i);
+                        // 同一通道
+                        if (event.getChannelId() == mChannelItemBean.getChannelId()) {
+                            LLogX.e(" dID = " + DigitalTrans.byte2hex(mDeviceItemBean.getDeviceId()) + " cId = " + DigitalTrans.byte2hex(mChannelItemBean.getChannelId()));
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+    } // onDeviceQueryEvent
 
     /**
      * 展示曲线
