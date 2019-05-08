@@ -134,7 +134,7 @@ class DeviceMainActivty : LAbstractBaseActivity() {
                     if (deviceBean.deviceId == event.deviceId) { // 同一设备
                         deviceBean.channelList.forEachIndexed { channelIndex, channelBean ->
                             if (channelBean.channelId == event.channelId) { // 同一通道
-                                LLogX.e("channelIndex = " + channelIndex + " id = " + DigitalTrans.byte2hex(event.channelId) + " toIndex = " + DigitalTrans.byte2hex(DeviceMgrService.getChannelIndex(event.channelId)) + " toInt " + DeviceMgrService.getChannelIndex(event.channelId).toInt())
+                                //LLogX.e("channelIndex = " + channelIndex + " id = " + DigitalTrans.byte2hex(event.channelId) + " toIndex = " + DigitalTrans.byte2hex(DeviceMgrService.getChannelIndex(event.channelId)) + " toInt " + DeviceMgrService.getChannelIndex(event.channelId).toInt())
 
                                 if (channelBean.deviceStatus == DeviceStatus.ONLINE) {
                                     deviceBean.channelAdapter.notifyItemChanged(channelIndex)

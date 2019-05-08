@@ -93,7 +93,7 @@ class DeviceMgrService : LBaseService() {
                 //添加到设备的内部连接通道List表中
                 if (!bean.deviceItemBean.channeChooselList.contains(bean)) {
                     bean.deviceItemBean.channeChooselList.add(bean)
-                    LLogX.e("add = " + DigitalTrans.byte2hex(bean.channelId))
+                    //LLogX.e("add = " + DigitalTrans.byte2hex(bean.channelId))
                 }
 
                 // 保存设备链表
@@ -202,7 +202,7 @@ class DeviceMgrService : LBaseService() {
 
         // 更新所有查询的数据
         val deviceID = DigitalTrans.byte2hex(byteArray[4])
-        LLogX.e("设备号 = " + deviceID)
+        //LLogX.e("设备号 = " + deviceID)
 
         sDeviceItemBeanList.forEachIndexed { deviceIndex, deviceBean ->
 
@@ -215,7 +215,7 @@ class DeviceMgrService : LBaseService() {
 
                         localChannelId = getLocalChannelIDByServerChannelID(index)
 
-                        LLogX.e("deviceID = " + DigitalTrans.byte2hex(deviceBean.deviceId) + " localChannelId = " + DigitalTrans.byte2hex(localChannelId) + " index = " + index.toInt())
+                        //LLogX.e("deviceID = " + DigitalTrans.byte2hex(deviceBean.deviceId) + " localChannelId = " + DigitalTrans.byte2hex(localChannelId) + " index = " + index.toInt())
 
                         val stepTimeArray = DeviceDataAnalysisUtils.getStepTime(byteArray, channelIndex)
                         val stepTimeFloat = DigitalTrans.byte2Float(stepTimeArray, 0) / 1000
@@ -246,7 +246,7 @@ class DeviceMgrService : LBaseService() {
                         }
 
 
-                        LLogX.e("deviceID = " + DigitalTrans.byte2hex(deviceBean.deviceId) + " channelID = " + DigitalTrans.byte2hex(channelBean.channelId) + " 步时间数组 = " + DigitalTrans.byte2hex(stepTimeArray) + " 步时间 = " + (stepTimeFloat))
+                        //LLogX.e("deviceID = " + DigitalTrans.byte2hex(deviceBean.deviceId) + " channelID = " + DigitalTrans.byte2hex(channelBean.channelId) + " 步时间数组 = " + DigitalTrans.byte2hex(stepTimeArray) + " 步时间 = " + (stepTimeFloat))
                         //LLogX.e("电流数组 = " + DigitalTrans.byte2hex(electricArray) + " 电流 = " + (electricFloat))
                         //LLogX.e("电压数组 = " + DigitalTrans.byte2hex(voltageArray) + " 电压 = " + (voltageFloat))
                         //LLogX.e("功率数组 = " + DigitalTrans.byte2hex(powerArray) + " 功率 = " + (powerFloat))
@@ -277,12 +277,17 @@ class DeviceMgrService : LBaseService() {
     var channelStatus: Byte = -1
 
     private fun updateDeviceChannelStatus(byteArray: ByteArray) {
+
+//        val deviceID = DigitalTrans.byte2hex(byteArray[4])
+//        LLogX.e("设备号 = " + deviceID)
         // 更新每条数据的tag标签
         sDeviceItemBeanList.forEachIndexed { deviceIndex, deviceBean ->
+
             if (deviceBean.deviceId == byteArray[4]) {
                 deviceBean.channelList.forEachIndexed { channelIndex, channelBean ->
                     // 共计 15 通道;通道信息位 n(0-14) = 6+x*4
                     // min=6;max=2+15*4=62; 步长 4
+
                     channelStatus = byteArray.get(DeviceDataAnalysisUtils.calcChannelStatusIndex(channelIndex))
 
                     when (channelStatus) {
@@ -404,10 +409,21 @@ class DeviceMgrService : LBaseService() {
                     return DeviceCommand.Companion.CHANNEL.CHANNEL_8.channelId
                 }
                 else -> return -1
-            }
+            }// when
+
         }
 
 
+        /**
+         * 功能：根据返回的通道ID，映射出本地的对应的设备ID
+         */
+
+//        fun getLocalDeviceIDByServerDeviceID(deviceID: Byte): Byte {
+//            when (deviceID) {
+//                0x01 -> {}
+//                else -> return -1
+//            } // when
+//        }
     }
 
 
