@@ -54,7 +54,7 @@ public class ReceiveUtils {
                     LLogX.e(recvName + "接收" + receive.length() / 2 + "字节 内容:" + receive);
 
                     // 发出查询信息
-                    DeviceQueryEvent.postQueryChannelStatusResult(receBuf);
+                    DeviceQueryEvent.postQueryDataResult(receBuf);
 
                 } catch (IOException e) {
                     e.printStackTrace();

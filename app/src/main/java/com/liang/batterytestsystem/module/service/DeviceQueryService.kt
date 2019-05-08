@@ -25,6 +25,13 @@ class DeviceQueryService : LBaseService() {
     private val mHandler: QueryHandler = QueryHandler(this)
 
 
+    override fun onCreate() {
+        super.onCreate()
+        //postHandlerQueryChooseDeviceTestData(false)
+        // postHandlerQueryAllDeviceChannelStatus(false)
+        val a = 0
+    }
+
     // 网络发送查询数据命令
     fun sendQueryDeviceChannelData() {
         // 查询数据 只管设备号，
@@ -36,9 +43,13 @@ class DeviceQueryService : LBaseService() {
     }
 
     // handler 发送查询所有设备的通道状态命令
-    fun postHandlerQueryAllDeviceChannelStatus() {
+    fun postHandlerQueryAllDeviceChannelStatus(delay: Boolean) {
         if (!mHandler.hasMessages(QUERY_ALL_DEVICE_CHANNEL_STATUS)) {
-            mHandler.sendEmptyMessageDelayed(QUERY_ALL_DEVICE_CHANNEL_STATUS, 3000)
+            if (delay) {
+                mHandler.sendEmptyMessageDelayed(QUERY_ALL_DEVICE_CHANNEL_STATUS, 3000)
+            } else {
+                mHandler.sendEmptyMessageDelayed(QUERY_ALL_DEVICE_CHANNEL_STATUS, 1000)
+            }
         }
     }
 
@@ -49,6 +60,17 @@ class DeviceQueryService : LBaseService() {
                 DeviceCommand.COMMAND_QUERY_CHANNEL_STATUS_TEST,
                 false)
         DeviceCommand.sendCommandList(commandList, mSendName)
+    }
+
+    // handler 发送查询所有设备的通道状态命令
+    fun postHandlerQueryChooseDeviceTestData(delay: Boolean) {
+        if (!mHandler.hasMessages(QUERY_CHOOSE_DEVICE_CHANNEL_DATA)) {
+            if (delay) {
+                mHandler.sendEmptyMessageDelayed(QUERY_CHOOSE_DEVICE_CHANNEL_DATA, 3000)
+            } else {
+                mHandler.sendEmptyMessageDelayed(QUERY_CHOOSE_DEVICE_CHANNEL_DATA, 1000)
+            }
+        }
     }
 
     // 静态Handler
@@ -68,11 +90,11 @@ class DeviceQueryService : LBaseService() {
                     QUERY_ALL_DEVICE_CHANNEL_STATUS -> {
                         service.sendQueryAllDeviceChannelStatus()
                         //service.mHandler.sendEmptyMessageDelayed(QUERY_ALL_DEVICE_CHANNEL_STATUS, 3000)
-                        service.postHandlerQueryAllDeviceChannelStatus()
+                        service.postHandlerQueryAllDeviceChannelStatus(true)
                     }
                     QUERY_CHOOSE_DEVICE_CHANNEL_DATA -> {
                         service.sendQueryDeviceChannelData()
-                        service.mHandler.sendEmptyMessageDelayed(QUERY_CHOOSE_DEVICE_CHANNEL_DATA, 3000)
+                        service.postHandlerQueryChooseDeviceTestData(true)
                     }
                     else -> {
                         LLogX.e("未匹配到查询命令")

@@ -47,7 +47,7 @@ class DeviceTestEvent : BusEvent() {
             if (add) s = "添加" else s = "移除"
 
 //            LLogX.e(s + "设备id=" + DigitalTrans.byte2hex(byteArrayOf(channelBean.deviceId)) +
-//                    " 通道ID=" + DigitalTrans.byte2hex(byteArrayOf(channelBean.channelId)))
+//                    " 通道ID=" + DigitalTrans.byte2hex(byteArrayOf(channelBean.localChannelId)))
 
         }
     }

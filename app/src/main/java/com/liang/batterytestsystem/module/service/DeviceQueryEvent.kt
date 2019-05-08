@@ -1,12 +1,7 @@
 package com.liang.batterytestsystem.module.service
 
 import android.support.annotation.NonNull
-import com.liang.batterytestsystem.module.device.DeviceEvent
-import com.liang.batterytestsystem.module.item.DeviceItemChannelBean
-import com.liang.batterytestsystem.utils.DigitalTrans
 import com.liang.liangutils.msg.BusEvent
-import com.liang.liangutils.utils.LLogX
-import java.text.FieldPosition
 
 /**
  * @author : Amarao
@@ -19,17 +14,19 @@ class DeviceQueryEvent : BusEvent() {
     var queryResultByteArray: ByteArray? = null
     var deviceId: Byte = -1
     var channelId: Byte = -1
+    var channelIndex: Int = -1
 
     var count = -1
 
     companion object {
         val DEVICE_QUERY_CHANNEL_STATUS_RESULT = "DEVICE_QUERY_CHANNEL_STATUS_RESULT"  // 通道状态查询结果
 
-        val DEVICE_DATA_UPDATE_NOTIFICATION = "DEVICE_DATA_UPDATE_NOTIFICATION" // 通知主线程需要数据更新
+        val DEVICE_DATA_UPDATE_CHANNEL_STATUS_NOTIFICATION = "DEVICE_DATA_UPDATE_CHANNEL_STATUS_NOTIFICATION" // 通知主线程需要通道状态
+        val DEVICE_DATA_UPDATE_DATA_NOTIFICATION = "DEVICE_DATA_UPDATE_DATA_NOTIFICATION" // 通知主线程更新设备数据
 
         val TEST = "TEST"
         @JvmStatic
-        fun postQueryChannelStatusResult(@NonNull queryResultByteArray: ByteArray) {
+        fun postQueryDataResult(@NonNull queryResultByteArray: ByteArray) {
 
             val event = DeviceQueryEvent()
             event.msg = DeviceQueryEvent.DEVICE_QUERY_CHANNEL_STATUS_RESULT
@@ -40,9 +37,19 @@ class DeviceQueryEvent : BusEvent() {
         }
 
         @JvmStatic
-        fun postUpdateNotification(deviceId: Byte, channelId: Byte) {
+        fun postUpdateChannelStatusNotification(deviceId: Byte, channelId: Byte) {
             val event = DeviceQueryEvent()
-            event.msg = DeviceQueryEvent.DEVICE_DATA_UPDATE_NOTIFICATION
+            event.msg = DeviceQueryEvent.DEVICE_DATA_UPDATE_CHANNEL_STATUS_NOTIFICATION
+            event.deviceId = deviceId
+            event.channelId = channelId
+            BusEvent.post(event)
+        }
+
+
+        @JvmStatic
+        fun postUpdateDataNotification(deviceId: Byte, channelId: Byte) {
+            val event = DeviceQueryEvent()
+            event.msg = DeviceQueryEvent.DEVICE_DATA_UPDATE_DATA_NOTIFICATION
             event.deviceId = deviceId
             event.channelId = channelId
             BusEvent.post(event)

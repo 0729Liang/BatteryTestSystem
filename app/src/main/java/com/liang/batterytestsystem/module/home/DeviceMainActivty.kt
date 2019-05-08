@@ -7,12 +7,10 @@ import com.blankj.utilcode.util.ToastUtils
 import com.liang.batterytestsystem.R
 import com.liang.batterytestsystem.base.LAbstractBaseActivity
 import com.liang.batterytestsystem.exts.Router
-import com.liang.batterytestsystem.module.data.DeviceDataAnalysisUtils
 import com.liang.batterytestsystem.module.device.DeviceStatus
 import com.liang.batterytestsystem.module.service.DeviceMgrService
 import com.liang.batterytestsystem.module.service.DeviceQueryEvent
 import com.liang.batterytestsystem.module.service.DeviceQueryService
-import com.liang.batterytestsystem.module.service.DeviceTestEvent
 import com.liang.batterytestsystem.utils.DigitalTrans
 import com.liang.batterytestsystem.view.DeviceOperWindow
 import com.liang.liangutils.utils.LLogX
@@ -36,7 +34,7 @@ class DeviceMainActivty : LAbstractBaseActivity() {
         initView()
         clicEvent()
 
-        DeviceDataAnalysisUtils.test()
+        //DeviceDataAnalysisUtils.test()
     }
 
 
@@ -83,10 +81,7 @@ class DeviceMainActivty : LAbstractBaseActivity() {
                         DeviceCommand.sendCommandList(commandList, mSendName)
                     }
                     .addStopClickEvent {
-                        //                        val list = DeviceMgrService.sDeviceTestChannelList
-//                        ToastUtils.showShort("发送停止 测试通道数=" + list.size)
-//                        val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_PAUSE_TEST)
-//                        DeviceCommand.sendCommandList(commandList, mSendName)
+
                         val deviceItemBeanList = DeviceMgrService.sDeviceItemBeanList
                         val commandList = DeviceCommand.createDeviceTestComposeCommandList(deviceItemBeanList, DeviceCommand.COMMAND_STOP_TEST, true)
                         ToastUtils.showShort("发送停止 设备数 =" + deviceItemBeanList.size + " 命令数 = " + commandList.size)
@@ -102,11 +97,6 @@ class DeviceMainActivty : LAbstractBaseActivity() {
                         DeviceCommand.sendCommandList(commandList, mSendName)
                     }
                     .addQueryChannelStatusClickEvent {
-                        //                        val list = DeviceMgrService.sDeviceTestChannelList
-//                        ToastUtils.showShort("发送查询通道状态 测试通道数=" + list.size)
-//                        val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_QUERY_CHANNEL_STATUS_TEST)
-//                        DeviceCommand.sendCommandList(commandList, mSendName)
-
                         // 查询通道状态 只管设备号
                         val deviceItemBeanList = DeviceMgrService.sDeviceItemBeanList
                         val commandList = DeviceCommand.createDeviceTestComposeCommandList(deviceItemBeanList, DeviceCommand.COMMAND_QUERY_CHANNEL_STATUS_TEST, false)
@@ -126,20 +116,37 @@ class DeviceMainActivty : LAbstractBaseActivity() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onDeviceQueryEvent(event: DeviceQueryEvent) {
         when (event.msg) {
-            DeviceQueryEvent.DEVICE_DATA_UPDATE_NOTIFICATION -> {
+            DeviceQueryEvent.DEVICE_DATA_UPDATE_CHANNEL_STATUS_NOTIFICATION -> {
                 // 更新指定设备
-                DeviceMgrService.sDeviceList.forEachIndexed { deviceIndex, deviceBean ->
+                DeviceMgrService.sDeviceItemBeanList.forEachIndexed { deviceIndex, deviceBean ->
                     if (deviceBean.deviceId == event.deviceId) { // 同一设备
                         deviceBean.channelList.forEachIndexed { channelIndex, channelBean ->
                             if (channelBean.channelId == event.channelId) { // 同一通道
                                 deviceBean.channelAdapter.notifyItemChanged(channelIndex)
-                            }
+                            }// if
                         }
-                    }
+                    }//if
+                }
+            }
+
+            DeviceQueryEvent.DEVICE_DATA_UPDATE_DATA_NOTIFICATION -> {
+                DeviceMgrService.sDeviceItemBeanList.forEachIndexed { deviceIndex, deviceBean ->
+                    if (deviceBean.deviceId == event.deviceId) { // 同一设备
+                        deviceBean.channelList.forEachIndexed { channelIndex, channelBean ->
+                            if (channelBean.channelId == event.channelId) { // 同一通道
+                                LLogX.e("channelIndex = " + channelIndex + " id = " + DigitalTrans.byte2hex(event.channelId) + " toIndex = " + DigitalTrans.byte2hex(DeviceMgrService.getChannelIndex(event.channelId)) + " toInt " + DeviceMgrService.getChannelIndex(event.channelId).toInt())
+
+                                if (channelBean.deviceStatus == DeviceStatus.ONLINE) {
+                                    deviceBean.channelAdapter.notifyItemChanged(channelIndex)
+
+                                }
+
+                            }// if
+                        }
+                    }// if
                 }
             }
             else -> {
-
             }
         }
     }

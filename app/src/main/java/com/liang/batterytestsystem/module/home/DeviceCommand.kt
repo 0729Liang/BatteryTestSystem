@@ -54,16 +54,16 @@ class DeviceCommand {
         val CHANNEL_7: Byte = 0x40
         val CHANNEL_8: Byte = 0x80.toByte()
 
-        enum class CHANNEL(val channelId: Byte, val index: Int) {
-            CHANNEL_1(0x1, 0),
-            CHANNEL_2(0x2, 1),
-            CHANNEL_3(0x4, 2),
-            CHANNEL_4(0x8, 3),
+        enum class CHANNEL(val channelId: Byte, val index: Byte) {
+            CHANNEL_1(0x1, 0x01),
+            CHANNEL_2(0x2, 0x02),
+            CHANNEL_3(0x4, 0x03),
+            CHANNEL_4(0x8, 0x04),
 
-            CHANNEL_5(0x10, 4),
-            CHANNEL_6(0x20, 5),
-            CHANNEL_7(0x40, 6),
-            CHANNEL_8(0x80.toByte(), 6)
+            CHANNEL_5(0x10, 0x05),
+            CHANNEL_6(0x20, 0x06),
+            CHANNEL_7(0x40, 0x07),
+            CHANNEL_8(0x80.toByte(), 0x08)
 
         }
 

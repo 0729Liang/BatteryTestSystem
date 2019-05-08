@@ -420,6 +420,7 @@ public class DigitalTrans {
         return b;
     }
 
+//    public static byte[] reversal
 
 //------------------以下字节转化均为大端格式
 
@@ -443,6 +444,7 @@ public class DigitalTrans {
         byteRet[3] = (byte) ((accum >> 24) & 0xFF);
         return byteRet;
     }
+
 //-------
 
     /**

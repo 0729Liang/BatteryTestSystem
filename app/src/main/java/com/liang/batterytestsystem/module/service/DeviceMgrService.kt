@@ -5,8 +5,6 @@ import android.content.Intent
 import android.os.Handler
 import android.os.IBinder
 import android.os.Message
-import android.widget.TextView
-import com.liang.batterytestsystem.R
 import com.liang.batterytestsystem.base.LBaseService
 import com.liang.batterytestsystem.module.config.UdpEvent
 import com.liang.batterytestsystem.module.data.DeviceDataAnalysisUtils
@@ -21,7 +19,7 @@ import com.liang.liangutils.utils.LLogX
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.lang.ref.WeakReference
-import java.lang.reflect.Array
+
 
 /**
  * @author : Amarao
@@ -95,6 +93,7 @@ class DeviceMgrService : LBaseService() {
                 //添加到设备的内部连接通道List表中
                 if (!bean.deviceItemBean.channeChooselList.contains(bean)) {
                     bean.deviceItemBean.channeChooselList.add(bean)
+                    LLogX.e("add = " + DigitalTrans.byte2hex(bean.channelId))
                 }
 
                 // 保存设备链表
@@ -196,18 +195,77 @@ class DeviceMgrService : LBaseService() {
     var power: Float = -1f    // 功率W
     var temperture: Float = -1f // 温度℃
     var ampereHour: Float = -1f // 安时Ah
+    var localChannelId: Byte = -1 // 通道号
+    var index: Byte = 0x00
+
     private fun updateDeviceData(byteArray: ByteArray) {
+
         // 更新所有查询的数据
-        LLogX.e("设备号 = " + DigitalTrans.byte2hex(byteArray[4]))
+        val deviceID = DigitalTrans.byte2hex(byteArray[4])
+        LLogX.e("设备号 = " + deviceID)
+
         sDeviceItemBeanList.forEachIndexed { deviceIndex, deviceBean ->
-            deviceBean.channeChooselList.forEachIndexed { channelIndex, channelBean ->
-                //stepTime = byteArray.get(DeviceDataAnalysisUtils.calcStepTimeIndex(channelIndex))
-                byteArray.get(DeviceDataAnalysisUtils.calcStepTimeIndex(channelIndex))
 
-            }
-        }
+            if (deviceBean.deviceId == byteArray[4]) {
+                deviceBean.channelList.forEachIndexed { channelIndex, channelBean ->
+
+                    index = byteArray.get(DeviceDataAnalysisUtils.getChannelIdIndex(channelIndex))
+
+                    if (index.toInt() == channelIndex + 1) {
+
+                        localChannelId = getLocalChannelIDByServerChannelID(index)
+
+                        LLogX.e("deviceID = " + DigitalTrans.byte2hex(deviceBean.deviceId) + " localChannelId = " + DigitalTrans.byte2hex(localChannelId) + " index = " + index.toInt())
+
+                        val stepTimeArray = DeviceDataAnalysisUtils.getStepTime(byteArray, channelIndex)
+                        val stepTimeFloat = DigitalTrans.byte2Float(stepTimeArray, 0) / 1000
+
+                        val electricArray = DeviceDataAnalysisUtils.getElectric(byteArray, channelIndex)
+                        val electricFloat = DigitalTrans.byte2Float(electricArray, 0) / 1000
+
+                        val voltageArray = DeviceDataAnalysisUtils.getVoltage(byteArray, channelIndex)
+                        val voltageFloat = DigitalTrans.byte2Float(voltageArray, 0) / 1000
+
+                        val powerArray = DeviceDataAnalysisUtils.getPower(byteArray, channelIndex)
+                        val powerFloat = DigitalTrans.byte2Float(powerArray, 0) / 1000
+
+                        val tempertureArray = DeviceDataAnalysisUtils.getTemperture(byteArray, channelIndex)
+                        val tempertureFloat = DigitalTrans.byte2Float(tempertureArray, 0) / 100
+
+                        val amperehourArray = DeviceDataAnalysisUtils.getAmperehour(byteArray, channelIndex)
+                        val amperehourFloat = DigitalTrans.byte2Float(amperehourArray, 0) / 1000
+
+                        if (channelBean.deviceStatus == DeviceStatus.ONLINE) {
+                            channelBean.stepTime = stepTimeFloat
+                            channelBean.electric = electricFloat
+                            channelBean.voltage = voltageFloat
+                            channelBean.power = powerFloat
+                            channelBean.temperture = tempertureFloat
+                            channelBean.ampereHour = amperehourFloat
+                            DeviceQueryEvent.postUpdateDataNotification(deviceBean.deviceId, localChannelId)
+                        }
+
+
+                        LLogX.e("deviceID = " + DigitalTrans.byte2hex(deviceBean.deviceId) + " channelID = " + DigitalTrans.byte2hex(channelBean.channelId) + " 步时间数组 = " + DigitalTrans.byte2hex(stepTimeArray) + " 步时间 = " + (stepTimeFloat))
+                        //LLogX.e("电流数组 = " + DigitalTrans.byte2hex(electricArray) + " 电流 = " + (electricFloat))
+                        //LLogX.e("电压数组 = " + DigitalTrans.byte2hex(voltageArray) + " 电压 = " + (voltageFloat))
+                        //LLogX.e("功率数组 = " + DigitalTrans.byte2hex(powerArray) + " 功率 = " + (powerFloat))
+                        //LLogX.e("温度数组 = " + DigitalTrans.byte2hex(tempertureArray) + " 温度 = " + (tempertureFloat))
+                        //LLogX.e("安时数组 = " + DigitalTrans.byte2hex(amperehourArray) + " 安时 = " + (amperehourFloat))
+                        // 更新一台设备数据
+                    }
+
+                }
+                return
+            } //  if deviceBean.deviceId
+        } // sDeviceItemBeanList.forEachIndexed
     }
-
+/*
+*
+* 内容:7B000071010000000001 7B00017655000001980000029C000003C90000004100000104C38EC39C0002002A0025001A0000017B00000237000001BD0000007800000000000002A80000000000000280017E0000007F00000229000000000000067D007D
+* 内容:7B000071020000000001 7B00017655000001980000029C000003C90000004100000104C38EC39C0002002A0025001A0000017B00000237000001BD0000007800000000000002A80000000000000280017E0000007F00000229000000000000067D007D
+*
+* */
 
     /**
      * 功能：更新选中设备的状态，并通知adapter更新
@@ -217,6 +275,7 @@ class DeviceMgrService : LBaseService() {
      *
      */
     var channelStatus: Byte = -1
+
     private fun updateDeviceChannelStatus(byteArray: ByteArray) {
         // 更新每条数据的tag标签
         sDeviceItemBeanList.forEachIndexed { deviceIndex, deviceBean ->
@@ -242,10 +301,10 @@ class DeviceMgrService : LBaseService() {
                     }
 
                     // 更新一台设备数据
-                    DeviceQueryEvent.postUpdateNotification(deviceBean.deviceId, channelBean.channelId)
+                    DeviceQueryEvent.postUpdateChannelStatusNotification(deviceBean.deviceId, channelBean.channelId)
                 }
                 return
-            } // deviceBean.channelList
+            } // if deviceBean.deviceId
         } // sDeviceList.forEachIndexed
 
     }
@@ -281,6 +340,73 @@ class DeviceMgrService : LBaseService() {
         fun startService(context: Context) {
             context.startService(Intent(context, DeviceMgrService::class.java))
         }
+
+        /**
+         * 功能：根据通道ID得到通道位置索引
+         */
+        fun getChannelIndex(channelId: Byte): Byte {
+            when (channelId) {
+                DeviceCommand.Companion.CHANNEL.CHANNEL_1.channelId -> {
+                    return DeviceCommand.Companion.CHANNEL.CHANNEL_1.index
+                }
+                DeviceCommand.Companion.CHANNEL.CHANNEL_2.channelId -> {
+                    return DeviceCommand.Companion.CHANNEL.CHANNEL_2.index
+                }
+                DeviceCommand.Companion.CHANNEL.CHANNEL_3.channelId -> {
+                    return DeviceCommand.Companion.CHANNEL.CHANNEL_3.index
+                }
+                DeviceCommand.Companion.CHANNEL.CHANNEL_4.channelId -> {
+                    return DeviceCommand.Companion.CHANNEL.CHANNEL_4.index
+                }
+                DeviceCommand.Companion.CHANNEL.CHANNEL_5.channelId -> {
+                    return DeviceCommand.Companion.CHANNEL.CHANNEL_5.index
+                }
+                DeviceCommand.Companion.CHANNEL.CHANNEL_6.channelId -> {
+                    return DeviceCommand.Companion.CHANNEL.CHANNEL_6.index
+                }
+                DeviceCommand.Companion.CHANNEL.CHANNEL_7.channelId -> {
+                    return DeviceCommand.Companion.CHANNEL.CHANNEL_7.index
+                }
+                DeviceCommand.Companion.CHANNEL.CHANNEL_8.channelId -> {
+                    return DeviceCommand.Companion.CHANNEL.CHANNEL_8.index
+                }
+                else -> return -1
+            }
+        }
+
+        /**
+         * 功能：根据返回的通道ID，映射出本地的对应的通道ID
+         */
+        fun getLocalChannelIDByServerChannelID(channelId: Byte): Byte {
+            when (channelId) {
+                DeviceCommand.Companion.CHANNEL.CHANNEL_1.index -> {
+                    return DeviceCommand.Companion.CHANNEL.CHANNEL_1.channelId
+                }
+                DeviceCommand.Companion.CHANNEL.CHANNEL_2.index -> {
+                    return DeviceCommand.Companion.CHANNEL.CHANNEL_2.channelId
+                }
+                DeviceCommand.Companion.CHANNEL.CHANNEL_3.index -> {
+                    return DeviceCommand.Companion.CHANNEL.CHANNEL_3.channelId
+                }
+                DeviceCommand.Companion.CHANNEL.CHANNEL_4.index -> {
+                    return DeviceCommand.Companion.CHANNEL.CHANNEL_4.channelId
+                }
+                DeviceCommand.Companion.CHANNEL.CHANNEL_5.index -> {
+                    return DeviceCommand.Companion.CHANNEL.CHANNEL_5.channelId
+                }
+                DeviceCommand.Companion.CHANNEL.CHANNEL_6.index -> {
+                    return DeviceCommand.Companion.CHANNEL.CHANNEL_6.channelId
+                }
+                DeviceCommand.Companion.CHANNEL.CHANNEL_7.index -> {
+                    return DeviceCommand.Companion.CHANNEL.CHANNEL_7.channelId
+                }
+                DeviceCommand.Companion.CHANNEL.CHANNEL_8.index -> {
+                    return DeviceCommand.Companion.CHANNEL.CHANNEL_8.channelId
+                }
+                else -> return -1
+            }
+        }
+
 
     }
 

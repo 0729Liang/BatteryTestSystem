@@ -68,7 +68,7 @@
 //    }
 //
 //    override fun initView() {
-//        val title = "设备" + DigitalTrans.byte2hex(byteArrayOf(mChannelBean.deviceId)) + "-通道" + DigitalTrans.byte2hex(byteArrayOf(mChannelBean.channelId))
+//        val title = "设备" + DigitalTrans.byte2hex(byteArrayOf(mChannelBean.deviceId)) + "-通道" + DigitalTrans.byte2hex(byteArrayOf(mChannelBean.localChannelId))
 //        mvDetailTitle.setClickLeftFinish(this)
 //        mvDetailTitle.setTitle(title)
 //        mvDetailTitle.lineView.visibility = View.VISIBLE
