@@ -1,5 +1,6 @@
 package com.liang.batterytestsystem.module.home
 
+import android.graphics.Color
 import com.liang.batterytestsystem.module.item.DeviceItemChannelBean
 import com.liang.batterytestsystem.module.socket.SendUtils
 import com.liang.batterytestsystem.utils.DigitalTrans
@@ -52,6 +53,20 @@ class DeviceCommand {
         val CHANNEL_6: Byte = 0x20
         val CHANNEL_7: Byte = 0x40
         val CHANNEL_8: Byte = 0x80.toByte()
+
+        enum class CHANNEL(val channelId: Byte, val index: Int) {
+            CHANNEL_1(0x1, 0),
+            CHANNEL_2(0x2, 1),
+            CHANNEL_3(0x4, 2),
+            CHANNEL_4(0x8, 3),
+
+            CHANNEL_5(0x10, 4),
+            CHANNEL_6(0x20, 5),
+            CHANNEL_7(0x40, 6),
+            CHANNEL_8(0x80.toByte(), 6)
+
+        }
+
 
         val CHANNEL_9: Byte = 0x10
         val CHANNEL_10: Byte = 0x20

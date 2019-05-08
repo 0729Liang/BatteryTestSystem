@@ -9,6 +9,7 @@ import android.widget.TextView
 import com.liang.batterytestsystem.R
 import com.liang.batterytestsystem.base.LBaseService
 import com.liang.batterytestsystem.module.config.UdpEvent
+import com.liang.batterytestsystem.module.data.DeviceDataAnalysisUtils
 import com.liang.batterytestsystem.module.device.DeviceStatus
 import com.liang.batterytestsystem.module.home.DeviceCommand
 import com.liang.batterytestsystem.module.home.DeviceCreateFactory
@@ -20,6 +21,7 @@ import com.liang.liangutils.utils.LLogX
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.lang.ref.WeakReference
+import java.lang.reflect.Array
 
 /**
  * @author : Amarao
@@ -57,8 +59,14 @@ class DeviceMgrService : LBaseService() {
             it.addChannelList(
                     // 为每台设备添加测试通道
                     DeviceCreateFactory.createDeviceChannelList(it,
-                            DeviceCommand.CHANNEL_1, DeviceCommand.CHANNEL_2, DeviceCommand.CHANNEL_3, DeviceCommand.CHANNEL_4,
-                            DeviceCommand.CHANNEL_5, DeviceCommand.CHANNEL_6, DeviceCommand.CHANNEL_7, DeviceCommand.CHANNEL_8
+                            DeviceCommand.Companion.CHANNEL.CHANNEL_1.channelId,
+                            DeviceCommand.Companion.CHANNEL.CHANNEL_2.channelId,
+                            DeviceCommand.Companion.CHANNEL.CHANNEL_3.channelId,
+                            DeviceCommand.Companion.CHANNEL.CHANNEL_4.channelId,
+                            DeviceCommand.Companion.CHANNEL.CHANNEL_5.channelId,
+                            DeviceCommand.Companion.CHANNEL.CHANNEL_6.channelId,
+                            DeviceCommand.Companion.CHANNEL.CHANNEL_7.channelId,
+                            DeviceCommand.Companion.CHANNEL.CHANNEL_8.channelId
                     ))
         }
     }
@@ -156,27 +164,50 @@ class DeviceMgrService : LBaseService() {
         }
     }
 
-    var stepTime: Float = 0f // 步时间S
-    var electric: Float = 0f // 电流A
-    var voltage: Float = 0f  // 电压V
-    var power: Float = 0f    // 功率W
-    var temperture: Float = 0f // 温度℃
-    var ampereHour: Float = 0f // 安时Ah
 
     /**
      * 功能：更新选中设备的数据，并通知adapter更新
+     * 一条通道字节：174/2=87
+     * 一条通道命令模板：7B***7D
+     * 最多16通道
+     * 数据范围：
+     *  通道1：10-96，
+     *  通道2：97-183、
+     *  通道3：184-270
+     *  *
+     *  *
+     *  *
+     *  通道x：10+87*x+offset  ~ 96+87*x+offset
      *
+     * 通用公式：n(0-14)=10+87*x+offset
+     * offset=数据索引-基数索引，范围10-96，基数索引是10，如isSave的索引是11，则offset=11-10=1
+     *
+     * 常用数据偏移量如下
+     * 步时间：offset=53 位数：8位   单位 S    索引：63-70
+     * 电流：offset=9   位数：4位   单位：A    索引：19-22
+     * 电压：offset=5   位数：4位   单位：V    索引：15-18
+     * 功率：offset=13  位数：4位   单位：W    索引：23-26
+     * 温度：offset=25  位数：2位   单位：℃    索引：35-36
+     * 安时：offset=17  位数：4位   单位：Ah   索引：27-30
      */
+    var stepTime: Float = -1f // 步时间S
+    var electric: Float = -1f // 电流A
+    var voltage: Float = -1f  // 电压V
+    var power: Float = -1f    // 功率W
+    var temperture: Float = -1f // 温度℃
+    var ampereHour: Float = -1f // 安时Ah
     private fun updateDeviceData(byteArray: ByteArray) {
         // 更新所有查询的数据
         LLogX.e("设备号 = " + DigitalTrans.byte2hex(byteArray[4]))
         sDeviceItemBeanList.forEachIndexed { deviceIndex, deviceBean ->
-
             deviceBean.channeChooselList.forEachIndexed { channelIndex, channelBean ->
+                //stepTime = byteArray.get(DeviceDataAnalysisUtils.calcStepTimeIndex(channelIndex))
+                byteArray.get(DeviceDataAnalysisUtils.calcStepTimeIndex(channelIndex))
 
             }
         }
     }
+
 
     /**
      * 功能：更新选中设备的状态，并通知adapter更新
@@ -185,6 +216,7 @@ class DeviceMgrService : LBaseService() {
      * 1字节设备号  -> 4
      *
      */
+    var channelStatus: Byte = -1
     private fun updateDeviceChannelStatus(byteArray: ByteArray) {
         // 更新每条数据的tag标签
         sDeviceItemBeanList.forEachIndexed { deviceIndex, deviceBean ->
@@ -192,8 +224,9 @@ class DeviceMgrService : LBaseService() {
                 deviceBean.channelList.forEachIndexed { channelIndex, channelBean ->
                     // 共计 15 通道;通道信息位 n(0-14) = 6+x*4
                     // min=6;max=2+15*4=62; 步长 4
-                    val status = byteArray.get(channelIndex * 4 + 6)
-                    when (status) {
+                    channelStatus = byteArray.get(DeviceDataAnalysisUtils.calcChannelStatusIndex(channelIndex))
+
+                    when (channelStatus) {
                         DeviceStatus.OFFLINE.statusKey -> {
                             channelBean.deviceStatus = DeviceStatus.OFFLINE
                         }
