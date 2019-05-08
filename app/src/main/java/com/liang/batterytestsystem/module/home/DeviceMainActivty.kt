@@ -36,7 +36,7 @@ class DeviceMainActivty : LAbstractBaseActivity() {
         initView()
         clicEvent()
 
-        //DeviceDataAnalysisUtils.test()
+        DeviceDataAnalysisUtils.test()
     }
 
 

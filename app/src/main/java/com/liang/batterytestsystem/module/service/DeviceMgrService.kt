@@ -131,11 +131,21 @@ class DeviceMgrService : LBaseService() {
         when (event.msg) {
             DeviceQueryEvent.DEVICE_QUERY_CHANNEL_STATUS_RESULT -> {
                 val byteArray = event.queryResultByteArray
-                // LLogX.e("设备号 = " + DigitalTrans.byte2hex(byteArray!![4])+" count = "+event.count)
-                // 如果是查询通道状态命令
-                if (event.queryResultByteArray != null) {
-                    updateDeviceChannelStatus(event.queryResultByteArray!!)
-                } // if 查询通道状态
+
+                // 确定帧头
+                if (byteArray!![0] != DeviceCommand.FRAME_HEADER) {
+                    return
+                }
+
+                // 根据相应的命令，执行不同的操作
+                when (byteArray[3]) {
+                    DeviceCommand.COMMAND_QUERY_CHANNEL_STATUS_TEST -> updateDeviceChannelStatus(event.queryResultByteArray!!)
+                    DeviceCommand.COMMAND_QUERY_DATA_TEST -> {
+                        updateDeviceData(event.queryResultByteArray!!)
+                    }
+                }
+
+
             }
             DeviceQueryEvent.TEST -> {
                 LLogX.e("xxxxx = " + event.count + " yyyy = " + DigitalTrans.byte2hex(event.queryResultByteArray!![0]))
@@ -146,50 +156,65 @@ class DeviceMgrService : LBaseService() {
         }
     }
 
+    var stepTime: Float = 0f // 步时间S
+    var electric: Float = 0f // 电流A
+    var voltage: Float = 0f  // 电压V
+    var power: Float = 0f    // 功率W
+    var temperture: Float = 0f // 温度℃
+    var ampereHour: Float = 0f // 安时Ah
+
+    /**
+     * 功能：更新选中设备的数据，并通知adapter更新
+     *
+     */
+    private fun updateDeviceData(byteArray: ByteArray) {
+        // 更新所有查询的数据
+        LLogX.e("设备号 = " + DigitalTrans.byte2hex(byteArray[4]))
+        sDeviceItemBeanList.forEachIndexed { deviceIndex, deviceBean ->
+
+            deviceBean.channeChooselList.forEachIndexed { channelIndex, channelBean ->
+
+            }
+        }
+    }
+
     /**
      * 功能：更新选中设备的状态，并通知adapter更新
      *
+     * 1字节命令（0x80） -> 3
+     * 1字节设备号  -> 4
+     *
      */
     private fun updateDeviceChannelStatus(byteArray: ByteArray) {
-        if (byteArray[0] == DeviceCommand.FRAME_HEADER && byteArray[3] == DeviceCommand.COMMAND_QUERY_CHANNEL_STATUS_TEST) {
-            /**
-             *
-             * 1字节总帧头 7B   -> 0
-             * 1字节命令（0x80） -> 3
-             * 1字节设备号  -> 4
-             *
-             */
-
-            // 更新每条数据的tag标签
-            sDeviceItemBeanList.forEachIndexed { deviceIndex, deviceBean ->
-                if (deviceBean.deviceId == byteArray[4]) {
-                    deviceBean.channelList.forEachIndexed { channelIndex, channelBean ->
-                        // 共计 15 通道;通道信息位 n(0-14) = 6+x*4
-                        // min=6;max=2+15*4=62; 步长 4
-                        val status = byteArray.get(channelIndex * 4 + 6)
-                        when (status) {
-                            DeviceStatus.OFFLINE.statusKey -> {
-                                channelBean.deviceStatus = DeviceStatus.OFFLINE
-                            }
-                            DeviceStatus.ONLINE.statusKey -> {
-                                channelBean.deviceStatus = DeviceStatus.ONLINE
-                            }
-                            DeviceStatus.TESTPAUSE.statusKey -> {
-                                channelBean.deviceStatus = DeviceStatus.TESTPAUSE
-                            }
-                            DeviceStatus.STOP.statusKey -> {
-                                channelBean.deviceStatus = DeviceStatus.STOP
-                            }
+        // 更新每条数据的tag标签
+        sDeviceItemBeanList.forEachIndexed { deviceIndex, deviceBean ->
+            if (deviceBean.deviceId == byteArray[4]) {
+                deviceBean.channelList.forEachIndexed { channelIndex, channelBean ->
+                    // 共计 15 通道;通道信息位 n(0-14) = 6+x*4
+                    // min=6;max=2+15*4=62; 步长 4
+                    val status = byteArray.get(channelIndex * 4 + 6)
+                    when (status) {
+                        DeviceStatus.OFFLINE.statusKey -> {
+                            channelBean.deviceStatus = DeviceStatus.OFFLINE
                         }
-
-                        // 更新一台设备数据
-                        DeviceQueryEvent.postUpdateNotification(deviceBean.deviceId, channelBean.channelId)
+                        DeviceStatus.ONLINE.statusKey -> {
+                            channelBean.deviceStatus = DeviceStatus.ONLINE
+                        }
+                        DeviceStatus.TESTPAUSE.statusKey -> {
+                            channelBean.deviceStatus = DeviceStatus.TESTPAUSE
+                        }
+                        DeviceStatus.STOP.statusKey -> {
+                            channelBean.deviceStatus = DeviceStatus.STOP
+                        }
                     }
-                    return
-                } // deviceBean.channelList
-            } // sDeviceList.forEachIndexed
 
-        }
+                    // 更新一台设备数据
+                    DeviceQueryEvent.postUpdateNotification(deviceBean.deviceId, channelBean.channelId)
+                }
+                return
+            } // deviceBean.channelList
+        } // sDeviceList.forEachIndexed
+
     }
 
     // 静态Handler

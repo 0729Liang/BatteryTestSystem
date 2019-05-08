@@ -1,12 +1,10 @@
 package com.liang.batterytestsystem.utils;
 
-import android.os.Build;
-
 import com.liang.liangutils.utils.LLogX;
 
-import java.util.Base64;
+import org.jetbrains.annotations.NotNull;
 
-import androidx.annotation.RequiresApi;
+import java.nio.ByteBuffer;
 
 /**
  * @author : Amarao
@@ -384,6 +382,143 @@ public class DigitalTrans {
             hs.append(s);
         }
         return hs.toString().toUpperCase();
+    }
+
+
+    /**
+     * 功能：将int数据转化为byte数组（小端格式）
+     * 十六进制： 0x11223344
+     * 索引      |  0   | 1    | 2     |3
+     * ---------|------|------|-------|-----
+     * 大端格式：| 0x11 |  0x22 | 0x33 | 0x44
+     * 小端格式：|0x44  |  0x33 | 0x22 |0x11
+     */
+    public static byte[] int2LittleEndian(int i) {
+        byte[] b = new byte[4];
+        b[0] = (byte) (0xff & i);
+        b[1] = (byte) ((0xff00 & i) >> 8);
+        b[2] = (byte) ((0xff0000 & i) >> 16);
+        b[3] = (byte) ((0xff000000 & i) >> 24);
+        return b;
+    }
+
+    /**
+     * 功能：将int数据转化为byte数组（大端格式）
+     * <p>
+     * 十六进制： 0x11223344
+     * 索引      |  0   | 1    | 2     |3
+     * ---------|------|------|-------|-----
+     * 大端格式：| 0x11 |  0x22 | 0x33 | 0x44
+     * 小端格式：|0x44  |  0x33 | 0x22 |0x11
+     */
+    public static byte[] int2BigEndian(int i) {
+        byte[] b = new byte[4];
+        b[3] = (byte) (0xff & i);
+        b[2] = (byte) ((0xff00 & i) >> 8);
+        b[1] = (byte) ((0xff0000 & i) >> 16);
+        b[0] = (byte) ((0xff000000 & i) >> 24);
+        return b;
+    }
+
+
+//------------------以下字节转化均为大端格式
+
+
+    public static float byteArrayToFloat(byte[] array, int offset) {
+        int accum = 0;
+        accum = array[offset + 0] & 0xFF;
+        accum |= (long) (array[offset + 1] & 0xFF) << 8;
+        accum |= (long) (array[offset + 2] & 0xFF) << 16;
+        accum |= (long) (array[offset + 3] & 0xFF) << 24;
+        return Float.intBitsToFloat(accum);
+    }
+
+
+    public static byte[] floatToByteArray(float Value) {
+        int accum = Float.floatToRawIntBits(Value);
+        byte[] byteRet = new byte[4];
+        byteRet[0] = (byte) (accum & 0xFF);
+        byteRet[1] = (byte) ((accum >> 8) & 0xFF);
+        byteRet[2] = (byte) ((accum >> 16) & 0xFF);
+        byteRet[3] = (byte) ((accum >> 24) & 0xFF);
+        return byteRet;
+    }
+//-------
+
+    /**
+     * 功能：将字节数组转化为float（大端格式）
+     * <p>
+     * 首先要知道一个float需要4个字节
+     * 当byte不足4位时，默认高位补0，测试index废弃
+     */
+    public static Float byte2Float(@NotNull byte[] byteArray, int index) {
+
+        if (byteArray.length < 4) {
+            byte[] newByteArray = new byte[4];
+            int length = byteArray.length;
+            for (int i = 0; i < 4; i++) {
+                if (i < 4 - length) {
+                    newByteArray[i] = 0;//
+                } else {
+                    newByteArray[i] = byteArray[i + length - 4];
+                }
+            }
+            return byte2float(newByteArray, 0);
+        }
+        return byte2float(byteArray, index);
+    }
+
+    /**
+     * 字节转换为浮点
+     *
+     * @param b     字节（至少4个字节）
+     * @param index 开始位置
+     * @return
+     */
+    private static float byte2float(byte[] b, int index) {
+        int l;
+        l = b[index + 0];
+        l &= 0xff;
+        l |= ((long) b[index + 1] << 8);
+        l &= 0xffff;
+        l |= ((long) b[index + 2] << 16);
+        l &= 0xffffff;
+        l |= ((long) b[index + 3] << 24);
+        return Float.intBitsToFloat(l);
+    }
+
+    /**
+     * 浮点转换为字节
+     *
+     * @param f
+     * @return
+     */
+    public static byte[] float2byte(float f) {
+
+        // 把float转换为byte[]
+        int fbit = Float.floatToIntBits(f);
+
+        byte[] b = new byte[4];
+        for (int i = 0; i < 4; i++) {
+            b[i] = (byte) (fbit >> (24 - i * 8));
+        }
+
+        // 翻转数组
+        int len = b.length;
+        // 建立一个与源数组元素类型相同的数组
+        byte[] dest = new byte[len];
+        // 为了防止修改源数组，将源数组拷贝一份副本
+        System.arraycopy(b, 0, dest, 0, len);
+        byte temp;
+        // 将顺位第i个与倒数第i个交换
+        for (int i = 0; i < len / 2; ++i) {
+            temp = dest[i];
+            dest[i] = dest[len - i - 1];
+            dest[len - i - 1] = temp;
+        }
+
+        return dest;
+
     }
 
     ///////////////////////////////////////////////////////////////////////////
