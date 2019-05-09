@@ -3,6 +3,7 @@ package com.liang.batterytestsystem.module.item
 import com.liang.batterytestsystem.module.device.DeviceStatus
 import com.liang.batterytestsystem.module.home.DeviceItemBean
 import java.io.Serializable
+import java.util.ArrayList
 
 /**
  * @author : Amarao
@@ -23,5 +24,91 @@ class DeviceItemChannelBean(var deviceItemBean: DeviceItemBean, var channelId: B
     var temperture: Float = 0f // 温度℃
     var ampereHour: Float = 0f // 安时Ah
 
+    fun setMStepTime(data: Float) {
+        stepTime = data
+        addStepTimeList(data)
+    }
 
+    fun setMElectric(data: Float) {
+        electric = data
+        addElectricistList(data)
+    }
+
+    fun setMVoltage(data: Float) {
+        voltage = data
+        addVoltageList(data)
+    }
+
+    fun setMPower(data: Float) {
+        power = data
+        addPowerList(data)
+    }
+
+    fun setMTemperture(data: Float) {
+        temperture = data
+        addTempertureList(data)
+    }
+
+    fun setMAmpereHour(data: Float) {
+        ampereHour = data
+        addAmpereHourList(data)
+    }
+
+
+    // 历史数据
+    var mStepTimeList: MutableList<Float> = ArrayList()
+    var mElectricistList: MutableList<Float> = ArrayList()
+    var mVoltageList: MutableList<Float> = ArrayList()
+    var mPowerList: MutableList<Float> = ArrayList()
+    var mTempertureList: MutableList<Float> = ArrayList()
+    var mAmpereHourList: MutableList<Float> = ArrayList()
+
+    private val limit = 500
+    private val removeIndex = 0
+
+    fun addStepTimeList(data: Float) {
+        if (mStepTimeList.size > limit) {
+            mStepTimeList.removeAt(removeIndex)
+        }
+        mStepTimeList.add(data)
+    }
+
+    fun addElectricistList(data: Float) {
+        if (mElectricistList.size > limit) {
+            mElectricistList.removeAt(removeIndex)
+        }
+        mElectricistList.add(data)
+    }
+
+
+    fun addVoltageList(data: Float) {
+        if (mVoltageList.size > limit) {
+            mVoltageList.removeAt(removeIndex)
+        }
+        mVoltageList.add(data)
+    }
+
+
+    fun addPowerList(data: Float) {
+        if (mPowerList.size > limit) {
+            mPowerList.removeAt(removeIndex)
+        }
+        mPowerList.add(data)
+    }
+
+
+    fun addTempertureList(data: Float) {
+        if (mTempertureList.size > limit) {
+            mTempertureList.removeAt(removeIndex)
+        }
+        mTempertureList.add(data)
+    }
+
+
+    fun addAmpereHourList(data: Float) {
+        if (mStepTimeList.size > limit) {
+            mStepTimeList.removeAt(removeIndex)
+        }
+        mAmpereHourList.add(data)
+    }
 }

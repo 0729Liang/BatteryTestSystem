@@ -239,19 +239,21 @@ class DeviceMgrService : LBaseService() {
                         val amperehourFloat = DigitalTrans.byte2Float(amperehourArray, 0) / 1000
 
                         if (channelBean.deviceStatus == DeviceStatus.ONLINE) {
-                            channelBean.stepTime = Math.abs(stepTimeFloat)
-                            channelBean.electric = Math.abs(electricFloat)
-                            channelBean.voltage = Math.abs(voltageFloat)
-                            channelBean.power = Math.abs(powerFloat)
-                            channelBean.temperture = Math.abs(tempertureFloat)
-                            channelBean.ampereHour = Math.abs(amperehourFloat)
+//                            channelBean.stepTime = Math.abs(stepTimeFloat)
+//                            channelBean.electric = Math.abs(electricFloat)
+//                            channelBean.voltage = Math.abs(voltageFloat)
+//                            channelBean.power = Math.abs(powerFloat)
+//                            channelBean.temperture = Math.abs(tempertureFloat)
+//                            channelBean.ampereHour = Math.abs(amperehourFloat)
 
-                            channelBean.stepTime = NewDeviceDetails.getRandom(40f)
-                            channelBean.electric = NewDeviceDetails.getRandom(10f)
-                            channelBean.voltage = NewDeviceDetails.getRandom(30f)
-                            channelBean.power = NewDeviceDetails.getRandom(10f)
-                            channelBean.temperture = NewDeviceDetails.getRandom(30f)
-                            channelBean.ampereHour = NewDeviceDetails.getRandom(10f)
+                            // todo 由于 控制器 模拟数据 极不稳定，临时替换自己的的假数据
+
+                            channelBean.setMStepTime(NewDeviceDetails.getRandom(40f))
+                            channelBean.setMElectric(NewDeviceDetails.getRandom(30f))
+                            channelBean.setMVoltage(NewDeviceDetails.getRandom(30f))
+                            channelBean.setMPower(NewDeviceDetails.getRandom(10f))
+                            channelBean.setMTemperture(NewDeviceDetails.getRandom(30f))
+                            channelBean.setMAmpereHour(NewDeviceDetails.getRandom(10f))
 
                             DeviceQueryEvent.postUpdateDataNotification(deviceBean.deviceId, localChannelId) // 更新一台设备数据
 

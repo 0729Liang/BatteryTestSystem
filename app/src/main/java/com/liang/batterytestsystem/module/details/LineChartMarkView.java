@@ -21,24 +21,24 @@ import java.text.DecimalFormat;
 public class LineChartMarkView extends MarkerView {
 
     DecimalFormat df = new DecimalFormat(".00");
-    private TextView            tvDate;
-    private TextView            tvValue;
+    private TextView mXValueTv;
+    private TextView mYValueTv;
     private IAxisValueFormatter xAxisValueFormatter;
 
     public LineChartMarkView(Context context, IAxisValueFormatter xAxisValueFormatter) {
         super(context, R.layout.layout_markview);
         this.xAxisValueFormatter = xAxisValueFormatter;
 
-        tvDate = findViewById(R.id.tv_date);
-        tvValue = findViewById(R.id.tv_value);
+        mXValueTv = findViewById(R.id.xValues_tv);
+        mYValueTv = findViewById(R.id.yValue_tv);
     }
 
     @SuppressLint("SetTextI18n")
     @Override
     public void refreshContent(Entry e, Highlight highlight) {
         //展示自定义X轴值 后的X轴内容
-        tvDate.setText(xAxisValueFormatter.getFormattedValue(e.getX(), null));
-        tvValue.setText("我的收益：" + df.format(e.getY() * 100) + "%");
+        mXValueTv.setText("X = " + df.format(e.getX()));
+        mYValueTv.setText("Y = " + df.format(e.getY()));
         super.refreshContent(e, highlight);
     }
 

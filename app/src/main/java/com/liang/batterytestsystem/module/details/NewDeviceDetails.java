@@ -259,7 +259,7 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
         createLegend();
 
         // 设置MarkerView
-        //setMarkerView();
+        setMarkerView();
     }
 
     /**
@@ -272,9 +272,9 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
         lineChart.setDragEnabled(true); //是否可以拖动
         lineChart.setScaleEnabled(true); // 是否可以缩放
         lineChart.setTouchEnabled(true); //是否有触摸事件
-
+//        lineChart.zoomOut(); //从图表中心缩小：默认：0.7f。
         //设置XY轴动画效果
-        lineChart.animateY(2500);
+        //lineChart.animateY(2500);
         lineChart.animateX(1500);
     }
 
@@ -300,8 +300,10 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
         mLeftYAxis.setGranularity(1f);
         mRightYAxis.setGranularity(1f);
         mLeftYAxis.setLabelCount(500);
-        mLineChart.setVisibleYRangeMaximum(10, YAxis.AxisDependency.LEFT);// 当前统计图表中最多在Y轴坐标线上显示的总量
-        mLineChart.setVisibleYRangeMaximum(20, YAxis.AxisDependency.RIGHT);// 当前统计图表中最多在Y轴坐标线上显示的总量
+        mLineChart.setVisibleYRangeMaximum(30, YAxis.AxisDependency.LEFT);// 当前统计图表中最多在Y轴坐标线上显示的总量
+        mLineChart.setVisibleYRangeMaximum(30, YAxis.AxisDependency.RIGHT);// 当前统计图表中最多在Y轴坐标线上显示的总量
+        mLeftYAxis.setEnabled(false);
+
 //        mLeftYAxis.setCenterAxisLabels(true);// 将轴标记居中
 //        mLeftYAxis.setDrawZeroLine(true); // 原点处绘制 一条线
 //        mLeftYAxis.setZeroLineColor(Color.RED);
@@ -314,15 +316,22 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
      */
     private void createLine() {
         //showLineChart(mElectricistList, "电流", Color.CYAN);
-        addLine(mStepTimeList, mStepTimeEntries, mStepTimeDataSet, LColor.Colors.RED.getColor());
-        addLine(mElectricistList, mElectricistEntries, mElectricLineDataSet, LColor.Colors.ORANGE.getColor());
-        addLine(mVoltageList, mVoltageEntries, mVoltageLineDataSet, LColor.Colors.YELLOW.getColor());
-        addLine(mPowerList, mPowerEntries, mPowerLineDataSet, LColor.Colors.GREEN.getColor());
-        addLine(mTempertureList, mTempertureEntries, mTempertureDataSet, LColor.Colors.PURPLE.getColor());
-        addLine(mAmpereHourList, mAmpereHourEntries, mAmpereHourDataSet, LColor.Colors.PINK.getColor());
+//        addLine(mStepTimeList, mStepTimeEntries, mStepTimeDataSet, LColor.Colors.RED.getColor());
+//        addLine(mElectricistList, mElectricistEntries, mElectricLineDataSet, LColor.Colors.ORANGE.getColor());
+//        addLine(mVoltageList, mVoltageEntries, mVoltageLineDataSet, LColor.Colors.YELLOW.getColor());
+//        addLine(mPowerList, mPowerEntries, mPowerLineDataSet, LColor.Colors.GREEN.getColor());
+//        addLine(mTempertureList, mTempertureEntries, mTempertureDataSet, LColor.Colors.PURPLE.getColor());
+//        addLine(mAmpereHourList, mAmpereHourEntries, mAmpereHourDataSet, LColor.Colors.PINK.getColor());
+
+        addLine(mChannelBean.getMStepTimeList(), mStepTimeEntries, mStepTimeDataSet, LColor.Colors.RED.getColor());
+        addLine(mChannelBean.getMElectricistList(), mElectricistEntries, mElectricLineDataSet, LColor.Colors.ORANGE.getColor());
+        addLine(mChannelBean.getMVoltageList(), mVoltageEntries, mVoltageLineDataSet, LColor.Colors.YELLOW.getColor());
+        addLine(mChannelBean.getMPowerList(), mPowerEntries, mPowerLineDataSet, LColor.Colors.GREEN.getColor());
+        addLine(mChannelBean.getMTempertureList(), mTempertureEntries, mTempertureDataSet, LColor.Colors.PURPLE.getColor());
+        addLine(mChannelBean.getMAmpereHourList(), mAmpereHourEntries, mAmpereHourDataSet, LColor.Colors.PINK.getColor());
 
         for (int i = 0; i < 6; i++) {
-            addEntry(0, i);
+            //addEntry(0, i);
             mLineChart.getLineData().getDataSets().get(i).setVisible(false);
         }
         showLine(INDEX_MELECTRICLINEDATASET_INDEX);
@@ -454,10 +463,10 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
      */
     public void addEntry(float yValues, int index) {
 
-        int count = mLineData.getDataSetByIndex(index).getEntryCount();
-        //LLogX.e("data = " + yValues + " 线：" + index + " 点数：" + count);// + " 总共点数：" + mLineData.getEntryCount() + " 线条数：" + mLineData.getDataSetCount());
+        int xCount = mLineData.getDataSetByIndex(index).getEntryCount();
+//        LLogX.e("data = " + yValues + " 线：" + index + " 点数：" + xCount);// + " 总共点数：" + mLineData.getEntryCount() + " 线条数：" + mLineData.getDataSetCount());
 
-        Entry entry = new Entry(count, yValues);
+        Entry entry = new Entry(xCount, yValues);
         mLineData.addEntry(entry, index);
 
         //LLogX.e(" x = " + entry.getX() + " y = " + entry.getY());
@@ -467,7 +476,9 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
         mLineChart.notifyDataSetChanged();
 
         //移到某个位置
-        mLineChart.moveViewToX(count - 5);// 异步的，会内存泄漏
+        //mLineChart.moveViewToX(count - 5);// 异步的，会内存泄漏
+        mLineChart.moveViewToAnimated(xCount - 5, yValues, YAxis.AxisDependency.LEFT, 1000);
+        //mLineChart.zoomAndCenterAnimated(0.5f,0.5f,xCount,yValues, YAxis.AxisDependency.LEFT,1000);
         mLineChart.invalidate();
     }
 
@@ -522,8 +533,9 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
 
                             LLogX.e(" *****cId = " + DigitalTrans.byte2hex(mChannelItemBean.getChannelId()) + " el = " + mChannelItemBean.getElectric());
 
-                            addStepTimeDataSet(mChannelItemBean.getStepTime());
                             addElectricLineDataSet(mChannelItemBean.getElectric());
+
+                            addStepTimeDataSet(mChannelItemBean.getStepTime());
                             addVoltageLineDataSet(mChannelItemBean.getVoltage());
                             addPowerLineDataSet(mChannelItemBean.getPower());
                             addTempertureDataSet(mChannelItemBean.getTemperture());
