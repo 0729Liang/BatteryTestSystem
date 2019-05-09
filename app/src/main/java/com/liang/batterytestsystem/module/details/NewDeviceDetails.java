@@ -39,6 +39,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.ref.WeakReference;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -47,11 +48,33 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
 
     public static final int MSG_ADD_DATASET = 1;
     public static final int FLAG_HIDDEN_ALL = -1;
+
+    public static final int INDEX_MSTEPTIMEDATASET_INDEX = 0; //步时间
+    public static final int INDEX_MELECTRICLINEDATASET_INDEX = 1; // 电流
+    public static final int INDEX_MVOLTAGELINEDATASET_INDEX = 2; // 电压
+    public static final int INDEX_MPOWERLINEDATASET_INDEX = 3; // 功率
+    public static final int INDEX_MTEMPERTUREDATASET_INDEX = 4; // 温度
+    public static final int INDEX_MAMPEREHOURDATASET_INDEX = 5; // 安时
+    private static Random sRandom = new Random();
+    private static DecimalFormat sDecimalFormat = new DecimalFormat("#.00");
+    private DeviceItemChannelBean mChannelBean;
+    private LTitleView mTitleView;
+    private Button mBtnClick1;
+    private Button mBtnClick2;
+    private CheckBox mRadioButtonStepTime;
+    private CheckBox mRadioButtonElectricist;
+    private CheckBox mRadioButtonVoltage;
+    private CheckBox mRadioButtonPower;
+    private CheckBox mRadioButtonTemperture;
+    private CheckBox mRadioButtonAmpereHour;
+    private List<CheckBox> mCheckBoxList = new ArrayList<>();
+    private LineData mLineData = null; // 线集合，所有折现以数组的形式存到此集合中
+    private LineChart mLineChart; // 折线表，存线集合
+
     //  数据链表
     List<Float> mStepTimeList = new ArrayList<>();
     List<Float> mElectricistList = new ArrayList<>();
     List<Float> mVoltageList = new ArrayList<>();
-    private Button mBtnClick;
     List<Float> mPowerList = new ArrayList<>();
     List<Float> mTempertureList = new ArrayList<>();
     List<Float> mAmpereHourList = new ArrayList<>();
@@ -61,26 +84,8 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
     List<Entry> mVoltageEntries = new ArrayList<>();
     List<Entry> mPowerEntries = new ArrayList<>();
     List<Entry> mTempertureEntries = new ArrayList<>();
-
-    private LineChart mLineChart; // 折线表，存线集合
     List<Entry> mAmpereHourEntries = new ArrayList<>();
 
-    private XAxis mXAxis; //X轴
-    private YAxis mLeftYAxis; //左侧Y轴
-    private YAxis mRightYAxis; //右侧Y轴
-    private Legend mLegend; //图例
-    private LimitLine mLimitline; //限制线
-    private Random random = new Random();
-    private DeviceItemChannelBean mChannelBean;
-    private LTitleView mTitleView;
-    private CheckBox mRadioButtonStepTime;
-    private CheckBox mRadioButtonElectricist;
-    private CheckBox mRadioButtonVoltage;
-    private CheckBox mRadioButtonPower;
-    private CheckBox mRadioButtonTemperture;
-    private CheckBox mRadioButtonAmpereHour;
-    private List<CheckBox> mCheckBoxList = new ArrayList<>();
-    private LineData mLineData = null; // 线集合，所有折现以数组的形式存到此集合中
     // LineDataSet:点集合,即一条线
     private LineDataSet mStepTimeDataSet = new LineDataSet(mStepTimeEntries, "步时间"); //步时间
     private LineDataSet mElectricLineDataSet = new LineDataSet(mElectricistEntries, "电流"); // 电流
@@ -88,6 +93,11 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
     private LineDataSet mPowerLineDataSet = new LineDataSet(mPowerEntries, "功率"); // 功率
     private LineDataSet mTempertureDataSet = new LineDataSet(mTempertureEntries, "温度"); // 温度
     private LineDataSet mAmpereHourDataSet = new LineDataSet(mAmpereHourEntries, "安时"); // 安时
+    private XAxis mXAxis; //X轴
+    private YAxis mLeftYAxis; //左侧Y轴
+    private YAxis mRightYAxis; //右侧Y轴
+    private Legend mLegend; //图例
+    private LimitLine mLimitline; //限制线
 
     public static void startActivity(Context context, DeviceItemChannelBean bean) {
         LKVMgr.memory().putObj(DeviceKey.KEY_DETAIL_INFO, bean);
@@ -108,9 +118,8 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
 
     }
 
-
-    public Float getRandom(Float seed) {
-        return random.nextFloat() * seed;
+    public static Float getRandom(Float seed) {
+        return Float.valueOf(sDecimalFormat.format(sRandom.nextFloat() * seed));
     }
 
     @Override
@@ -129,10 +138,10 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
         }
 
         mLineChart = findViewById(R.id.mDeviceDetailChart);
-        mBtnClick = findViewById(R.id.mTestBtn1);
-        mBtnClick.setOnClickListener(this);
-        mBtnClick = findViewById(R.id.mTestBtn2);
-        mBtnClick.setOnClickListener(this);
+        mBtnClick1 = findViewById(R.id.mTestBtn1);
+        mBtnClick1.setOnClickListener(this);
+        mBtnClick2 = findViewById(R.id.mTestBtn2);
+        mBtnClick2.setOnClickListener(this);
         mRadioButtonStepTime = findViewById(R.id.mDeviceDetailStepTime);
         mRadioButtonElectricist = findViewById(R.id.mDeviceDetailElectric);
         mRadioButtonVoltage = findViewById(R.id.mDeviceDetailVoltage);
@@ -161,7 +170,77 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
 
     }
 
-    List<DeviceItemBean> mDeviceList;
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.mTestBtn1:
+
+                // 查询数据 只管设备号，
+                List<DeviceItemBean> deviceItemBeanList = DeviceMgrService.Companion.getSDeviceItemBeanList();
+                List<byte[]> commandList = DeviceCommand.createDeviceTestComposeCommandList(deviceItemBeanList, DeviceCommand.Companion.getCOMMAND_QUERY_DATA_TEST(), false);
+                ToastUtils.showShort("发送查询数据 设备数 =" + deviceItemBeanList.size() + " 命令数 = " + commandList.size());
+                DeviceCommand.Companion.sendCommandList(commandList, "详情页");
+
+                break;
+            case R.id.mTestBtn2:
+
+                List<DeviceItemBean> mDeviceList = DeviceMgrService.Companion.getSDeviceList();
+                for (int i = 0; i < mDeviceList.size(); i++) {
+                    DeviceItemBean mDeviceItemBean = mDeviceList.get(i);
+                    // 同一设备
+                    if (mChannelBean.getDeviceId() == mDeviceItemBean.getDeviceId()) {
+                        List<DeviceItemChannelBean> channelList = mDeviceItemBean.getChannelList();
+
+                        LLogX.e(" dId = " + DigitalTrans.byte2hex(mDeviceItemBean.getDeviceId()) + " s = " + channelList.size());
+
+                        for (int j = 0; j < channelList.size(); j++) {
+                            DeviceItemChannelBean deviceItemChannelBean = channelList.get(j);
+                            LLogX.e(" j = " + j + " cId = " + DigitalTrans.byte2hex(deviceItemChannelBean.getChannelId()));
+
+                        }
+                    }
+                }
+
+                break;
+            case R.id.mDeviceDetailStepTime:
+                showLine(INDEX_MSTEPTIMEDATASET_INDEX);
+
+                //mLineChart.getLineData().getDataSets().get(0).setVisible(true);
+                //mStepTimeDataSet.setVisible(true);
+                //mLineChart.invalidate();
+                break;
+            case R.id.mDeviceDetailElectric:
+                showLine(INDEX_MELECTRICLINEDATASET_INDEX);
+                break;
+            case R.id.mDeviceDetailVoltage:
+                showLine(INDEX_MVOLTAGELINEDATASET_INDEX);
+                break;
+            case R.id.mDeviceDetailPower:
+                showLine(INDEX_MPOWERLINEDATASET_INDEX);
+                break;
+            case R.id.mDeviceDetailTemperture:
+                showLine(INDEX_MTEMPERTUREDATASET_INDEX);
+                break;
+            case R.id.mDeviceDetailAmpereHour:
+                showLine(INDEX_MAMPEREHOURDATASET_INDEX);
+                break;
+            default:
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mDetailHandler.removeCallbacksAndMessages(null);
+        mDetailHandler = null;
+
+        mLineChart.clearAllViewportJobs();
+        mLineChart.removeAllViewsInLayout();
+        mLineChart.removeAllViews();
+
+    }
+
+    //---------------------------图表的初始化
 
     /**
      * 初始化图表
@@ -183,224 +262,9 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
         //setMarkerView();
     }
 
-    List<DeviceItemChannelBean> mChannelList;
-    private DeviceItemBean mDeviceItemBean;
-
-    void createLegend() {
-        /***折线图例 标签 设置***/
-        mLegend = mLineChart.getLegend();
-        //设置显示类型，LINE CIRCLE SQUARE EMPTY 等等 多种方式，查看LegendForm 即可
-        mLegend.setForm(Legend.LegendForm.CIRCLE);
-        mLegend.setTextSize(12f);
-        //显示位置 左下方
-        mLegend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
-        mLegend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
-        mLegend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
-        //是否绘制在图表里面
-        mLegend.setDrawInside(false);
-        mLegend.setEnabled(true);
-    }
-
-    private void createLine() {
-        //showLineChart(mElectricistList, "电流", Color.CYAN);
-        addLine(mStepTimeList, mStepTimeEntries, mStepTimeDataSet, LColor.Colors.RED.getColor());
-        addLine(mElectricistList, mElectricistEntries, mElectricLineDataSet, LColor.Colors.ORANGE.getColor());
-        addLine(mVoltageList, mVoltageEntries, mVoltageLineDataSet, LColor.Colors.YELLOW.getColor());
-        addLine(mPowerList, mPowerEntries, mPowerLineDataSet, LColor.Colors.GREEN.getColor());
-        addLine(mTempertureList, mTempertureEntries, mTempertureDataSet, LColor.Colors.PURPLE.getColor());
-        addLine(mAmpereHourList, mAmpereHourEntries, mAmpereHourDataSet, LColor.Colors.PINK.getColor());
-        for (int i = 0; i < 6; i++) {
-            addEntry(0, i);
-            mLineChart.getLineData().getDataSets().get(i).setVisible(false);
-        }
-        showLine(1);
-    }
-
-    public void showLine(int index) {
-        mLineChart
-                .getLineData()
-                .getDataSets()
-                .get(index)
-                .setVisible(mCheckBoxList.get(index).isChecked());
-        mLineChart.invalidate();
-    }
-
-    private DeviceItemChannelBean mChannelItemBean;
-
-
     /**
-     * 添加曲线
+     * 功能：设置图标的基本属性
      */
-    private void addLine(List<Float> dataList, List<Entry> entries, LineDataSet lineDataSet, int color) {
-        for (int i = 0; i < dataList.size(); i++) {
-            /**
-             * 在此可查看 Entry构造方法，可发现 可传入数值 Entry(float x, float y)
-             * 也可传入Drawable， Entry(float x, float y, Drawable icon) 可在XY轴交点 设置Drawable图像展示
-             */
-            Entry entry = new Entry(i, dataList.get(i));// Entry(x,y)
-            entries.add(entry);
-        }
-
-        initLineDataSet(lineDataSet, color, LineDataSet.Mode.CUBIC_BEZIER);
-        if (mLineData == null) {
-            mLineData = new LineData();
-            mLineData.addDataSet(lineDataSet);
-            mLineChart.setData(mLineData);
-        } else {
-            mLineChart.getLineData().addDataSet(lineDataSet);
-        }
-        mLineChart.invalidate();
-    }
-
-    /**
-     * 动态添加数据（一条折线图）
-     *
-     * @param xValues
-     * @param yValues
-     */
-    public void addEntry(float xValues, float yValues, int index) {
-
-        int count = mLineData.getEntryCount();
-        LLogX.e("data = " + yValues + " count == " + count + "-" + mLineData.getDataSetCount());
-
-        Entry entry = new Entry(count, yValues);
-        mLineData.addEntry(entry, index);
-
-        //通知数据已经改变
-        mLineData.notifyDataChanged();
-        mLineChart.notifyDataSetChanged();
-
-        // TODO: 2019/5/4 内存泄漏，异步 待修复
-        //移到某个位置
-        mLineChart.moveViewToX(count - 6);
-
-    }
-
-    /**
-     * 动态添加数据（一条折线图）
-     *
-     * @param yValues
-     */
-    public void addEntry(float yValues, int index) {
-
-        int count = mLineData.getDataSetByIndex(index).getEntryCount();
-        //LLogX.e("data = " + yValues + " 线：" + index + " 点数：" + count + " 总共点数：" + mLineData.getEntryCount() + " 线条数：" + mLineData.getDataSetCount());
-
-        Entry entry = new Entry(count, yValues);
-        mLineData.addEntry(entry, index);
-
-        //通知数据已经改变
-        mLineData.notifyDataChanged();
-        mLineChart.notifyDataSetChanged();
-
-        //移到某个位置
-        mLineChart.moveViewToX(count - 5);// 异步的，会内存泄漏
-        mLineChart.invalidate();
-    }
-
-    /**
-     * 设置 可以显示X Y 轴自定义值的 MarkerView
-     */
-    public void setMarkerView() {
-        LineChartMarkView mv = new LineChartMarkView(this, mXAxis.getValueFormatter());
-        mv.setChartView(mLineChart);
-        mLineChart.setMarker(mv);
-        mLineChart.invalidate();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mDetailHandler.removeCallbacksAndMessages(null);
-        mDetailHandler = null;
-
-        LLogX.e(" x1 = " + mLineChart.getJobs().size());
-        mLineChart.clearAllViewportJobs();
-        mLineChart.removeAllViewsInLayout();
-        mLineChart.removeAllViews();
-        LLogX.e(" x2 = " + mLineChart.getJobs().size());
-
-//        mLineData.clearValues();
-//        mLineChart.clear();
-//        mLineChart.clearAllViewportJobs();
-//        mLineChart.removeAllViews();
-//        mLineData = null;
-//        mLineChart = null;
-    }
-
-    private static class DetailHandler extends Handler {
-        WeakReference<NewDeviceDetails> mReference;
-
-        DetailHandler(NewDeviceDetails activity) {
-            mReference = new WeakReference<>(activity);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            NewDeviceDetails newDeviceDetails = mReference.get();
-            if (newDeviceDetails == null) {
-                return;
-            }
-            switch (msg.what) {
-                case MSG_ADD_DATASET:
-                    for (int i = 0; i < 6; i++) {
-                        newDeviceDetails.addEntry(newDeviceDetails.getRandom(10f), i);
-                    }
-                    if (newDeviceDetails.mLineData.getDataSetByIndex(0).getEntryCount() <= 5) {
-                        newDeviceDetails.mDetailHandler.sendEmptyMessageDelayed(MSG_ADD_DATASET, 1000);
-                    }
-
-//                    newDeviceDetails.addEntry(newDeviceDetails.getRandom(10f));
-//                    newDeviceDetails.mDetailHandler.sendEmptyMessageDelayed(MSG_ADD_DATASET, 1000);
-                    break;
-                default:
-            }
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.mTestBtn1:
-                //mDetailHandler.sendEmptyMessageDelayed(MSG_ADD_DATASET, 1000);
-
-                // 查询数据 只管设备号，
-                List<DeviceItemBean> deviceItemBeanList = DeviceMgrService.Companion.getSDeviceItemBeanList();
-
-                List<byte[]> commandList = DeviceCommand.createDeviceTestComposeCommandList(deviceItemBeanList, DeviceCommand.Companion.getCOMMAND_QUERY_DATA_TEST(), false);
-                ToastUtils.showShort("发送查询数据 设备数 =" + deviceItemBeanList.size() + " 命令数 = " + commandList.size());
-                DeviceCommand.Companion.sendCommandList(commandList, "详情页");
-                break;
-            case R.id.mTestBtn2:
-                //LLogX.e("共 " + mLineData.getDataSetCount());
-                break;
-            case R.id.mDeviceDetailStepTime:
-                showLine(0);
-
-                //mLineChart.getLineData().getDataSets().get(0).setVisible(true);
-                //mStepTimeDataSet.setVisible(true);
-                //mLineChart.invalidate();
-                break;
-            case R.id.mDeviceDetailElectric:
-                showLine(1);
-                break;
-            case R.id.mDeviceDetailVoltage:
-                showLine(2);
-                break;
-            case R.id.mDeviceDetailPower:
-                showLine(3);
-                break;
-            case R.id.mDeviceDetailTemperture:
-                showLine(4);
-                break;
-            case R.id.mDeviceDetailAmpereHour:
-                showLine(5);
-                break;
-            default:
-        }
-    }
-
     private void setChartBasicAttr(LineChart lineChart) {
         /***图表设置***/
         lineChart.setDrawGridBackground(false); //是否展示网格线
@@ -414,6 +278,9 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
         lineChart.animateX(1500);
     }
 
+    /**
+     * 功能：设置XY轴
+     */
     private void setXYAxis(LineChart lineChart) {
         /***XY轴的设置***/
         mXAxis = lineChart.getXAxis(); // x轴
@@ -443,6 +310,49 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
     }
 
     /**
+     * 功能：创建曲线集合，并设置初始值为0
+     */
+    private void createLine() {
+        //showLineChart(mElectricistList, "电流", Color.CYAN);
+        addLine(mStepTimeList, mStepTimeEntries, mStepTimeDataSet, LColor.Colors.RED.getColor());
+        addLine(mElectricistList, mElectricistEntries, mElectricLineDataSet, LColor.Colors.ORANGE.getColor());
+        addLine(mVoltageList, mVoltageEntries, mVoltageLineDataSet, LColor.Colors.YELLOW.getColor());
+        addLine(mPowerList, mPowerEntries, mPowerLineDataSet, LColor.Colors.GREEN.getColor());
+        addLine(mTempertureList, mTempertureEntries, mTempertureDataSet, LColor.Colors.PURPLE.getColor());
+        addLine(mAmpereHourList, mAmpereHourEntries, mAmpereHourDataSet, LColor.Colors.PINK.getColor());
+
+        for (int i = 0; i < 6; i++) {
+            addEntry(0, i);
+            mLineChart.getLineData().getDataSets().get(i).setVisible(false);
+        }
+        showLine(INDEX_MELECTRICLINEDATASET_INDEX);
+    }
+
+    /**
+     * 添加曲线
+     */
+    private void addLine(List<Float> dataList, List<Entry> entries, LineDataSet lineDataSet, int color) {
+        for (int i = 0; i < dataList.size(); i++) {
+            /**
+             * 在此可查看 Entry构造方法，可发现 可传入数值 Entry(float x, float y)
+             * 也可传入Drawable， Entry(float x, float y, Drawable icon) 可在XY轴交点 设置Drawable图像展示
+             */
+            Entry entry = new Entry(i, dataList.get(i));// Entry(x,y)
+            entries.add(entry);
+        }
+
+        initLineDataSet(lineDataSet, color, LineDataSet.Mode.CUBIC_BEZIER);
+        if (mLineData == null) {
+            mLineData = new LineData();
+            mLineData.addDataSet(lineDataSet);
+            mLineChart.setData(mLineData);
+        } else {
+            mLineChart.getLineData().addDataSet(lineDataSet);
+        }
+        mLineChart.invalidate();
+    }
+
+    /**
      * 曲线初始化设置 一个LineDataSet 代表一条曲线
      *
      * @param lineDataSet 线条
@@ -468,55 +378,196 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
         }
     }
 
+
+    /**
+     * 功能：创建图例
+     */
+    private void createLegend() {
+        /***折线图例 标签 设置***/
+        mLegend = mLineChart.getLegend();
+        //设置显示类型，LINE CIRCLE SQUARE EMPTY 等等 多种方式，查看LegendForm 即可
+        mLegend.setForm(Legend.LegendForm.CIRCLE);
+        mLegend.setTextSize(12f);
+        //显示位置 左下方
+        mLegend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+        mLegend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+        mLegend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        //是否绘制在图表里面
+        mLegend.setDrawInside(false);
+        mLegend.setEnabled(true);
+    }
+
+    /**
+     * 设置 可以显示X Y 轴自定义值的 MarkerView
+     */
+    public void setMarkerView() {
+        LineChartMarkView mv = new LineChartMarkView(this, mXAxis.getValueFormatter());
+        mv.setChartView(mLineChart);
+        mLineChart.setMarker(mv);
+        mLineChart.invalidate();
+    }
+
+
+    //---------------------------图表的控制，添加折线，添加点
+
+    /**
+     * 功能：根据索引显示或隐藏指定线条
+     */
+    public void showLine(int index) {
+        mLineChart
+                .getLineData()
+                .getDataSets()
+                .get(index)
+                .setVisible(mCheckBoxList.get(index).isChecked());
+        mLineChart.invalidate();
+    }
+
+
+    /**
+     * 动态添加数据（一条折线图）
+     *
+     * @param xValues
+     * @param yValues
+     */
+    public void addEntry(float xValues, float yValues, int index) {
+
+        int count = mLineData.getEntryCount();
+        LLogX.e("data = " + yValues + " count == " + count + "-" + mLineData.getDataSetCount());
+
+        Entry entry = new Entry(count, yValues);// (x,y)
+        mLineData.addEntry(entry, index);
+
+        //通知数据已经改变
+        mLineData.notifyDataChanged();
+        mLineChart.notifyDataSetChanged();
+
+        // TODO: 2019/5/4 内存泄漏，异步 待修复
+        //移到某个位置
+        mLineChart.moveViewToX(count - 6);
+
+    }
+
+    /**
+     * 动态添加数据（一条折线图）
+     *
+     * @param yValues
+     */
+    public void addEntry(float yValues, int index) {
+
+        int count = mLineData.getDataSetByIndex(index).getEntryCount();
+        //LLogX.e("data = " + yValues + " 线：" + index + " 点数：" + count);// + " 总共点数：" + mLineData.getEntryCount() + " 线条数：" + mLineData.getDataSetCount());
+
+        Entry entry = new Entry(count, yValues);
+        mLineData.addEntry(entry, index);
+
+        //LLogX.e(" x = " + entry.getX() + " y = " + entry.getY());
+
+        //通知数据已经改变
+        mLineData.notifyDataChanged();
+        mLineChart.notifyDataSetChanged();
+
+        //移到某个位置
+        mLineChart.moveViewToX(count - 5);// 异步的，会内存泄漏
+        mLineChart.invalidate();
+    }
+
+
+    public void addStepTimeDataSet(float yValues) {
+        addEntry(yValues, INDEX_MSTEPTIMEDATASET_INDEX);
+    }
+
+    public void addElectricLineDataSet(float yValues) {
+        addEntry(yValues, INDEX_MELECTRICLINEDATASET_INDEX);
+    }
+
+    public void addVoltageLineDataSet(float yValues) {
+        addEntry(yValues, INDEX_MVOLTAGELINEDATASET_INDEX);
+    }
+
+    public void addPowerLineDataSet(float yValues) {
+        addEntry(yValues, INDEX_MPOWERLINEDATASET_INDEX);
+    }
+
+    public void addTempertureDataSet(float yValues) {
+        addEntry(yValues, INDEX_MTEMPERTUREDATASET_INDEX);
+    }
+
+    public void addAmpereHourDataSet(float yValues) {
+        addEntry(yValues, INDEX_MAMPEREHOURDATASET_INDEX);
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDeviceQueryEvent(DeviceQueryEvent event) {
 
         if (event.msg.equals(DeviceQueryEvent.Companion.getDEVICE_DATA_UPDATE_DATA_NOTIFICATION())) {
 
-            mDeviceList = DeviceMgrService.Companion.getSDeviceList();
-            for (int i = 0; i < mDeviceList.size(); i++) {
-                mDeviceItemBean = mDeviceList.get(i);
+            List<DeviceItemBean> mDeviceList = DeviceMgrService.Companion.getSDeviceList();
+            for (int deviceIndex = 0; deviceIndex < mDeviceList.size(); deviceIndex++) {
+                DeviceItemBean mDeviceItemBean = mDeviceList.get(deviceIndex);
                 // 同一设备
                 if (event.getDeviceId() == mDeviceItemBean.getDeviceId()) {
 
-                    mChannelList = mDeviceItemBean.getChannelList();
+                    List<DeviceItemChannelBean> mChannelList = mDeviceItemBean.getChannelList();
+
+                    //LLogX.e(" dID = " + DigitalTrans.byte2hex(mDeviceItemBean.getDeviceId()) + " s = " + mChannelList.size());
 
                     for (int channelIndex = 0; channelIndex < mChannelList.size(); channelIndex++) {
-                        mChannelItemBean = mChannelList.get(i);
+
+                        DeviceItemChannelBean mChannelItemBean = mChannelList.get(channelIndex);
+
+
                         // 同一通道
-                        if (event.getChannelId() == mChannelItemBean.getChannelId()) {
-                            LLogX.e(" dID = " + DigitalTrans.byte2hex(mDeviceItemBean.getDeviceId()) + " cId = " + DigitalTrans.byte2hex(mChannelItemBean.getChannelId()));
+                        if (mChannelItemBean.getChannelId() == mChannelBean.getChannelId()
+                                && mChannelItemBean.getChannelId() == event.getChannelId()) {
+
+                            LLogX.e(" *****cId = " + DigitalTrans.byte2hex(mChannelItemBean.getChannelId()) + " el = " + mChannelItemBean.getElectric());
+
+                            addStepTimeDataSet(mChannelItemBean.getStepTime());
+                            addElectricLineDataSet(mChannelItemBean.getElectric());
+                            addVoltageLineDataSet(mChannelItemBean.getVoltage());
+                            addPowerLineDataSet(mChannelItemBean.getPower());
+                            addTempertureDataSet(mChannelItemBean.getTemperture());
+                            addAmpereHourDataSet(mChannelItemBean.getAmpereHour());
+
                             return;
-                        }
-                    }
-                }
-            }
-        }
+                        } // if 同一通道
+                    }// for mChannelList
+                }// if 同一设备
+            } // for mDeviceList
+        } // msg
 
     } // onDeviceQueryEvent
 
-    /**
-     * 展示曲线
-     *
-     * @param dataList 数据集合
-     * @param name     曲线名称
-     * @param color    曲线颜色
-     */
-//    public void showLineChart(List<Float> dataList, String name, int color) {
-//        List<Entry> entries = new ArrayList<>();
-//        for (int i = 0; i < dataList.size(); i++) {
-//            /**
-//             * 在此可查看 Entry构造方法，可发现 可传入数值 Entry(float x, float y)
-//             * 也可传入Drawable， Entry(float x, float y, Drawable icon) 可在XY轴交点 设置Drawable图像展示
-//             */
-//            Entry entry = new Entry(i, dataList.get(i));
-//            entries.add(entry);
-//        }
-//        // 每一个LineDataSet代表一条线
-//        mElectricLineDataSet = new LineDataSet(entries, name);
-//        initLineDataSet(mElectricLineDataSet, color, LineDataSet.Mode.CUBIC_BEZIER);
-//        mLineData = new LineData(mElectricLineDataSet);
-//        mLineChart.setData(mLineData);
-//    }
+    private static class DetailHandler extends Handler {
+        WeakReference<NewDeviceDetails> mReference;
+
+        DetailHandler(NewDeviceDetails activity) {
+            mReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            NewDeviceDetails newDeviceDetails = mReference.get();
+            if (newDeviceDetails == null) {
+                return;
+            }
+            switch (msg.what) {
+                case MSG_ADD_DATASET:
+
+                    for (int i = 0; i < 6; i++) {
+                        newDeviceDetails.addEntry(getRandom(10f), i);
+                    }
+
+                    if (newDeviceDetails.mLineData.getDataSetByIndex(0).getEntryCount() <= 5) {
+                        newDeviceDetails.mDetailHandler.sendEmptyMessageDelayed(MSG_ADD_DATASET, 1000);
+                    }
+
+//                    newDeviceDetails.mDetailHandler.sendEmptyMessageDelayed(MSG_ADD_DATASET, 1000);
+                    break;
+                default:
+            }
+        }
+    }
 
 }

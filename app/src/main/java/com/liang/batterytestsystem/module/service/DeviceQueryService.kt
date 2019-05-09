@@ -27,9 +27,8 @@ class DeviceQueryService : LBaseService() {
 
     override fun onCreate() {
         super.onCreate()
-        //postHandlerQueryChooseDeviceTestData(false)
-        // postHandlerQueryAllDeviceChannelStatus(false)
-        val a = 0
+        postHandlerQueryChooseDeviceTestData(false)
+        postHandlerQueryAllDeviceChannelStatus(false)
     }
 
     // 网络发送查询数据命令

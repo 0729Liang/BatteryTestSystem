@@ -72,6 +72,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="1"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/mTestBtn2" />
@@ -81,6 +82,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="2"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/mTestBtn1"
         app:layout_constraintRight_toRightOf="parent" />

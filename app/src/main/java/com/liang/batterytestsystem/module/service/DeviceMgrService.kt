@@ -8,6 +8,7 @@ import android.os.Message
 import com.liang.batterytestsystem.base.LBaseService
 import com.liang.batterytestsystem.module.config.UdpEvent
 import com.liang.batterytestsystem.module.data.DeviceDataAnalysisUtils
+import com.liang.batterytestsystem.module.details.NewDeviceDetails
 import com.liang.batterytestsystem.module.device.DeviceStatus
 import com.liang.batterytestsystem.module.home.DeviceCommand
 import com.liang.batterytestsystem.module.home.DeviceCreateFactory
@@ -19,6 +20,7 @@ import com.liang.liangutils.utils.LLogX
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.lang.ref.WeakReference
+import java.text.DecimalFormat
 
 
 /**
@@ -197,6 +199,7 @@ class DeviceMgrService : LBaseService() {
     var ampereHour: Float = -1f // 安时Ah
     var localChannelId: Byte = -1 // 通道号
     var index: Byte = 0x00
+    val format = DecimalFormat("#.00")
 
     private fun updateDeviceData(byteArray: ByteArray) {
 
@@ -236,23 +239,33 @@ class DeviceMgrService : LBaseService() {
                         val amperehourFloat = DigitalTrans.byte2Float(amperehourArray, 0) / 1000
 
                         if (channelBean.deviceStatus == DeviceStatus.ONLINE) {
-                            channelBean.stepTime = stepTimeFloat
-                            channelBean.electric = electricFloat
-                            channelBean.voltage = voltageFloat
-                            channelBean.power = powerFloat
-                            channelBean.temperture = tempertureFloat
-                            channelBean.ampereHour = amperehourFloat
-                            DeviceQueryEvent.postUpdateDataNotification(deviceBean.deviceId, localChannelId)
+                            channelBean.stepTime = Math.abs(stepTimeFloat)
+                            channelBean.electric = Math.abs(electricFloat)
+                            channelBean.voltage = Math.abs(voltageFloat)
+                            channelBean.power = Math.abs(powerFloat)
+                            channelBean.temperture = Math.abs(tempertureFloat)
+                            channelBean.ampereHour = Math.abs(amperehourFloat)
+
+                            channelBean.stepTime = NewDeviceDetails.getRandom(40f)
+                            channelBean.electric = NewDeviceDetails.getRandom(10f)
+                            channelBean.voltage = NewDeviceDetails.getRandom(30f)
+                            channelBean.power = NewDeviceDetails.getRandom(10f)
+                            channelBean.temperture = NewDeviceDetails.getRandom(30f)
+                            channelBean.ampereHour = NewDeviceDetails.getRandom(10f)
+
+                            DeviceQueryEvent.postUpdateDataNotification(deviceBean.deviceId, localChannelId) // 更新一台设备数据
+
+//                            LLogX.e("deviceID = " + DigitalTrans.byte2hex(deviceBean.deviceId) + " channelID = " + DigitalTrans.byte2hex(channelBean.channelId) + " 步时间数组 = " + DigitalTrans.byte2hex(stepTimeArray) + " 步时间 = " + (stepTimeFloat))
+//                            LLogX.e("电流数组 = " + DigitalTrans.byte2hex(electricArray) + " 电流 = " + (electricFloat))
+//                            LLogX.e("电压数组 = " + DigitalTrans.byte2hex(voltageArray) + " 电压 = " + (voltageFloat))
+//                            LLogX.e("功率数组 = " + DigitalTrans.byte2hex(powerArray) + " 功率 = " + (powerFloat))
+//                            LLogX.e("温度数组 = " + DigitalTrans.byte2hex(tempertureArray) + " 温度 = " + (tempertureFloat))
+//                            LLogX.e("安时数组 = " + DigitalTrans.byte2hex(amperehourArray) + " 安时 = " + (amperehourFloat))
+//
+//
                         }
 
 
-                        //LLogX.e("deviceID = " + DigitalTrans.byte2hex(deviceBean.deviceId) + " channelID = " + DigitalTrans.byte2hex(channelBean.channelId) + " 步时间数组 = " + DigitalTrans.byte2hex(stepTimeArray) + " 步时间 = " + (stepTimeFloat))
-                        //LLogX.e("电流数组 = " + DigitalTrans.byte2hex(electricArray) + " 电流 = " + (electricFloat))
-                        //LLogX.e("电压数组 = " + DigitalTrans.byte2hex(voltageArray) + " 电压 = " + (voltageFloat))
-                        //LLogX.e("功率数组 = " + DigitalTrans.byte2hex(powerArray) + " 功率 = " + (powerFloat))
-                        //LLogX.e("温度数组 = " + DigitalTrans.byte2hex(tempertureArray) + " 温度 = " + (tempertureFloat))
-                        //LLogX.e("安时数组 = " + DigitalTrans.byte2hex(amperehourArray) + " 安时 = " + (amperehourFloat))
-                        // 更新一台设备数据
                     }
 
                 }
@@ -260,20 +273,7 @@ class DeviceMgrService : LBaseService() {
             } //  if deviceBean.deviceId
         } // sDeviceItemBeanList.forEachIndexed
     }
-/*
-*
-* 内容:7B000071010000000001 7B00017655000001980000029C000003C90000004100000104C38EC39C0002002A0025001A0000017B00000237000001BD0000007800000000000002A80000000000000280017E0000007F00000229000000000000067D007D
-* 内容:7B000071020000000001 7B00017655000001980000029C000003C90000004100000104C38EC39C0002002A0025001A0000017B00000237000001BD0000007800000000000002A80000000000000280017E0000007F00000229000000000000067D007D
-*
-* */
 
-    /**
-     * 功能：更新选中设备的状态，并通知adapter更新
-     *
-     * 1字节命令（0x80） -> 3
-     * 1字节设备号  -> 4
-     *
-     */
     var channelStatus: Byte = -1
 
     private fun updateDeviceChannelStatus(byteArray: ByteArray) {
