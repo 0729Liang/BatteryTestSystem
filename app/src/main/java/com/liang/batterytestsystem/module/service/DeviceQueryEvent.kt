@@ -27,14 +27,15 @@ class DeviceQueryEvent : BusEvent() {
         val DEVICE_DATA_UPDATE_DATA_NOTIFICATION = "DEVICE_DATA_UPDATE_DATA_NOTIFICATION" // 通知主线程更新设备数据
 
         val TEST = "TEST"
+
         @JvmStatic
         fun postQueryDataResult(@NonNull queryResultByteArray: ByteArray) {
 
             val event = DeviceQueryEvent()
             event.msg = DeviceQueryEvent.DEVICE_QUERY_CHANNEL_STATUS_RESULT
             event.queryResultByteArray = queryResultByteArray.copyOf()
-            event.count = queryResultByteArray[4].toInt()
-//            LLogX.e("设备号1 = "+ DigitalTrans.byte2hex(queryResultByteArray[4])+" count1 = "+event.count)
+            event.count = queryResultByteArray[9].toInt()
+            // LLogX.e("设备号1 = " + DigitalTrans.byte2hex(queryResultByteArray[4]) + " count1 = " + event.count)
             BusEvent.post(event)
         }
 
@@ -50,6 +51,8 @@ class DeviceQueryEvent : BusEvent() {
 
         @JvmStatic
         fun postUpdateDataNotification(deviceId: Byte, channelId: Byte) {
+//            LLogX.e("####### event dId = " + DigitalTrans.byte2hex(deviceId) + " cId = " + channelId)
+
             val event = DeviceQueryEvent()
             event.msg = DeviceQueryEvent.DEVICE_DATA_UPDATE_DATA_NOTIFICATION
             event.deviceId = deviceId

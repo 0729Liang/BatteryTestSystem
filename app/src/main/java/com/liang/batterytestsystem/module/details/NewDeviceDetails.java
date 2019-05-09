@@ -47,7 +47,6 @@ import java.util.Random;
 public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnClickListener {
 
     public static final int MSG_ADD_DATASET = 1;
-    public static final int FLAG_HIDDEN_ALL = -1;
 
     public static final int INDEX_MSTEPTIMEDATASET_INDEX = 0; //步时间
     public static final int INDEX_MELECTRICLINEDATASET_INDEX = 1; // 电流
@@ -72,12 +71,12 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
     private LineChart mLineChart; // 折线表，存线集合
 
     //  数据链表
-    List<Float> mStepTimeList = new ArrayList<>();
-    List<Float> mElectricistList = new ArrayList<>();
-    List<Float> mVoltageList = new ArrayList<>();
-    List<Float> mPowerList = new ArrayList<>();
-    List<Float> mTempertureList = new ArrayList<>();
-    List<Float> mAmpereHourList = new ArrayList<>();
+//    List<Float> mStepTimeList = new ArrayList<>();
+//    List<Float> mElectricistList = new ArrayList<>();
+//    List<Float> mVoltageList = new ArrayList<>();
+//    List<Float> mPowerList = new ArrayList<>();
+//    List<Float> mTempertureList = new ArrayList<>();
+//    List<Float> mAmpereHourList = new ArrayList<>();
     // Chart需要的点数据链表
     List<Entry> mStepTimeEntries = new ArrayList<>();
     List<Entry> mElectricistEntries = new ArrayList<>();
@@ -142,6 +141,8 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
         mBtnClick1.setOnClickListener(this);
         mBtnClick2 = findViewById(R.id.mTestBtn2);
         mBtnClick2.setOnClickListener(this);
+        mBtnClick1.setVisibility(View.INVISIBLE);
+        mBtnClick2.setVisibility(View.INVISIBLE);
         mRadioButtonStepTime = findViewById(R.id.mDeviceDetailStepTime);
         mRadioButtonElectricist = findViewById(R.id.mDeviceDetailElectric);
         mRadioButtonVoltage = findViewById(R.id.mDeviceDetailVoltage);
@@ -512,15 +513,19 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
 
         if (event.msg.equals(DeviceQueryEvent.Companion.getDEVICE_DATA_UPDATE_DATA_NOTIFICATION())) {
 
-            List<DeviceItemBean> mDeviceList = DeviceMgrService.Companion.getSDeviceList();
+            List<DeviceItemBean> mDeviceList = DeviceMgrService.Companion.getSDeviceItemBeanList();
+
             for (int deviceIndex = 0; deviceIndex < mDeviceList.size(); deviceIndex++) {
                 DeviceItemBean mDeviceItemBean = mDeviceList.get(deviceIndex);
+
+//                LLogX.e(" dId1 = " + DigitalTrans.byte2hex(event.getDeviceId()) + "index = " + deviceIndex + " dID2 = " + DigitalTrans.byte2hex(mDeviceItemBean.getDeviceId()));
                 // 同一设备
-                if (event.getDeviceId() == mDeviceItemBean.getDeviceId()) {
+                if (mDeviceItemBean.getDeviceId() == mChannelBean.getDeviceId()
+                        && mDeviceItemBean.getDeviceId() == event.getDeviceId()) {
 
                     List<DeviceItemChannelBean> mChannelList = mDeviceItemBean.getChannelList();
 
-                    //LLogX.e(" dID = " + DigitalTrans.byte2hex(mDeviceItemBean.getDeviceId()) + " s = " + mChannelList.size());
+                    //LLogX.e("同一设备 dID = " + DigitalTrans.byte2hex(mDeviceItemBean.getDeviceId()) + " s = " + mChannelList.size());
 
                     for (int channelIndex = 0; channelIndex < mChannelList.size(); channelIndex++) {
 
@@ -531,7 +536,7 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
                         if (mChannelItemBean.getChannelId() == mChannelBean.getChannelId()
                                 && mChannelItemBean.getChannelId() == event.getChannelId()) {
 
-                            LLogX.e(" *****cId = " + DigitalTrans.byte2hex(mChannelItemBean.getChannelId()) + " el = " + mChannelItemBean.getElectric());
+//                            LLogX.e(" *****cId = " + DigitalTrans.byte2hex(mChannelItemBean.getChannelId()) + " el = " + mChannelItemBean.getElectric());
 
                             addElectricLineDataSet(mChannelItemBean.getElectric());
 

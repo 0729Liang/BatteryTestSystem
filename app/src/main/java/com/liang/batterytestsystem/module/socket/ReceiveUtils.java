@@ -51,7 +51,7 @@ public class ReceiveUtils {
                 try {
                     socket.receive(packet);
                     String receive = DigitalTrans.byte2hex(packet.getData());
-                    //LLogX.e(recvName + "接收" + receive.length() / 2 + "字节 内容:" + receive);
+//                    LLogX.e(recvName + "接收" + receive.length() / 2 + "字节 内容:" + receive);
 
                     // 发出查询信息
                     DeviceQueryEvent.postQueryDataResult(receBuf);

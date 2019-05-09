@@ -55,7 +55,7 @@ public class SendUtils {
                     socket.send(msg);
                     //socket.close();  最后释放
                     String msg = DigitalTrans.byte2hex(content);
-                    //LLogX.e(threadName + "发送" + msg.length() / 2 + "字节 内容:" + msg);
+//                    LLogX.e(threadName + "发送" + msg.length() / 2 + "字节 内容:" + msg);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

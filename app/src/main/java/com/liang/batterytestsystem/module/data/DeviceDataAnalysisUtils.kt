@@ -18,6 +18,9 @@ class DeviceDataAnalysisUtils {
 
         fun test() {
 
+            for (x in 0..3) {
+                LLogX.e(x)
+            }
 //            val a = 1
 //
 //            LLogX.e(" al = " + DigitalTrans.byte2hex(DigitalTrans.int2LittleEndian(a)))

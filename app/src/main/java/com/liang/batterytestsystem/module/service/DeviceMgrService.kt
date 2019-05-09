@@ -150,7 +150,7 @@ class DeviceMgrService : LBaseService() {
                 when (byteArray[3]) {
                     DeviceCommand.COMMAND_QUERY_CHANNEL_STATUS_TEST -> updateDeviceChannelStatus(event.queryResultByteArray!!)
                     DeviceCommand.COMMAND_QUERY_DATA_TEST -> {
-                        updateDeviceData(event.queryResultByteArray!!)
+                        updateDeviceData(event.queryResultByteArray!!, event.count)
                     }
                 }
 
@@ -191,54 +191,52 @@ class DeviceMgrService : LBaseService() {
      * 温度：offset=25  位数：2位   单位：℃    索引：35-36
      * 安时：offset=17  位数：4位   单位：Ah   索引：27-30
      */
-    var stepTime: Float = -1f // 步时间S
-    var electric: Float = -1f // 电流A
-    var voltage: Float = -1f  // 电压V
-    var power: Float = -1f    // 功率W
-    var temperture: Float = -1f // 温度℃
-    var ampereHour: Float = -1f // 安时Ah
+
     var localChannelId: Byte = -1 // 通道号
     var index: Byte = 0x00
-    val format = DecimalFormat("#.00")
 
-    private fun updateDeviceData(byteArray: ByteArray) {
+    private fun updateDeviceData(byteArray: ByteArray, count: Int) {
 
         // 更新所有查询的数据
         val deviceID = DigitalTrans.byte2hex(byteArray[4])
-        //LLogX.e("设备号 = " + deviceID)
+        //LLogX.e("设备号 = " + deviceID + " s = " + sDeviceItemBeanList.size)
 
         sDeviceItemBeanList.forEachIndexed { deviceIndex, deviceBean ->
+            //LLogX.e("index = " + deviceIndex + " dID = " + DigitalTrans.byte2hex(deviceBean.deviceId))
 
             if (deviceBean.deviceId == byteArray[4]) {
-                deviceBean.channelList.forEachIndexed { channelIndex, channelBean ->
 
-                    index = byteArray.get(DeviceDataAnalysisUtils.getChannelIdIndex(channelIndex))
+                //LLogX.e(" 是同一设备 c = " + count)
+                for (countIndex in 0..count - 1) {
+                    index = byteArray.get(DeviceDataAnalysisUtils.getChannelIdIndex(countIndex))
+                    localChannelId = getLocalChannelIDByServerChannelID(index)
 
-                    if (index.toInt() == channelIndex + 1) {
+                    //LLogX.e(" i = " + countIndex + " index = " + index.toInt()+" cId = "+DigitalTrans.byte2hex(localChannelId))
 
-                        localChannelId = getLocalChannelIDByServerChannelID(index)
+                    deviceBean.channelList.forEachIndexed { channelIndex, channelBean ->
+                        if (localChannelId == channelBean.channelId) {
 
-                        //LLogX.e("deviceID = " + DigitalTrans.byte2hex(deviceBean.deviceId) + " localChannelId = " + DigitalTrans.byte2hex(localChannelId) + " index = " + index.toInt())
+                            //LLogX.e("deviceID = " + DigitalTrans.byte2hex(deviceBean.deviceId) + " localChannelId = " + DigitalTrans.byte2hex(localChannelId) + " index = " + index.toInt())
 
-                        val stepTimeArray = DeviceDataAnalysisUtils.getStepTime(byteArray, channelIndex)
-                        val stepTimeFloat = DigitalTrans.byte2Float(stepTimeArray, 0) / 1000
+                            val stepTimeArray = DeviceDataAnalysisUtils.getStepTime(byteArray, channelIndex)
+                            val stepTimeFloat = DigitalTrans.byte2Float(stepTimeArray, 0) / 1000
 
-                        val electricArray = DeviceDataAnalysisUtils.getElectric(byteArray, channelIndex)
-                        val electricFloat = DigitalTrans.byte2Float(electricArray, 0) / 1000
+                            val electricArray = DeviceDataAnalysisUtils.getElectric(byteArray, channelIndex)
+                            val electricFloat = DigitalTrans.byte2Float(electricArray, 0) / 1000
 
-                        val voltageArray = DeviceDataAnalysisUtils.getVoltage(byteArray, channelIndex)
-                        val voltageFloat = DigitalTrans.byte2Float(voltageArray, 0) / 1000
+                            val voltageArray = DeviceDataAnalysisUtils.getVoltage(byteArray, channelIndex)
+                            val voltageFloat = DigitalTrans.byte2Float(voltageArray, 0) / 1000
 
-                        val powerArray = DeviceDataAnalysisUtils.getPower(byteArray, channelIndex)
-                        val powerFloat = DigitalTrans.byte2Float(powerArray, 0) / 1000
+                            val powerArray = DeviceDataAnalysisUtils.getPower(byteArray, channelIndex)
+                            val powerFloat = DigitalTrans.byte2Float(powerArray, 0) / 1000
 
-                        val tempertureArray = DeviceDataAnalysisUtils.getTemperture(byteArray, channelIndex)
-                        val tempertureFloat = DigitalTrans.byte2Float(tempertureArray, 0) / 100
+                            val tempertureArray = DeviceDataAnalysisUtils.getTemperture(byteArray, channelIndex)
+                            val tempertureFloat = DigitalTrans.byte2Float(tempertureArray, 0) / 100
 
-                        val amperehourArray = DeviceDataAnalysisUtils.getAmperehour(byteArray, channelIndex)
-                        val amperehourFloat = DigitalTrans.byte2Float(amperehourArray, 0) / 1000
+                            val amperehourArray = DeviceDataAnalysisUtils.getAmperehour(byteArray, channelIndex)
+                            val amperehourFloat = DigitalTrans.byte2Float(amperehourArray, 0) / 1000
 
-                        if (channelBean.deviceStatus == DeviceStatus.ONLINE) {
+                            if (channelBean.deviceStatus == DeviceStatus.ONLINE) {
 //                            channelBean.stepTime = Math.abs(stepTimeFloat)
 //                            channelBean.electric = Math.abs(electricFloat)
 //                            channelBean.voltage = Math.abs(voltageFloat)
@@ -246,31 +244,32 @@ class DeviceMgrService : LBaseService() {
 //                            channelBean.temperture = Math.abs(tempertureFloat)
 //                            channelBean.ampereHour = Math.abs(amperehourFloat)
 
-                            // todo 由于 控制器 模拟数据 极不稳定，临时替换自己的的假数据
+                                // todo 由于 控制器 模拟数据 极不稳定，临时替换自己的的假数据
 
-                            channelBean.setMStepTime(NewDeviceDetails.getRandom(40f))
-                            channelBean.setMElectric(NewDeviceDetails.getRandom(30f))
-                            channelBean.setMVoltage(NewDeviceDetails.getRandom(30f))
-                            channelBean.setMPower(NewDeviceDetails.getRandom(10f))
-                            channelBean.setMTemperture(NewDeviceDetails.getRandom(30f))
-                            channelBean.setMAmpereHour(NewDeviceDetails.getRandom(10f))
+                                channelBean.setMStepTime(NewDeviceDetails.getRandom(40f))
+                                channelBean.setMElectric(NewDeviceDetails.getRandom(30f))
+                                channelBean.setMVoltage(NewDeviceDetails.getRandom(30f))
+                                channelBean.setMPower(NewDeviceDetails.getRandom(10f))
+                                channelBean.setMTemperture(NewDeviceDetails.getRandom(30f))
+                                channelBean.setMAmpereHour(NewDeviceDetails.getRandom(10f))
 
-                            DeviceQueryEvent.postUpdateDataNotification(deviceBean.deviceId, localChannelId) // 更新一台设备数据
+                                DeviceQueryEvent.postUpdateDataNotification(deviceBean.deviceId, localChannelId) // 更新一台设备数据
 
+                                //LLogX.e("#####更新数据")
 //                            LLogX.e("deviceID = " + DigitalTrans.byte2hex(deviceBean.deviceId) + " channelID = " + DigitalTrans.byte2hex(channelBean.channelId) + " 步时间数组 = " + DigitalTrans.byte2hex(stepTimeArray) + " 步时间 = " + (stepTimeFloat))
 //                            LLogX.e("电流数组 = " + DigitalTrans.byte2hex(electricArray) + " 电流 = " + (electricFloat))
 //                            LLogX.e("电压数组 = " + DigitalTrans.byte2hex(voltageArray) + " 电压 = " + (voltageFloat))
 //                            LLogX.e("功率数组 = " + DigitalTrans.byte2hex(powerArray) + " 功率 = " + (powerFloat))
 //                            LLogX.e("温度数组 = " + DigitalTrans.byte2hex(tempertureArray) + " 温度 = " + (tempertureFloat))
 //                            LLogX.e("安时数组 = " + DigitalTrans.byte2hex(amperehourArray) + " 安时 = " + (amperehourFloat))
-//
-//
-                        }
 
 
-                    }
+                            }
 
-                }
+                            return@forEachIndexed
+                        } // if localChannelId == channelBean.channelId
+                    } // for channelList
+                } // for countIndex
                 return
             } //  if deviceBean.deviceId
         } // sDeviceItemBeanList.forEachIndexed
@@ -416,16 +415,6 @@ class DeviceMgrService : LBaseService() {
         }
 
 
-        /**
-         * 功能：根据返回的通道ID，映射出本地的对应的设备ID
-         */
-
-//        fun getLocalDeviceIDByServerDeviceID(deviceID: Byte): Byte {
-//            when (deviceID) {
-//                0x01 -> {}
-//                else -> return -1
-//            } // when
-//        }
     }
 
 

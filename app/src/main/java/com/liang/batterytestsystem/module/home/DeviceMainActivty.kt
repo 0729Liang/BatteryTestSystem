@@ -7,6 +7,7 @@ import com.blankj.utilcode.util.ToastUtils
 import com.liang.batterytestsystem.R
 import com.liang.batterytestsystem.base.LAbstractBaseActivity
 import com.liang.batterytestsystem.exts.Router
+import com.liang.batterytestsystem.module.data.DeviceDataAnalysisUtils
 import com.liang.batterytestsystem.module.device.DeviceStatus
 import com.liang.batterytestsystem.module.service.DeviceMgrService
 import com.liang.batterytestsystem.module.service.DeviceQueryEvent
@@ -33,6 +34,7 @@ class DeviceMainActivty : LAbstractBaseActivity() {
         initData()
         initView()
         clicEvent()
+
 
         //DeviceDataAnalysisUtils.test()
     }
@@ -131,14 +133,15 @@ class DeviceMainActivty : LAbstractBaseActivity() {
 
             DeviceQueryEvent.DEVICE_DATA_UPDATE_DATA_NOTIFICATION -> {
                 DeviceMgrService.sDeviceItemBeanList.forEachIndexed { deviceIndex, deviceBean ->
+                    //                    LLogX.e(" dID = " + DigitalTrans.byte2hex(deviceBean.deviceId))
                     if (deviceBean.deviceId == event.deviceId) { // 同一设备
                         deviceBean.channelList.forEachIndexed { channelIndex, channelBean ->
                             if (channelBean.channelId == event.channelId) { // 同一通道
-                                //LLogX.e("channelIndex = " + channelIndex + " id = " + DigitalTrans.byte2hex(event.channelId) + " toIndex = " + DigitalTrans.byte2hex(DeviceMgrService.getChannelIndex(event.channelId)) + " toInt " + DeviceMgrService.getChannelIndex(event.channelId).toInt())
+                                // LLogX.e(" dID = " + DigitalTrans.byte2hex(deviceBean.deviceId)+" cId = " + DigitalTrans.byte2hex(event.channelId) +"channelIndex = " + channelIndex )
 
                                 if (channelBean.deviceStatus == DeviceStatus.ONLINE) {
                                     deviceBean.channelAdapter.notifyItemChanged(channelIndex)
-
+                                    return
                                 }
 
                             }// if
