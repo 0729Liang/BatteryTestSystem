@@ -1,4 +1,4 @@
-package com.liang.batterytestsystem.device
+package com.liang.batterytestsystem.module.device
 
 import com.liang.liangutils.msg.BusEvent
 
@@ -10,7 +10,7 @@ import com.liang.liangutils.msg.BusEvent
 class DeviceEvent : BusEvent() {
 
     var serialNumber: String? = null    // 设备编号
-    var deviceBean: DeviceBean? = null  // 设备对象
+    //    var deviceBean: DeviceBean? = null  // 设备对象
     var recvMsg: String? = null // 接收到的信息
 
     companion object {

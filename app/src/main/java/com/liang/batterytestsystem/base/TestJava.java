@@ -1,4 +1,4 @@
-package com.liang.batterytestsystem.demo;
+package com.liang.batterytestsystem.base;
 
 import com.liang.liangutils.utils.LLogX;
 
@@ -13,6 +13,9 @@ import java.util.List;
 public class TestJava implements Cloneable {
 
 
+    static {
+
+    }
     List<String> mList = new ArrayList<>();
 
     public static void listTest() {
@@ -34,7 +37,9 @@ public class TestJava implements Cloneable {
         LLogX.e(list2.toString());
     }
 
+
     public void et() {
+
 
     }
 
@@ -48,4 +53,6 @@ public class TestJava implements Cloneable {
         }
         return student;
     }
+
+
 }

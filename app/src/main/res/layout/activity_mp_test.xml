@@ -4,18 +4,86 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".module.details.MpTestActivity">
+    tools:context=".module.details.NewDeviceDetails">
 
-    <Button
-        android:id="@+id/btn_click"
+    <com.liang.liangutils.view.LTitleView
+        android:id="@+id/mDeviceDetailTitle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/chart"
+        android:id="@+id/mDeviceDetailChart"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp200"
-        app:layout_constraintTop_toBottomOf="@id/btn_click">
+        android:layout_marginTop="@dimen/dp10"
+        app:layout_constraintTop_toBottomOf="@id/mDeviceDetailTitle" />
 
-    </com.github.mikephil.charting.charts.LineChart>
+    <RadioGroup
+        android:id="@+id/mvDeviceDetailRadio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp10"
+        app:layout_constraintTop_toBottomOf="@id/mDeviceDetailChart">
+
+
+        <CheckBox
+            android:id="@+id/mDeviceDetailStepTime"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp50"
+            android:text="步时间" />
+
+        <CheckBox
+            android:id="@+id/mDeviceDetailElectric"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp50"
+            android:checked="true"
+            android:text="电流" />
+
+        <CheckBox
+            android:id="@+id/mDeviceDetailVoltage"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp50"
+            android:text="电压" />
+
+        <CheckBox
+            android:id="@+id/mDeviceDetailPower"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp50"
+            android:text="功率" />
+
+        <CheckBox
+            android:id="@+id/mDeviceDetailTemperture"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp50"
+            android:text="温度" />
+
+        <CheckBox
+            android:id="@+id/mDeviceDetailAmpereHour"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp50"
+            android:text="安时" />
+
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/mTestBtn1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/mTestBtn2" />
+
+    <Button
+        android:id="@+id/mTestBtn2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="2"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/mTestBtn1"
+        app:layout_constraintRight_toRightOf="parent" />
 </android.support.constraint.ConstraintLayout>

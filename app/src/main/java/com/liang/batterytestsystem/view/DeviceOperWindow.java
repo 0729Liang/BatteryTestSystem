@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.PopupWindow;
 
 import com.liang.batterytestsystem.R;
-import com.liang.batterytestsystem.device.CustomerNoParameters;
+import com.liang.batterytestsystem.module.device.CustomerNoParameters;
 import com.liang.liangutils.utils.LSizeX;
 
 /**
@@ -51,8 +51,20 @@ public class DeviceOperWindow extends PopupWindow {
         return this;
     }
 
-    public DeviceOperWindow addQueryClickEvent(CustomerNoParameters customer) {
-        View view = this.getContentView().findViewById(R.id.mvWindowQuery);
+    public DeviceOperWindow addStopClickEvent(CustomerNoParameters customer) {
+        View view = this.getContentView().findViewById(R.id.mvWindowStop);
+        view.setOnClickListener(v -> customer.accept());
+        return this;
+    }
+
+    public DeviceOperWindow addQueryDataClickEvent(CustomerNoParameters customer) {
+        View view = this.getContentView().findViewById(R.id.mvWindowQueryData);
+        view.setOnClickListener(v -> customer.accept());
+        return this;
+    }
+
+    public DeviceOperWindow addQueryChannelStatusClickEvent(CustomerNoParameters customer) {
+        View view = this.getContentView().findViewById(R.id.mvWindowQueryChannelStatus);
         view.setOnClickListener(v -> customer.accept());
         return this;
     }

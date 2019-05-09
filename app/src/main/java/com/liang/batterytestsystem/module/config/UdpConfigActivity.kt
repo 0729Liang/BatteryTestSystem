@@ -6,11 +6,10 @@ import android.os.Bundle
 import com.blankj.utilcode.util.ToastUtils
 import com.liang.batterytestsystem.R
 import com.liang.batterytestsystem.base.LAbstractBaseActivity
-import com.liang.batterytestsystem.exts.Router
-import com.liang.batterytestsystem.module.service.DeviceService
 import com.liang.batterytestsystem.utils.LNetwork
 import com.liang.liangutils.init.LCommon
 import kotlinx.android.synthetic.main.activity_udp_config.*
+
 
 class UdpConfigActivity : LAbstractBaseActivity() {
 
@@ -26,15 +25,16 @@ class UdpConfigActivity : LAbstractBaseActivity() {
     override fun initData() {
     }
 
-
     override fun initView() {
         val ipAddress = LNetwork.getIPAddress(LCommon.getContext())
         //var substring = ipAddress.substring(0, ipAddress.lastIndexOf(".") + 1)
 
         mvConfigClientIpEt.setText(ipAddress)
-        mvConfigSendPortEt.setText(UdpInfoStorage.getClientSendPort().toString())
-        mvConfigServerIpEt.setText(ipAddress)
         mvConfigListenPortEt.setText(UdpInfoStorage.getClientListenPort().toString())
+        mvConfigServerIpEt.setText(UdpInfoStorage.getServerIp())
+        mvConfigSendPortEt.setText(UdpInfoStorage.getClientSendPort().toString())
+
+
         mvConfigServerIpEt.requestFocus() // 申请焦点
 
 
@@ -49,8 +49,8 @@ class UdpConfigActivity : LAbstractBaseActivity() {
                     Integer.valueOf(mvConfigListenPortEt.text.toString()))
             ToastUtils.showShort("保存成功")
             UdpEvent.postCreateNewUdpRecv()
-            //this.finish()
-            Router.startDeviceDetail(this, DeviceService.mDeviceTestChannelList.get(0))
+            this.finish()
+            //Router.startDeviceDetail(this, DeviceMgrService.sDeviceTestChannelList.get(0))
         }
     }
 

@@ -10,6 +10,7 @@ import com.liang.liangutils.msg.BusEvent
  */
 class UdpEvent : BusEvent() {
     companion object {
+
         val EVENT_CREATE_NEW_UDP_RECV = "EVENT_CREATE_NEW_UDP_RECV"
 
         @JvmStatic

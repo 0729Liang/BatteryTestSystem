@@ -2,7 +2,7 @@ package com.liang.batterytestsystem.utils;
 
 import android.support.annotation.NonNull;
 
-import com.liang.batterytestsystem.device.CustomerNoParameters;
+import com.liang.batterytestsystem.module.device.CustomerNoParameters;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;

@@ -1,5 +1,11 @@
 package com.liang.batterytestsystem.utils;
 
+import com.liang.liangutils.utils.LLogX;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.nio.ByteBuffer;
+
 /**
  * @author : Amarao
  * CreateAt : 15:35 2019/3/14
@@ -182,6 +188,8 @@ public class DigitalTrans {
             temp = (char) aBytearray;
             result.append(temp);
         }
+
+
         return result.toString();
     }
 
@@ -278,7 +286,7 @@ public class DigitalTrans {
      * @param hex 十六进制字符串
      * @return byte 转换结果
      */
-    public static byte[] hexStringToByte(String hex) {
+    private static byte[] hexStringToByte(String hex) {
         int max = hex.length() / 2;
         byte[] bytes = new byte[max];
         String binarys = DigitalTrans.hexStringToBinary(hex);
@@ -290,6 +298,28 @@ public class DigitalTrans {
             }
         }
         return bytes;
+    }
+
+    /**
+     * Hex string to bytes.
+     * <p>e.g. hexString2Bytes("00A8") returns { 0, (byte) 0xA8 }</p>
+     *
+     * @param hexString The hex string.
+     * @return the bytes
+     */
+    public static byte[] hexString2Bytes(String hexString) {
+        if (isSpace(hexString)) return null;
+        int len = hexString.length();
+        if (len % 2 != 0) {
+            hexString = "0" + hexString;
+            len = len + 1;
+        }
+        char[] hexBytes = hexString.toUpperCase().toCharArray();
+        byte[] ret = new byte[len >> 1];
+        for (int i = 0; i < len; i += 2) {
+            ret[i >> 1] = (byte) (hex2Int(hexBytes[i]) << 4 | hex2Int(hexBytes[i + 1]));
+        }
+        return ret;
     }
 
     /**
@@ -315,18 +345,18 @@ public class DigitalTrans {
     /**
      * 字节数组转换为十六进制字符串
      *
-     * @param b byte[] 需要转换的字节数组
+     * @param byteArray byte[] 需要转换的字节数组
      * @return String 十六进制字符串
      */
-    public static String byte2hex(byte b[]) {
-        if (b == null) {
+    public static String byte2hex(byte byteArray[]) {
+        if (byteArray == null) {
             throw new IllegalArgumentException(
                     "Argument b ( byte array ) is null! ");
         }
         StringBuilder hs = new StringBuilder();
         String stmp = "";
-        for (byte aB : b) {
-            stmp = Integer.toHexString(aB & 0xff);
+        for (byte b : byteArray) {
+            stmp = Integer.toHexString(b & 0xff);
             if (stmp.length() == 1) {
                 hs.append("0").append(stmp);
             } else {
@@ -334,6 +364,189 @@ public class DigitalTrans {
             }
         }
         return hs.toString().toUpperCase();
+    }
+
+
+    /**
+     * 字节数组转换为十六进制字符串
+     *
+     * @param b byte[] 需要转换的字节数组
+     * @return String 十六进制字符串
+     */
+    public static String byte2hex(byte b) {
+        StringBuilder hs = new StringBuilder();
+        String s = Integer.toHexString(b & 0xff);
+        if (s.length() == 1) {
+            hs.append("0").append(s);
+        } else {
+            hs.append(s);
+        }
+        return hs.toString().toUpperCase();
+    }
+
+
+    /**
+     * 功能：将int数据转化为byte数组（小端格式）
+     * 十六进制： 0x11223344
+     * 索引      |  0   | 1    | 2     |3
+     * ---------|------|------|-------|-----
+     * 大端格式：| 0x11 |  0x22 | 0x33 | 0x44
+     * 小端格式：|0x44  |  0x33 | 0x22 |0x11
+     */
+    public static byte[] int2LittleEndian(int i) {
+        byte[] b = new byte[4];
+        b[0] = (byte) (0xff & i);
+        b[1] = (byte) ((0xff00 & i) >> 8);
+        b[2] = (byte) ((0xff0000 & i) >> 16);
+        b[3] = (byte) ((0xff000000 & i) >> 24);
+        return b;
+    }
+
+    /**
+     * 功能：将int数据转化为byte数组（大端格式）
+     * <p>
+     * 十六进制： 0x11223344
+     * 索引      |  0   | 1    | 2     |3
+     * ---------|------|------|-------|-----
+     * 大端格式：| 0x11 |  0x22 | 0x33 | 0x44
+     * 小端格式：|0x44  |  0x33 | 0x22 |0x11
+     */
+    public static byte[] int2BigEndian(int i) {
+        byte[] b = new byte[4];
+        b[3] = (byte) (0xff & i);
+        b[2] = (byte) ((0xff00 & i) >> 8);
+        b[1] = (byte) ((0xff0000 & i) >> 16);
+        b[0] = (byte) ((0xff000000 & i) >> 24);
+        return b;
+    }
+
+//    public static byte[] reversal
+
+//------------------以下字节转化均为大端格式
+
+
+    public static float byteArrayToFloat(byte[] array, int offset) {
+        int accum = 0;
+        accum = array[offset + 0] & 0xFF;
+        accum |= (long) (array[offset + 1] & 0xFF) << 8;
+        accum |= (long) (array[offset + 2] & 0xFF) << 16;
+        accum |= (long) (array[offset + 3] & 0xFF) << 24;
+        return Float.intBitsToFloat(accum);
+    }
+
+
+    public static byte[] floatToByteArray(float Value) {
+        int accum = Float.floatToRawIntBits(Value);
+        byte[] byteRet = new byte[4];
+        byteRet[0] = (byte) (accum & 0xFF);
+        byteRet[1] = (byte) ((accum >> 8) & 0xFF);
+        byteRet[2] = (byte) ((accum >> 16) & 0xFF);
+        byteRet[3] = (byte) ((accum >> 24) & 0xFF);
+        return byteRet;
+    }
+
+//-------
+
+    /**
+     * 功能：将字节数组转化为float（大端格式）
+     * <p>
+     * 首先要知道一个float需要4个字节
+     * 当byte不足4位时，默认高位补0，测试index废弃
+     */
+    public static Float byte2Float(@NotNull byte[] byteArray, int index) {
+
+        if (byteArray.length < 4) {
+            byte[] newByteArray = new byte[4];
+            int length = byteArray.length;
+            for (int i = 0; i < 4; i++) {
+                if (i < 4 - length) {
+                    newByteArray[i] = 0;//
+                } else {
+                    newByteArray[i] = byteArray[i + length - 4];
+                }
+            }
+            return byte2float(newByteArray, 0);
+        }
+        return byte2float(byteArray, index);
+    }
+
+    /**
+     * 字节转换为浮点
+     *
+     * @param b     字节（至少4个字节）
+     * @param index 开始位置
+     * @return
+     */
+    private static float byte2float(byte[] b, int index) {
+        int l;
+        l = b[index + 0];
+        l &= 0xff;
+        l |= ((long) b[index + 1] << 8);
+        l &= 0xffff;
+        l |= ((long) b[index + 2] << 16);
+        l &= 0xffffff;
+        l |= ((long) b[index + 3] << 24);
+        return Float.intBitsToFloat(l);
+    }
+
+    /**
+     * 浮点转换为字节
+     *
+     * @param f
+     * @return
+     */
+    public static byte[] float2byte(float f) {
+
+        // 把float转换为byte[]
+        int fbit = Float.floatToIntBits(f);
+
+        byte[] b = new byte[4];
+        for (int i = 0; i < 4; i++) {
+            b[i] = (byte) (fbit >> (24 - i * 8));
+        }
+
+        // 翻转数组
+        int len = b.length;
+        // 建立一个与源数组元素类型相同的数组
+        byte[] dest = new byte[len];
+        // 为了防止修改源数组，将源数组拷贝一份副本
+        System.arraycopy(b, 0, dest, 0, len);
+        byte temp;
+        // 将顺位第i个与倒数第i个交换
+        for (int i = 0; i < len / 2; ++i) {
+            temp = dest[i];
+            dest[i] = dest[len - i - 1];
+            dest[len - i - 1] = temp;
+        }
+
+        return dest;
+
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // other utils methods
+    ///////////////////////////////////////////////////////////////////////////
+
+    private static int hex2Int(final char hexChar) {
+        if (hexChar >= '0' && hexChar <= '9') {
+            return hexChar - '0';
+        } else if (hexChar >= 'A' && hexChar <= 'F') {
+            return hexChar - 'A' + 10;
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private static boolean isSpace(final String s) {
+        if (s == null) {
+            return true;
+        }
+        for (int i = 0, len = s.length(); i < len; ++i) {
+            if (!Character.isWhitespace(s.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 }
 

@@ -12,10 +12,11 @@ import com.liang.liangutils.mgrs.LKVMgr;
  */
 public class UdpInfoStorage {
 
-    private static String clientIp         = LNetwork.getIPAddress(LCommon.getContext());
-    private static int    clientListenPort = 61000; //
-    private static String serverIp         = "192.168.100.8";
-    private static int    clientSendPort   = 61001;
+    private static String clientIp = LNetwork.getIPAddress(LCommon.getContext()); // 本机IP
+    private static int clientListenPort = 61001; // 监听端口
+    private static String serverIp = "192.168.43.8"; // 服务器IP
+    private static int clientSendPort = 61000; // 发送端口
+
 
     public static String getClientIp() {
         return LKVMgr.getInstance().getString(DeviceKey.KEY_CLIENT_IP, clientIp);

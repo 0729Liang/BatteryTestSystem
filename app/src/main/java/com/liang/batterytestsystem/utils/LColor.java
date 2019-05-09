@@ -28,11 +28,53 @@ public class LColor {
         return Color.argb(a, r, g, b);
     }
 
-//
-//    public static int getRandomColor() {
-//        int num=(int) (Math.random()*16777216);
-//        String hex = Integer.toHexString(-num);
-//        return LResourceX.parseColor(hex);
-//    }
 
+    public enum Colors {
+        /**
+         * LKVMgr  LKVMgr参数，限制LKVMgr的实例类型
+         */
+        RED("#FF0500", 0xFF0500),
+        ORANGE("#FFB601", 0xFFB601),
+        YELLOW("#FFEF05", 0xFFEF05),
+        GREEN("#08FF08", 0x08FF08),
+        CYAN("#04FFAF", 0X04FFAF),
+        BLUE("#00E3FF", 0X00E3FF),
+        PURPLE("#FF00EF", 0XFF00EF),
+        PINK("#FFB0E5", 0XFFB0E5),
+        WHITE("#FFFFFF", 0XFFFFFF),
+        BLACK("#000000", 0X000000);
+
+        private String name;
+        private int values;
+
+        Colors(String name, int values) {
+            this.name = name;
+            this.values = values;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getValues() {
+            return values;
+        }
+
+        /**
+         * 解析颜色
+         * <p>
+         * 如'#345678'
+         *
+         * @return color
+         */
+        public int getColor() {
+            try {
+                return Color.parseColor(name);
+            } catch (Exception e) {
+                return Color.WHITE;
+            }
+
+        }
+
+    }
 }

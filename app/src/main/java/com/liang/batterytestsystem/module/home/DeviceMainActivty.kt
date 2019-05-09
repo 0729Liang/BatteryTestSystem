@@ -7,100 +7,42 @@ import com.blankj.utilcode.util.ToastUtils
 import com.liang.batterytestsystem.R
 import com.liang.batterytestsystem.base.LAbstractBaseActivity
 import com.liang.batterytestsystem.exts.Router
-import com.liang.batterytestsystem.module.service.DeviceService
+import com.liang.batterytestsystem.module.data.DeviceDataAnalysisUtils
+import com.liang.batterytestsystem.module.device.DeviceStatus
+import com.liang.batterytestsystem.module.service.DeviceMgrService
+import com.liang.batterytestsystem.module.service.DeviceQueryEvent
+import com.liang.batterytestsystem.module.service.DeviceQueryService
+import com.liang.batterytestsystem.utils.DigitalTrans
 import com.liang.batterytestsystem.view.DeviceOperWindow
 import com.liang.liangutils.utils.LLogX
 import kotlinx.android.synthetic.main.activity_device_main_activty.*
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 class DeviceMainActivty : LAbstractBaseActivity() {
 
-    val mDeviceList: MutableList<DeviceItemBean> = ArrayList()
-    val mAdapter = DeviceItemAdapter(mDeviceList)
     val mSendName = "发送线程"
+    lateinit var mDeviceItemAdapter: DeviceItemAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_device_main_activty)
 
         Router.startDeviceMgrService(this)
+        Router.startDeviceQueryService(this)
+
         initData()
         initView()
         clicEvent()
 
-        //设备0x01 通道0x01
-//        val s1_1 = "7B0000710105060708017B01011DC7000001BA000002C50000038B0000013C00000295C38FC38100220018005B000D0000018F000002C4000000AE000001B50000000000000002000000000000012902090000010A000002BB000000000000067D007D"
-//        val s1_2 = "7B0000710105060708017B01012297000000B1000001F10000028C000001DE000003D2C35FC36E0004000E00620029000000660000027C00000163000003590000000000000034000000000000005C00270000020D00000115000000000000067D007D"
-//        val s1_3 = "7B0000710105060708017B01012666000003900000011D0000018D0000028000000126C392C35B00490004000500460000032500000233000002170000011500000000000000650000000000000377022C0000030F00000358000000000000067D007D"
-        val s1_1 = "7B0000710105060708017B01011DC7000001BA000002C50000038B0000013C00000295C38FC38100220018005B000D0000018F000002C4000000AE000001B50000000000000002000000000000012902090000010A000002BB000000000000067D007D"
-        val s1_2 = "7B0000710105060708017B01012297000000B1000001F10000028C000001DE000003D2C35FC36E0004000E00620029000000660000027C00000163000003590000000000000034000000000000005C00270000020D00000115000000000000067D007D"
-        val s1_3 = "7B0000710105060708017B01012666000003900000011D0000018D0000028000000126C392C35B00490004000500460000032500000233000002170000011500000000000000650000000000000377022C0000030F00000358000000000000067D007D"
-        LLogX.e("设备0x01 通道0x01 测试数据 字节数 = " + s1_1.length / 2) // lenght1 = 99 1419
-        LLogX.e("设备0x01 通道0x01 测试数据 字节数 = " + s1_2.length / 2) // lenght1 = 99 1419
-        LLogX.e("设备0x01 通道0x01 测试数据 字节数 = " + s1_3.length / 2) // lenght1 = 99 1419
-        // 设备0x01 通道0x01 0x02 0x03测试数据
-        val s3 =
-                "7B0000" +
-                        "71" +//命令
-                        "01" +//设备号
-                        "05060708" +//4
-                        "03" +//通道数
-                        "7B" +//通道帧头
-                        "01" +//是否保存
-                        "01" +//通道号
-                        "188B000000000000019300000259000000A7000001CEC37EC39E00280059001C000F00000306000001E6000001BA00000210000000000000030800000000000000F8005A0000039B00000172000000000000067D+" +
-                        "7B0102188B000000000000019300000259000000A7000001CEC37EC39E00280059001C000F00000306000001E6000001BA00000210000000000000030800000000000000F8005A0000039B00000172000000000000067D" +
-                        "7B0103188B000000000000019300000259000000A7000001CEC37EC39E00280059001C000F00000306000001E6000001BA00000210000000000000030800000000000000F8005A0000039B00000172000000000000067D" +
-                        "007D04" +
-                        "7B44000002F5000003E40000039E000002CB00000374C3B2C3AF003F0039004300160000007500000186000003CE00000344000000000000000000000000000000DB01DA000001AA000001CD000000000000067D" +
-                        "7B00057B44000002F5000003E40000039E000002CB00000374C3B2C3AF003F0039004300160000007500000186000003CE00000344000000000000000000000000000000DB01DA000001AA000001CD000000000000067D" +
-                        "7B00067B44000002F5000003E40000039E000002CB00000374C3B2C3AF003F0039004300160000007500000186000003CE00000344"
-        LLogX.e("设备0x01 通道0x01 0x02 0x03 测试数据 字节数 = " + s3.length / 2) // lenght1 = 99 1419
-        // 设备0x01 通道0x01-0x016 测试数据
-        val s16 = "7B00007101050607080F7B0001F93D0000002400000218000002C2000001950000021FC3B1C372000A00450006002500000069000000A7000002F3000000DB00000000000002A6000000000000026E02090000016400000176000000000000067D7B0002F93D0000002400000218000002C2000001950000021FC3B1C372000A00450006002500000069000000A7000002F3000000DB00000000000002A6000000000000026E02090000016400000176000000000000067D7B0003F93D0000002400000218000002C2000001950000021FC3B1C372000A00450006002500000069000000A7000002F3000000DB00000000000002A6000000000000026E02090000016400000176000000000000067D7B0004F93D0000002400000218000002C2000001950000021FC3B1C372000A00450006002500000069000000A7000002F3000000DB00000000000002A6000000000000026E02090000016400000176000000000000067D7B0005F93D0000002400000218000002C2000001950000021FC3B1C372000A00450006002500000069000000A7000002F3000000DB00000000000002A6000000000000026E02090000016400000176000000000000067D7B0006F93D0000002400000218000002C2000001950000021FC3B1C372000A00450006002500000069000000A7000002F3000000DB00000000000002A6000000000000026E02090000016400000176000000000000067D7B0007F93D0000002400000218000002C2000001950000021FC3B1C372000A00450006002500000069000000A7000002F3000000DB00000000000002A6000000000000026E02090000016400000176000000000000067D7B0008F93D0000002400000218000002C2000001950000021FC3B1C372000A00450006002500000069000000A7000002F3000000DB00000000000002A6000000000000026E02090000016400000176000000000000067D7B0009F93D0000002400000218000002C2000001950000021FC3B1C372000A00450006002500000069000000A7000002F3000000DB00000000000002A6000000000000026E02090000016400000176000000000000067D7B000AF93D0000002400000218000002C2000001950000021FC3B1C372000A00450006002500000069000000A7000002F3000000DB00000000000002A6000000000000026E02090000016400000176000000000000067D7B000BF93D0000002400000218000002C2000001950000021FC3B1C372000A00450006002500000069000000A7000002F3000000DB00000000000002A6000000000000026E02090000016400000176000000000000067D7B000CF93D0000002400000218000002C2000001950000021FC3B1C372000A00450006002500000069000000A7000002F3000000DB00000000000002A6000000000000026E02090000016400000176000000000000067D7B000DF93D0000002400000218000002C2000001950000021FC3B1C372000A00450006002500000069000000A7000002F3000000DB00000000000002A6000000000000026E02090000016400000176000000000000067D7B000EF93D0000002400000218000002C2000001950000021FC3B1C372000A00450006002500000069000000A7000002F3000000DB00000000000002A6000000000000026E02090000016400000176000000000000067D7B000FF93D0000002400000218000002C2000001950000021FC3B1C372000A00450006002500000069000000A7000002F3000000DB00000000000002A6000000000000026E02090000016400000176000000000000067D007D"
-        LLogX.e("设备0x01 通道0x01-0x016 测试数据 字节数 = " + s16.length / 2) // lenght1 = 99 1419
 
-        /**
-         * 13位不重复
-         * 1 通道 99=13+86
-         * 3 通道 498=13+485
-         * 16通道 1317=13+1304
-         * */
-
-//        val low:Byte = 0x8f.toByte()
-//        val th:Byte = 0x0003
-//        val high:Byte = 0x0001
-//
-//
-//        LLogX.e(" low = "+Integer.toHexString(low.toInt()))
-//        LLogX.e(" th "+th)
-//        LLogX.e(" high = "+DigitalTrans.byte2hex(byteArrayOf(high)))
+        //DeviceDataAnalysisUtils.test()
     }
 
 
     override fun initData() {
-        //创建设备
-        val device1 = DeviceCreateFactory.createDevice(DeviceCommand.DEVICE_1)
-        val device2 = DeviceCreateFactory.createDevice(DeviceCommand.DEVICE_2)
-        val device3 = DeviceCreateFactory.createDevice(DeviceCommand.DEVICE_3)
-        val device4 = DeviceCreateFactory.createDevice(DeviceCommand.DEVICE_4)
-        // 设备列表生成
-        addDeviceList(device1, device2, device3, device4)
+
     }
-
-
-    fun addDeviceList(vararg deviceList: DeviceItemBean) {
-        mDeviceList.addAll(deviceList)
-        mDeviceList.forEach {
-            it.addChannelList(
-                    // 为每台设备添加测试通道
-                    DeviceCreateFactory.createDeviceChannelList(
-                            DeviceCommand.CHANNEL_1, DeviceCommand.CHANNEL_2, DeviceCommand.CHANNEL_3, DeviceCommand.CHANNEL_4,
-                            DeviceCommand.CHANNEL_5, DeviceCommand.CHANNEL_6, DeviceCommand.CHANNEL_7, DeviceCommand.CHANNEL_8,
-                            DeviceCommand.CHANNEL_9, DeviceCommand.CHANNEL_10, DeviceCommand.CHANNEL_11, DeviceCommand.CHANNEL_12,
-                            DeviceCommand.CHANNEL_13, DeviceCommand.CHANNEL_14, DeviceCommand.CHANNEL_15, DeviceCommand.CHANNEL_16))
-        }
-    }
-
 
     override fun initView() {
         mvMain2Title.setTitle("电池测试系统")
@@ -108,39 +50,59 @@ class DeviceMainActivty : LAbstractBaseActivity() {
         val layoutManager = LinearLayoutManager(this)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
         mvMain2RecycleView.layoutManager = layoutManager
-        mvMain2RecycleView.adapter = mAdapter
+        mDeviceItemAdapter = DeviceItemAdapter(DeviceMgrService.sDeviceList)
+        mvMain2RecycleView.adapter = mDeviceItemAdapter
     }
 
     override fun clicEvent() {
         mvMain2ConfigTest.setOnClickListener {
             Router.startUdpConfig(this)
+
         }
 
         mvMain2TestStart.setOnClickListener {
-            val list = DeviceService.mDeviceTestChannelList
-            ToastUtils.showShort("开始测试 测试通道数=" + list.size)
-            val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_START_TEST)
+            val deviceItemBeanList = DeviceMgrService.sDeviceItemBeanList
+            val commandList = DeviceCommand.createDeviceTestComposeCommandList(deviceItemBeanList, DeviceCommand.COMMAND_START_TEST, true)
+            ToastUtils.showShort("开始测试 设备数 =" + deviceItemBeanList.size + " 命令数 = " + commandList.size)
             DeviceCommand.sendCommandList(commandList, mSendName)
+            // todo Device.Service 异步查询数据，通道状态
         }
 
         mvMain2DeviceMore.setOnClickListener {
             DeviceOperWindow.create(this).show(it)
                     .addTestPauseClickEvent {
-                        val list = DeviceService.mDeviceTestChannelList
-                        ToastUtils.showShort("发送暂停 测试通道数=" + list.size)
-                        val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_PAUSE_TEST)
+                        val deviceItemBeanList = DeviceMgrService.sDeviceItemBeanList
+                        val commandList = DeviceCommand.createDeviceTestComposeCommandList(deviceItemBeanList, DeviceCommand.COMMAND_PAUSE_TEST, true)
+                        ToastUtils.showShort("发送暂停 设备数 =" + deviceItemBeanList.size + " 命令数 = " + commandList.size)
                         DeviceCommand.sendCommandList(commandList, mSendName)
                     }
                     .addTestResumeClickEvent {
-                        val list = DeviceService.mDeviceTestChannelList
-                        ToastUtils.showShort("发送继续 测试通道数=" + list.size)
-                        val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_RESUME_TEST)
+                        val deviceItemBeanList = DeviceMgrService.sDeviceItemBeanList
+                        val commandList = DeviceCommand.createDeviceTestComposeCommandList(deviceItemBeanList, DeviceCommand.COMMAND_RESUME_TEST, true)
+                        ToastUtils.showShort("发送继续 设备数 =" + deviceItemBeanList.size + " 命令数 = " + commandList.size)
                         DeviceCommand.sendCommandList(commandList, mSendName)
                     }
-                    .addQueryClickEvent {
-                        val list = DeviceService.mDeviceTestChannelList
-                        ToastUtils.showShort("发送查询 测试通道数=" + list.size)
-                        val commandList = DeviceCommand.createDeviceTestCommandList(list, DeviceCommand.COMMAND_QUERY_TEST)
+                    .addStopClickEvent {
+
+                        val deviceItemBeanList = DeviceMgrService.sDeviceItemBeanList
+                        val commandList = DeviceCommand.createDeviceTestComposeCommandList(deviceItemBeanList, DeviceCommand.COMMAND_STOP_TEST, true)
+                        ToastUtils.showShort("发送停止 设备数 =" + deviceItemBeanList.size + " 命令数 = " + commandList.size)
+                        DeviceCommand.sendCommandList(commandList, mSendName)
+                    }
+                    // 通道单独发
+                    .addQueryDataClickEvent {
+
+                        // 查询数据 只管设备号，
+                        val deviceItemBeanList = DeviceMgrService.sDeviceItemBeanList
+                        val commandList = DeviceCommand.createDeviceTestComposeCommandList(deviceItemBeanList, DeviceCommand.COMMAND_QUERY_DATA_TEST, false)
+                        ToastUtils.showShort("发送查询数据 设备数 =" + deviceItemBeanList.size + " 命令数 = " + commandList.size)
+                        DeviceCommand.sendCommandList(commandList, mSendName)
+                    }
+                    .addQueryChannelStatusClickEvent {
+                        // 查询通道状态 只管设备号
+                        val deviceItemBeanList = DeviceMgrService.sDeviceItemBeanList
+                        val commandList = DeviceCommand.createDeviceTestComposeCommandList(deviceItemBeanList, DeviceCommand.COMMAND_QUERY_CHANNEL_STATUS_TEST, false)
+                        ToastUtils.showShort("发送查询通道状态 设备数 =" + deviceItemBeanList.size + " 命令数 = " + commandList.size)
                         DeviceCommand.sendCommandList(commandList, mSendName)
                     }
 
@@ -149,7 +111,46 @@ class DeviceMainActivty : LAbstractBaseActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        stopService(Intent(this, DeviceService::class.java))
+        stopService(Intent(this, DeviceMgrService::class.java))
+        stopService(Intent(this, DeviceQueryService::class.java))
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onDeviceQueryEvent(event: DeviceQueryEvent) {
+        when (event.msg) {
+            DeviceQueryEvent.DEVICE_DATA_UPDATE_CHANNEL_STATUS_NOTIFICATION -> {
+                // 更新指定设备
+                DeviceMgrService.sDeviceItemBeanList.forEachIndexed { deviceIndex, deviceBean ->
+                    if (deviceBean.deviceId == event.deviceId) { // 同一设备
+                        deviceBean.channelList.forEachIndexed { channelIndex, channelBean ->
+                            if (channelBean.channelId == event.channelId) { // 同一通道
+                                deviceBean.channelAdapter.notifyItemChanged(channelIndex)
+                            }// if
+                        }
+                    }//if
+                }
+            }
+
+            DeviceQueryEvent.DEVICE_DATA_UPDATE_DATA_NOTIFICATION -> {
+                DeviceMgrService.sDeviceItemBeanList.forEachIndexed { deviceIndex, deviceBean ->
+                    //                    LLogX.e(" dID = " + DigitalTrans.byte2hex(deviceBean.deviceId))
+                    if (deviceBean.deviceId == event.deviceId) { // 同一设备
+                        deviceBean.channelList.forEachIndexed { channelIndex, channelBean ->
+                            if (channelBean.channelId == event.channelId) { // 同一通道
+                                // LLogX.e(" dID = " + DigitalTrans.byte2hex(deviceBean.deviceId)+" cId = " + DigitalTrans.byte2hex(event.channelId) +"channelIndex = " + channelIndex )
+
+                                if (channelBean.deviceStatus == DeviceStatus.ONLINE) {
+                                    deviceBean.channelAdapter.notifyItemChanged(channelIndex)
+                                    return
+                                }
+
+                            }// if
+                        }
+                    }// if
+                }
+            }
+            else -> {
+            }
+        }// when
+    } // onDeviceQueryEvent
 }
