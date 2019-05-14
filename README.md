@@ -16,49 +16,37 @@ https://wenku.baidu.com/view/78d7ce28bd64783e09122b73.html
 
 # 电池测试系统
 
-项目介绍
-
-主要功能
-
-业务流程
-
---------
-
-项目架构
-
-
 实现语言 Android kotlin java xml Markdown
-工具： Android studio，Github，
+
+工具： Android studio，WireShark
+
 流程管理： gitflow
 
-采用技术
-  BaseRecycleView
-  MpAndroidChart
-  
-设计模式：单例模式，工厂模式，观察者模式，建造者模式
-
-实现原理
-  handler
-  轮询式 查询各个在线设备状态 实时更新
   
 流程图
 
 UML
 
 ```
-开发背景
 
-需求分析
+一、项目介绍
+    主要功能
+    业务流程
+二、需求分析
+三、概要设计
+四、详细设计与实现
+    项目架构
+    设计模式：单例模式，工厂模式，观察者模式，建造者模式
+    采用技术
+        BaseRecycleView
+        MpAndroidChart
+     实现原理
+        handler
+        轮询式 查询各个在线设备状态 实时更新
+五、成果展示
+六、结束语
 
-概要设计
 
-数据库设计
-
-详细设计与实现
-
-系统测试
-
-软件安装
 ```
 
 
