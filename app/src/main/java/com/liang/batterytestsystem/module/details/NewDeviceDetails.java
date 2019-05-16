@@ -56,6 +56,10 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
     public static final int INDEX_MAMPEREHOURDATASET_INDEX = 5; // 安时
     private static Random sRandom = new Random();
     private static DecimalFormat sDecimalFormat = new DecimalFormat("#.00");
+
+    private LineChart mLineChart; // 折线表，存线集合
+
+
     private DeviceItemChannelBean mChannelBean;
     private LTitleView mTitleView;
     private Button mBtnClick1;
@@ -67,8 +71,17 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
     private CheckBox mRadioButtonTemperture;
     private CheckBox mRadioButtonAmpereHour;
     private List<CheckBox> mCheckBoxList = new ArrayList<>();
+    private XAxis mXAxis; //X轴
     private LineData mLineData = null; // 线集合，所有折现以数组的形式存到此集合中
-    private LineChart mLineChart; // 折线表，存线集合
+    private YAxis mLeftYAxis; //左侧Y轴
+    private YAxis mRightYAxis; //右侧Y轴
+    private Legend mLegend; //图例
+    private LimitLine mLimitline; //限制线
+
+    public static void startActivity(Context context, DeviceItemChannelBean bean) {
+        LKVMgr.memory().putObj(DeviceKey.KEY_DETAIL_INFO, bean);
+        context.startActivity(new Intent(context, NewDeviceDetails.class));
+    }
 
     //  数据链表
 //    List<Float> mStepTimeList = new ArrayList<>();
@@ -77,6 +90,7 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
 //    List<Float> mPowerList = new ArrayList<>();
 //    List<Float> mTempertureList = new ArrayList<>();
 //    List<Float> mAmpereHourList = new ArrayList<>();
+
     // Chart需要的点数据链表
     List<Entry> mStepTimeEntries = new ArrayList<>();
     List<Entry> mElectricistEntries = new ArrayList<>();
@@ -92,16 +106,6 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
     private LineDataSet mPowerLineDataSet = new LineDataSet(mPowerEntries, "功率"); // 功率
     private LineDataSet mTempertureDataSet = new LineDataSet(mTempertureEntries, "温度"); // 温度
     private LineDataSet mAmpereHourDataSet = new LineDataSet(mAmpereHourEntries, "安时"); // 安时
-    private XAxis mXAxis; //X轴
-    private YAxis mLeftYAxis; //左侧Y轴
-    private YAxis mRightYAxis; //右侧Y轴
-    private Legend mLegend; //图例
-    private LimitLine mLimitline; //限制线
-
-    public static void startActivity(Context context, DeviceItemChannelBean bean) {
-        LKVMgr.memory().putObj(DeviceKey.KEY_DETAIL_INFO, bean);
-        context.startActivity(new Intent(context, NewDeviceDetails.class));
-    }
 
 
     private DetailHandler mDetailHandler = new DetailHandler(NewDeviceDetails.this);
@@ -141,7 +145,7 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
         mBtnClick1.setOnClickListener(this);
         mBtnClick2 = findViewById(R.id.mTestBtn2);
         mBtnClick2.setOnClickListener(this);
-        mBtnClick1.setVisibility(View.INVISIBLE);
+        mBtnClick1.setVisibility(View.VISIBLE);
         mBtnClick2.setVisibility(View.INVISIBLE);
         mRadioButtonStepTime = findViewById(R.id.mDeviceDetailStepTime);
         mRadioButtonElectricist = findViewById(R.id.mDeviceDetailElectric);
@@ -176,11 +180,12 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
         switch (v.getId()) {
             case R.id.mTestBtn1:
 
-                // 查询数据 只管设备号，
-                List<DeviceItemBean> deviceItemBeanList = DeviceMgrService.Companion.getSDeviceItemBeanList();
-                List<byte[]> commandList = DeviceCommand.createDeviceTestComposeCommandList(deviceItemBeanList, DeviceCommand.Companion.getCOMMAND_QUERY_DATA_TEST(), false);
-                ToastUtils.showShort("发送查询数据 设备数 =" + deviceItemBeanList.size() + " 命令数 = " + commandList.size());
-                DeviceCommand.Companion.sendCommandList(commandList, "详情页");
+                LineChartDemo.startActivity(this);
+//                // 查询数据 只管设备号，
+//                List<DeviceItemBean> deviceItemBeanList = DeviceMgrService.Companion.getSDeviceItemBeanList();
+//                List<byte[]> commandList = DeviceCommand.createDeviceTestComposeCommandList(deviceItemBeanList, DeviceCommand.Companion.getCOMMAND_QUERY_DATA_TEST(), false);
+//                ToastUtils.showShort("发送查询数据 设备数 =" + deviceItemBeanList.size() + " 命令数 = " + commandList.size());
+//                DeviceCommand.Companion.sendCommandList(commandList, "详情页");
 
                 break;
             case R.id.mTestBtn2:
@@ -464,7 +469,7 @@ public class NewDeviceDetails extends LAbstractBaseActivity implements View.OnCl
      */
     public void addEntry(float yValues, int index) {
 
-        int xCount = mLineData.getDataSetByIndex(index).getEntryCount();
+        int xCount = mLineData.getDataSetByIndex(index).getEntryCount();// 通过索引得到一条折线，之后得到折线上当前点的数量
 //        LLogX.e("data = " + yValues + " 线：" + index + " 点数：" + xCount);// + " 总共点数：" + mLineData.getEntryCount() + " 线条数：" + mLineData.getDataSetCount());
 
         Entry entry = new Entry(xCount, yValues);

@@ -65,7 +65,6 @@ class DeviceMainActivty : LAbstractBaseActivity() {
             val commandList = DeviceCommand.createDeviceTestComposeCommandList(deviceItemBeanList, DeviceCommand.COMMAND_START_TEST, true)
             ToastUtils.showShort("开始测试 设备数 =" + deviceItemBeanList.size + " 命令数 = " + commandList.size)
             DeviceCommand.sendCommandList(commandList, mSendName)
-            // todo Device.Service 异步查询数据，通道状态
         }
 
         mvMain2DeviceMore.setOnClickListener {

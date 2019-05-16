@@ -19,7 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-
+        <activity android:name=".module.details.LineChartDemo"></activity>
         <activity android:name=".module.home.DeviceMainActivty">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,26 +27,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".module.config.UdpConfigActivity"
             android:launchMode="singleInstance" />
-
         <activity
             android:name=".module.details.NewDeviceDetails"
             android:launchMode="singleInstance" />
-
 
         <service
             android:name=".module.service.DeviceMgrService"
             android:enabled="true"
             android:exported="false" />
-
         <service
             android:name=".module.service.DeviceQueryService"
             android:enabled="true"
             android:exported="true" />
-
     </application>
 
 </manifest>
